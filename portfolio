@@ -4,313 +4,219 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/ico" href="images/favicon.ico">
-
-<!-- 导入 Tailwind CSS for utility classes -->
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- 
-    ✅ 导入 Google Fonts：Cactus Classical Serif (中文/衬线)
-    使用说明：在你想使用这个字体的 CSS 规则中，将 font-family 设置为 'Cactus Classical Serif', cursive; 
-    如何使用其它网站的字体：
-    1. 找到字体的 @font-face 规则或 Google Fonts 提供的 <link> 标签。
-    2. 将 <link> 标签（如本例）放置在 <head> 中。
-    3. 在 CSS 中，通过 font-family 属性引用该字体名称。
--->
-<link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif:wght@400;700&display=swap" rel="stylesheet">
-
-<!-- 导入 Google Fonts：Elms Sans (原有的英文/西文字体) -->
-<link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-
-
 <title>xinyuan 2025</title>
 
-<!-- 嗨以免有人在看这里。是的，很多代码都是gpt写的，感谢gpt。但我也在这里证明了我也参与了敲代码的过程的，✌️ -->
-<!-- hi in case anyone is reading this. yes, most of the codes are done by gpt. but since i'm here, this proves i also worked with these codes ✌️ -->
-<!-- OMG MY DEAR NEIGHBOUR IS SINGING OUT LOUD AGAIN IM GONNA CRAZY NOOOOOOOOOOO -->
-  
+<!-- ================= Google Fonts ================= -->
+<!-- Elms Sans 已保留用于英文标题 -->
+<link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
+<!-- 中文字体示例：Cactus Classical Serif -->
+<link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&display=swap" rel="stylesheet">
+<!-- ✅ 如需使用其他字体：
+     1. 在 https://fonts.google.com/ 找到你喜欢的字体
+     2. 点击 + Select this style，复制 <link> 标签到这里
+     3. 在 CSS 中通过 font-family 使用该字体 -->
+
 <style>
-    /* === 页面基础设置 === */
-    body {
-        margin: 0;
-        /* 默认字体堆栈，中文将使用 'Cactus Classical Serif' */
-        font-family: 'Elms Sans', sans-serif;
-        background-color: #f5f5f5;
-        background-image: url('images/portback.png');
-        background-size: cover;           
-        background-position: center;      
-        background-repeat: no-repeat;     
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+/* === 全局基础设置 === */
+body {
+  margin: 0;
+  font-family: 'Poppins', 'Microsoft YaHei', sans-serif;
+  background-color: #f5f5f5;
+  background-image: url('images/portback.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* ✅ 便于子元素绝对定位 */
+}
 
-    /* === 荧光色块 (Highlight) === */
-    .highlight {
-        position: absolute;
-        top: 0;
-        left: 0;
-        /* ✅ 3.2 缩窄：将宽度设为约 60% */
-        width: 60%;
-        height: 100%;
-        /* ✅ 3.1 渐变为白色：
-           从底部 (0deg) 往上，前 10% 渐变为白色 (rgba(255,255,255,1))，
-           然后渐变为荧光绿 (rgba(215,255,95,0.8))。
-           注意：这里使用了 0deg (从下到上) 来实现底部渐变。
-        */
-        background: linear-gradient(
-            0deg, 
-            rgba(255, 255, 255, 1) 0%,      /* 底部纯白 */
-            rgba(255, 255, 255, 0.8) 10%,   /* 10% 处开始淡出 */
-            rgba(215, 255, 95, 0.8) 20%,    /* 20% 处开始荧光绿 */
-            rgba(215, 255, 95, 0.8) 100%    /* 顶部荧光绿 */
-        );
-        
-        /* 保持原有的倾斜剪裁形状，相对于 60% 的宽度 box 进行剪裁 */
-        clip-path: polygon(40% 0, 100% 0, 100% 100%, 20% 100%);
-        opacity: 0;
-        animation: slideDown 1.5s ease forwards;
-        animation-delay: 0.2s;
-    }
+/* === 顶部语言切换按钮 === */
+.language-switch {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+.language-switch button {
+  padding: 5px 12px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #fff;
+}
+.language-switch button:hover {
+  background-color: #d7ff5f; /* 荧光绿色提示 */
+}
 
-    /* === 主标题 PORTFOLIO === */
-    .title {
-        position: absolute;
-        top: 35%;
-        left: 10%;
-        /* ✅ 1. 放大标题：从 90px 放大到 120px */
-        font-size: 120px;
-        font-weight: 900;
-        color: #000;
-        opacity: 0;
-        transform: translateY(50px);
-        animation: fadeUp 1s ease forwards;
-        animation-delay: 1.3s;
-        /* 调整位置以适配缩窄的绿色块 */
-        left: 5%;
-    }
+/* === 荧光色块 highlight === */
+.highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%; /* ✅ 缩窄，为右边留出空间 */
+  height: 100%;
+  background: linear-gradient(120deg, rgba(215,255,95,0.8) 0%, rgba(215,255,95,0.4) 90%, rgba(255,255,255,0.6) 100%);
+  clip-path: polygon(40% 0, 100% 0, 100% 100%, 20% 100%);
+  opacity: 0;
+  animation: slideDown 1.5s ease forwards;
+  animation-delay: 0.2s;
+}
 
-    /* === 中文副标题 (Subtitle) === */
-    .subtitle {
-        position: absolute;
-        top: 50%;
-        left: 11%;
-        background: #d7ff5f;
-        font-size: 22px;
-        padding: 5px 10px;
-        font-weight: 500;
-        opacity: 0;
-        transform: translateY(40px);
-        animation: fadeUp 1s ease forwards;
-        animation-delay: 1.6s;
-        /* ✅ 2. 应用 Cactus Classical Serif 字体 */
-        font-family: 'Cactus Classical Serif', cursive; 
-        /* 调整位置以适配缩窄的绿色块 */
-        left: 5%;
-    }
+/* === 主标题 title === */
+.title {
+  position: absolute;
+  top: 25%; /* 调整位置 */
+  left: 10%;
+  font-size: 120px; /* ✅ 放大标题 */
+  font-weight: 900;
+  color: #000;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 1.3s;
+  font-family: 'Elms Sans', sans-serif; /* 英文标题字体 */
+}
 
-    /* === 年份 (Year) === */
-    .year {
-        position: absolute;
-        top: 60%;
-        left: 11%;
-        font-size: 70px;
-        font-weight: 800;
-        opacity: 0;
-        transform: translateY(40px);
-        animation: fadeUp 1s ease forwards;
-        animation-delay: 1.9s;
-        /* 调整位置以适配缩窄的绿色块 */
-        left: 5%;
-    }
+/* === 中文副标题 subtitle === */
+.subtitle {
+  position: absolute;
+  top: 50%;
+  left: 11%;
+  background: #d7ff5f;
+  font-size: 28px; /* 放大一点 */
+  padding: 8px 15px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 1.6s;
+  font-family: 'Cactus Classical Serif', 'Microsoft YaHei', sans-serif; /* 中文字体示例 */
+}
 
-    /* === 箭头图 (Arrow) === */
-    .arrow {
-        position: absolute;
-        top: 42%;
-        left: 65%;
-        width: 150px;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeUp 1s ease forwards;
-        animation-delay: 2.2s;
-    }
-    
-    /* === 作者信息 (Author) === */
-    .author {
-        position: absolute;
-        bottom: 60px;
-        right: 80px;
-        font-size: 20px;
-        font-weight: 600;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeUp 1s ease forwards;
-        animation-delay: 2.5s;
-    }
-    .author::before {
-        content: "// ";
-    }
+/* === 简介按钮 Button1 === */
+#btn1 {
+  position: absolute;
+  top: 65%;
+  left: 11%;
+  padding: 15px 25px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  background: linear-gradient(120deg, rgba(215,255,95,0.8), rgba(215,255,95,0.5));
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+#btn1.expanded {
+  transform: scale(1.5);
+}
+#btn1.expanded::after {
+  content: "内容1";
+}
 
-    /* === 交互按钮 (Action Button) === */
-    .action-button {
-        position: absolute;
-        top: 55%;
-        left: 5%;
-        padding: 12px 24px;
-        color: #000;
-        font-weight: 700;
-        border: none;
-        cursor: pointer;
-        border-radius: 8px;
-        opacity: 0;
-        transition: 
-            transform 0.3s ease-in-out, /* 平滑放大动画 */
-            background 0.3s ease-in-out,
-            opacity 1s ease forwards;
-        animation: fadeUp 1s ease forwards;
-        animation-delay: 2.0s;
-        /* ✅ 6. 按钮背景渐变 - 参考绿色荧光块 */
-        background: linear-gradient(135deg, #d7ff5f, #aaff33);
-        box-shadow: 0 4px 15px rgba(215, 255, 95, 0.4);
-    }
-    .action-button:hover {
-        box-shadow: 0 4px 20px rgba(215, 255, 95, 0.8);
-    }
+/* === 年份 year === */
+.year {
+  position: absolute;
+  top: 60%;
+  left: 11%;
+  font-size: 70px;
+  font-weight: 800;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 1.9s;
+}
 
-    /* 按钮点击后放大的状态 */
-    .action-button.expanded {
-        transform: scale(1.2);
-    }
+/* === 箭头图 arrow === */
+.arrow {
+  position: absolute;
+  top: 42%;
+  left: 65%;
+  width: 150px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 2.2s;
+}
+/* ✅ 替换箭头为本地文件 images/arrow.png */
+.arrow {
+  content: url('images/arrow.png');
+}
 
-    /* === 动画关键帧 === */
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-100%);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+/* === 作者信息 author === */
+.author {
+  position: absolute;
+  bottom: 60px;
+  right: 80px;
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 2.5s;
+}
+.author::before { content: "// "; }
 
-    @keyframes fadeUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* === 语言切换栏 (Language Switcher) === */
-    .language-switcher {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
-    .lang-button {
-        padding: 8px 12px;
-        margin-left: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        border: 2px solid #000;
-        background-color: transparent;
-        color: #000;
-        cursor: pointer;
-        border-radius: 6px;
-        transition: 
-            background-color 0.2s, 
-            color 0.2s,
-            border-color 0.2s;
-    }
-    .lang-button:hover {
-        background-color: #d7ff5f;
-        border-color: #d7ff5f;
-    }
+/* === 动画关键帧 === */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
 
 </style>
 </head>
 
 <body>
-    <!-- ✅ 4. 集中文字编辑内容 (JavaScript Object) -->
-    <script>
-        // 这是所有可编辑文字内容的中央存储区
-        const editableContent = {
-            title: "PORTFOLIO",
-            subtitle: "这里是简介之类的",
-            year: "2025",
-            author: "Xinyuan Li",
-            buttonDefaultText: "按钮1",
-            buttonExpandedText: "内容1"
-        };
-    </script>
-    
-    <!-- ✅ 7. 语言切换按钮 (Language Switcher) -->
-    <div class="language-switcher">
-        <button onclick="window.location.href='https://x-x1n.github.io/zh'" class="lang-button">中</button>
-        <button onclick="window.location.href='https://x-x1n.github.io/fr'" class="lang-button">FR</button>
-        <button onclick="window.location.href='https://x-x1n.github.io/jp'" class="lang-button">日</button>
-    </div>
+  <!-- === 语言切换按钮 === -->
+  <div class="language-switch">
+    <button onclick="location.href='https://x-x1n.github.io/zh'">中</button>
+    <button onclick="location.href='https://x-x1n.github.io/fr'">FR</button>
+    <button onclick="location.href='https://x-x1n.github.io/jp'">日</button>
+  </div>
 
-    <!-- ✅ 3. 荧光色块，从上方滑入（已应用缩窄和底部渐变） -->
-    <div class="highlight"></div>
+  <!-- === 荧光色块 highlight === -->
+  <div class="highlight"></div>
 
-    <!-- ✅ 1. 主标题（已放大） -->
-    <div class="title" id="mainTitle"></div>
+  <!-- === 主标题 === -->
+  <div class="title">hi</div>
 
-    <!-- ✅ 2. 中文副标题（已应用新字体） -->
-    <div class="subtitle" id="subTitle"></div>
+  <!-- === 中文副标题 === -->
+  <div class="subtitle">这里是简介之类的</div>
 
-    <!-- ✅ 6. 交互按钮 -->
-    <button class="action-button" id="actionButton"></button>
+  <!-- === 简介按钮 Button1 === -->
+  <button id="btn1">按钮1</button>
 
-    <!-- ✅ 年份 -->
-    <div class="year" id="yearText"></div>
+  <!-- === 年份 === -->
+  <div class="year">2025</div>
 
-    <!-- 
-        ✅ 5. 箭头图 (Arrow) 
-        替换为 images/arrow.png 文件路径。
-    -->
-    <img
-        src="images/arrow.png"
-        alt="arrow"
-        class="arrow"
-    >
+  <!-- === 箭头图 === -->
+  <img src="images/arrow.png" alt="arrow" class="arrow">
 
-    <!-- ✅ 作者信息 -->
-    <div class="author" id="authorText"></div>
+  <!-- === 作者信息 === -->
+  <div class="author">Xinyuan Li</div>
 
+<script>
+  // === 按钮点击切换动画和文字 ===
+  const btn = document.getElementById('btn1');
+  btn.addEventListener('click', () => {
+    if(btn.classList.contains('expanded')){
+      btn.classList.remove('expanded');
+      btn.textContent = "按钮1";
+    } else {
+      btn.classList.add('expanded');
+      btn.textContent = "内容1";
+    }
+  });
+</script>
 
-    <script>
-        // 初始化函数：将文本内容从 JS 对象渲染到 DOM
-        function initializeContent() {
-            document.getElementById('mainTitle').textContent = editableContent.title;
-            document.getElementById('subTitle').textContent = editableContent.subtitle;
-            document.getElementById('yearText').textContent = editableContent.year;
-            document.getElementById('authorText').textContent = editableContent.author;
-            
-            const button = document.getElementById('actionButton');
-            button.textContent = editableContent.buttonDefaultText; // 设置按钮初始文本
-            button.addEventListener('click', toggleButtonState);
-        }
-
-        // ✅ 6. 按钮点击事件处理函数
-        function toggleButtonState() {
-            const button = document.getElementById('actionButton');
-            // 切换 CSS 类实现平滑放大
-            const isExpanded = button.classList.toggle('expanded'); 
-
-            if (isExpanded) {
-                // 放大状态：显示 “内容1”
-                button.textContent = editableContent.buttonExpandedText;
-            } else {
-                // 原始状态：显示 “按钮1”
-                button.textContent = editableContent.buttonDefaultText;
-            }
-        }
-
-        // 在页面加载完成后执行初始化
-        window.onload = initializeContent;
-    </script>
 </body>
 </html>
