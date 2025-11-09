@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+<title>xinyuan 2025</title>
+
+<!-- 嗨以免有人在看这里。是的，很多代码都是gpt写的，感谢gpt。但我也在这里证明了我也参与了敲代码的过程的，✌️ -->
+<!-- hi in case anyone is reading this. yes, most of the codes are done by gpt. but since i'm here, this proves i also worked with these codes ✌️ -->
+<!-- OMG MY DEAR NEIGHBOUR IS SINGING OUT LOUD AGAIN IM GONNA CRAZY NOOOOOOOOOOO -->
+  
+<!-- ✅ 导入 Google Fonts：Elms Sans -->
+<link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+  /* === 页面基础设置 === */
+  body {
+  margin: 0;
+  font-family: 'Poppins', 'Microsoft YaHei', sans-serif;
+  background-color: #f5f5f5;
+
+  /* 原先的 background-image 替换为本地图片路径 */
+  background-image: url('images/portback.png');
+  background-size: cover;           /* 背景铺满 */
+  background-position: center;      /* 居中显示 */
+  background-repeat: no-repeat;     /* 不重复 */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+  /* === 荧光色块，从上方滑入 === */
+  .highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(215,255,95,0.8) 0%, rgba(215,255,95,0.4) 100%);
+    clip-path: polygon(40% 0, 100% 0, 100% 100%, 20% 100%);
+    opacity: 0;
+    animation: slideDown 1.5s ease forwards;
+    animation-delay: 0.2s;
+  }
+
+  /* === 主标题 PORTFOLIO === */
+  .title {
+    position: absolute;
+    top: 35%;
+    left: 10%;
+    font-size: 90px;
+    font-weight: 900;
+    color: #000;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 1.3s;
+  }
+
+  /* === 中文副标题 === */
+  .subtitle {
+    position: absolute;
+    top: 50%;
+    left: 11%;
+    background: #d7ff5f;
+    font-size: 22px;
+    padding: 5px 10px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 1.6s;
+    font-family: 'Microsoft YaHei', sans-serif; /* ✅ 保持中文字体清晰 */
+  }
+
+  /* === 年份 === */
+  .year {
+    position: absolute;
+    top: 60%;
+    left: 11%;
+    font-size: 70px;
+    font-weight: 800;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 1.9s;
+  }
+
+  /* === 箭头图 === */
+  .arrow {
+    position: absolute;
+    top: 42%;
+    left: 65%;
+    width: 150px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 2.2s;
+  }
+  /* ✅ 说明：
+     - 替换箭头图片路径或位置：
+       src: 改为你想用的图片地址；
+       top / left / width：可自由调整位置与大小
+  */
+
+  /* === 作者信息 === */
+  .author {
+    position: absolute;
+    bottom: 60px;
+    right: 80px;
+    font-size: 20px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 2.5s;
+  }
+  .author::before {
+    content: "// ";
+  }
+
+  /* === 动画关键帧 === */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+
+<body>
+  <!-- ✅ 荧光色块，从上方滑入 -->
+  <div class="highlight"></div>
+
+  <!-- ✅ 主标题 -->
+  <div class="title">testtesttest</div>
+
+  <!-- ✅ 中文副标题 -->
+  <div class="subtitle">这里是简介之类的</div>
+
+  <!-- ✅ 年份 -->
+  <div class="year">2025</div>
+
+  <!-- ✅ 箭头图（使用你提供的URL） -->
+  <img
+    src="https://media.prts.wiki/7/7d/%E5%9B%BE%E6%A0%87_%E8%81%8C%E4%B8%9A_%E8%BF%91%E5%8D%AB.png"
+    alt="arrow"
+    class="arrow"
+  >
+
+  <!-- ✅ 作者信息 -->
+  <div class="author">Xinyuan Li</div>
+</body>
+</html>
