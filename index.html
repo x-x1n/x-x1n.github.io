@@ -1,141 +1,160 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-/* 留有一点注释的余地 */
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>xy</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio 2025</title>
 
-  <style>
-    /* ======= 页面基础设置 ======= */
-    body {
-      margin: 0;
-      font-family: 'Poppins', 'Microsoft YaHei', sans-serif;
-      background-color: #f5f5f5;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-image: url('port2_副本.png'); /* 你上传的背景图，可以替换为路径 */
-      background-size: cover;
-      background-position: center;
-    }
+<!-- 嗨以免有人在看这里。是的，很多代码都是gpt写的，感谢gpt。但我也在这里证明了我也参与了敲代码的过程的，✌️ -->
+<!-- hi in case anyone is reading this. yes, most of the codes are done by gpt. but since i'm here, this proves i also worked with these codes ✌️ -->
+<!-- OMG MY DEAR NEIGHBOUR IS SINGING OUT LOUD AGAIN IM GONNA CRAZY NOOOOOOOOOOO -->
+  
+<!-- ✅ 导入 Google Fonts：Elms Sans -->
+<link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
 
-    /* ======= 主容器 ======= */
-    .cover {
-      position: relative;
-      width: 1000px;
-      height: 600px;
-      background: #f8f8f8 url('texture.png') repeat; /* 模拟布纹纸背景 */
-      overflow: hidden;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
-    }
+<style>
+  /* === 页面基础设置 === */
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Elms Sans', 'Microsoft YaHei', sans-serif; /* ✅ 所有英文字体使用 Elms Sans */
+    background: url('your-background.jpg') no-repeat center center/cover;
+    /* ✅ 背景设置：将 'your-background.jpg' 替换为你自己的图片路径 */
+  }
 
-    /* ======= 右侧荧光绿色斜色块 ======= */
-    .highlight {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(120deg, #d7ff5f 0%, #d7ff5f60 100%);
-      transform: skewX(-15deg);
-      transform-origin: right;
-      z-index: 1;
-    }
+  /* === 荧光色块，从上方滑入 === */
+  .highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(215,255,95,0.8) 0%, rgba(215,255,95,0.4) 100%);
+    clip-path: polygon(40% 0, 100% 0, 100% 100%, 20% 100%);
+    opacity: 0;
+    animation: slideDown 1.5s ease forwards;
+    animation-delay: 0.2s;
+  }
 
-    /* ======= 主标题 PORTFOLIO ======= */
-    .title {
-      position: absolute;
-      top: 160px;
-      left: 80px;
-      font-size: 90px;
-      font-weight: 900;
-      letter-spacing: -3px;
-      color: #000;
-      z-index: 2;
-    }
+  /* === 主标题 PORTFOLIO === */
+  .title {
+    position: absolute;
+    top: 35%;
+    left: 10%;
+    font-size: 90px;
+    font-weight: 900;
+    color: #000;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 1.3s;
+  }
 
-    /* 模拟文字部分有磨砂质感，可用text-shadow或纹理叠加实现 */
-    .title span {
-      background: linear-gradient(90deg, #000 70%, #000 30%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+  /* === 中文副标题 === */
+  .subtitle {
+    position: absolute;
+    top: 50%;
+    left: 11%;
+    background: #d7ff5f;
+    font-size: 22px;
+    padding: 5px 10px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 1.6s;
+    font-family: 'Microsoft YaHei', sans-serif; /* ✅ 保持中文字体清晰 */
+  }
 
-    /* ======= 中英标题装饰块 ======= */
-    .subtitle {
-      position: absolute;
-      top: 270px;
-      left: 90px;
-      font-size: 20px;
-      background: #d7ff5f;
-      padding: 3px 10px;
-      font-weight: 500;
-      z-index: 2;
-    }
+  /* === 年份 === */
+  .year {
+    position: absolute;
+    top: 60%;
+    left: 11%;
+    font-size: 70px;
+    font-weight: 800;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 1.9s;
+  }
 
-    /* ======= 年份 ======= */
-    .year {
-      position: absolute;
-      top: 340px;
-      left: 90px;
-      font-size: 70px;
-      font-weight: 800;
-      color: #000;
-      z-index: 2;
-    }
+  /* === 箭头图 === */
+  .arrow {
+    position: absolute;
+    top: 42%;
+    left: 65%;
+    width: 150px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 2.2s;
+  }
+  /* ✅ 说明：
+     - 替换箭头图片路径或位置：
+       src: 改为你想用的图片地址；
+       top / left / width：可自由调整位置与大小
+  */
 
-    /* ======= 作者署名 ======= */
-    .author {
-      position: absolute;
-      bottom: 60px;
-      right: 100px;
-      font-size: 20px;
-      font-weight: 600;
-      color: #000;
-      z-index: 2;
-    }
+  /* === 作者信息 === */
+  .author {
+    position: absolute;
+    bottom: 60px;
+    right: 80px;
+    font-size: 20px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 2.5s;
+  }
+  .author::before {
+    content: "// ";
+  }
 
-    .author::before {
-      content: "// ";
-      color: #000;
-      margin-right: 5px;
+  /* === 动画关键帧 === */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
     }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-    /* ======= 箭头图案 ======= */
-    .arrows {
-      position: absolute;
-      top: 210px;
-      left: 690px;
-      font-size: 40px;
-      letter-spacing: -5px;
-      z-index: 2;
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-  </style>
+  }
+</style>
 </head>
 
 <body>
-  <div class="cover">
-    <!-- 右侧荧光色块 -->
-    <div class="highlight"></div>
+  <!-- ✅ 荧光色块，从上方滑入 -->
+  <div class="highlight"></div>
 
-    <!-- 主标题 -->
-    <div class="title">
-      <span>PORTFOLIO</span>
-    </div>
+  <!-- ✅ 主标题 -->
+  <div class="title">PORTFOLIO</div>
 
-    <!-- 英中文副标题 -->
-    <div class="subtitle">个人作品集</div>
+  <!-- ✅ 中文副标题 -->
+  <div class="subtitle">个人作品集</div>
 
-    <!-- 年份 -->
-    <div class="year">2025</div>
+  <!-- ✅ 年份 -->
+  <div class="year">2025</div>
 
-    <!-- 箭头符号可用Unicode或SVG实现 -->
-    <div class="arrows">➤➤➤➤</div>
+  <!-- ✅ 箭头图（使用你提供的URL） -->
+  <img
+    src="https://i0.hdslb.com/bfs/new_dyn/5258af839a72d1850e085f529ed43f2b1792593725.png@1036w_!web-dynamic.webp"
+    alt="arrow"
+    class="arrow"
+  >
 
-    <!-- 作者署名 -->
-    <div class="author">Xinyuan Li</div>
-  </div>
+  <!-- ✅ 作者信息 -->
+  <div class="author">Xinyuan Li</div>
 </body>
 </html>
