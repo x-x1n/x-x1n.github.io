@@ -7,14 +7,8 @@
 <title>xinyuan 2025</title>
 
 <!-- ================= Google Fonts ================= -->
-<!-- Elms Sans 已保留用于英文标题 -->
 <link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<!-- 中文字体示例：Cactus Classical Serif -->
 <link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&display=swap" rel="stylesheet">
-<!-- ✅ 如需使用其他字体：
-     1. 在 https://fonts.google.com/ 找到你喜欢的字体
-     2. 点击 + Select this style，复制 <link> 标签到这里
-     3. 在 CSS 中通过 font-family 使用该字体 -->
 
 <style>
 /* === 全局基础设置 === */
@@ -30,7 +24,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative; /* ✅ 便于子元素绝对定位 */
+  position: relative;
 }
 
 /* === 顶部语言切换按钮 === */
@@ -57,22 +51,30 @@ body {
 .highlight {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 60%; /* ✅ 缩窄，为右边留出空间 */
+  left: 20%; /* 色块整体右移，实现居中，可调节 */
+  width: 60%; /* 色块宽度，可调节 */
   height: 100%;
+  /* 背景渐变，顶部亮绿色，中间透明，下方渐变为白色 */
   background: linear-gradient(120deg, rgba(215,255,95,0.8) 0%, rgba(215,255,95,0.4) 90%, rgba(255,255,255,0.6) 100%);
-  clip-path: polygon(40% 0, 100% 0, 100% 100%, 20% 100%);
+  /* 平行四边形形状：左上和左下顶点水平偏移形成倾斜 */
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
   opacity: 0;
   animation: slideDown 1.5s ease forwards;
   animation-delay: 0.2s;
+  /* 注释：
+     - left: 色块水平位置
+     - width: 色块宽度
+     - clip-path: 形成平行四边形，可调整四个顶点
+     - background: 渐变从上到下
+  */
 }
 
 /* === 主标题 title === */
 .title {
   position: absolute;
-  top: 25%; /* 调整位置 */
+  top: 25%;
   left: 10%;
-  font-size: 120px; /* ✅ 放大标题 */
+  font-size: 120px; /* 放大标题 */
   font-weight: 900;
   color: #000;
   opacity: 0;
@@ -88,21 +90,21 @@ body {
   top: 50%;
   left: 11%;
   background: #d7ff5f;
-  font-size: 28px; /* 放大一点 */
+  font-size: 28px;
   padding: 8px 15px;
   font-weight: 500;
   opacity: 0;
   transform: translateY(40px);
   animation: fadeUp 1s ease forwards;
   animation-delay: 1.6s;
-  font-family: 'Cactus Classical Serif', 'Microsoft YaHei', sans-serif; /* 中文字体示例 */
+  font-family: 'Cactus Classical Serif', 'Microsoft YaHei', sans-serif; /* 中文字体 */
 }
 
 /* === 简介按钮 Button1 === */
 #btn1 {
   position: absolute;
-  top: 65%;
-  left: 11%;
+  top: 65%; /* 按钮垂直位置，可调整 */
+  left: 11%; /* 按钮水平位置，可调整 */
   padding: 15px 25px;
   font-size: 20px;
   font-weight: bold;
@@ -115,9 +117,6 @@ body {
 }
 #btn1.expanded {
   transform: scale(1.5);
-}
-#btn1.expanded::after {
-  content: "内容1";
 }
 
 /* === 年份 year === */
@@ -142,11 +141,6 @@ body {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeUp 1s ease forwards;
-  animation-delay: 2.2s;
-}
-/* ✅ 替换箭头为本地文件 images/arrow.png */
-.arrow {
-  content: url('images/arrow.png');
 }
 
 /* === 作者信息 author === */
@@ -159,9 +153,20 @@ body {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeUp 1s ease forwards;
-  animation-delay: 2.5s;
 }
 .author::before { content: "// "; }
+
+/* === 签名图片 signature === */
+.signature {
+  position: absolute;
+  bottom: 20px; /* 签名垂直位置，可调整 */
+  right: 80px;  /* 与作者名字对齐 */
+  width: 200px; /* 签名宽度，可调整 */
+  opacity: 0;
+  transform: translateX(-50px); /* 从左侧偏移 */
+  animation: fadeInRight 1s ease forwards;
+  animation-delay: 3s; /* 入场延迟，可调整 */
+}
 
 /* === 动画关键帧 === */
 @keyframes slideDown {
@@ -171,41 +176,46 @@ body {
 @keyframes fadeUp {
   to { opacity: 1; transform: translateY(0); }
 }
-
+@keyframes fadeInRight {
+  to { opacity: 1; transform: translateX(0); }
+}
 </style>
 </head>
 
 <body>
-  <!-- === 语言切换按钮 === -->
+  <!-- 顶部语言切换按钮 -->
   <div class="language-switch">
     <button onclick="location.href='https://x-x1n.github.io/zh'">中</button>
     <button onclick="location.href='https://x-x1n.github.io/fr'">FR</button>
     <button onclick="location.href='https://x-x1n.github.io/jp'">日</button>
   </div>
 
-  <!-- === 荧光色块 highlight === -->
+  <!-- 荧光色块 -->
   <div class="highlight"></div>
 
-  <!-- === 主标题 === -->
+  <!-- 主标题 -->
   <div class="title">hi</div>
 
-  <!-- === 中文副标题 === -->
+  <!-- 中文副标题 -->
   <div class="subtitle">这里是简介之类的</div>
 
-  <!-- === 简介按钮 Button1 === -->
+  <!-- 简介按钮 -->
   <button id="btn1">按钮1</button>
 
-  <!-- === 年份 === -->
+  <!-- 年份 -->
   <div class="year">2025</div>
 
-  <!-- === 箭头图 === -->
+  <!-- 箭头图 -->
   <img src="images/arrow.png" alt="arrow" class="arrow">
 
-  <!-- === 作者信息 === -->
+  <!-- 作者信息 -->
   <div class="author">Xinyuan Li</div>
 
+  <!-- 签名图片 -->
+  <img src="images/signature.png" alt="signature" class="signature">
+
 <script>
-  // === 按钮点击切换动画和文字 ===
+  // 按钮点击切换动画和文字
   const btn = document.getElementById('btn1');
   btn.addEventListener('click', () => {
     if(btn.classList.contains('expanded')){
@@ -217,6 +227,5 @@ body {
     }
   });
 </script>
-
 </body>
 </html>
