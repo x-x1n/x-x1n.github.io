@@ -57,7 +57,7 @@ body {
   /* 背景渐变，顶部亮绿色，中间透明，下方渐变为白色 */
   background: linear-gradient(120deg, rgba(215,255,95,0.8) 0%, rgba(215,255,95,0.4) 90%, rgba(255,255,255,0.6) 100%);
   /* 平行四边形形状：左上和左下顶点水平偏移形成倾斜 */
-  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+  clip-path: polygon(10% 0, 90% 0, 80% 100%, 0% 100%);
   opacity: 0;
   animation: slideDown 1.5s ease forwards;
   animation-delay: 0.2s;
@@ -97,14 +97,14 @@ body {
   transform: translateY(40px);
   animation: fadeUp 1s ease forwards;
   animation-delay: 1.6s;
-  font-family: 'Cactus Classical Serif', 'Microsoft YaHei', sans-serif; /* 中文字体 */
+  font-family: 'Noto Sans', sans-serif; /* 中文字体 */
 }
 
 /* === 简介按钮 Button1 === */
 #btn1 {
   position: absolute;
   top: 65%; /* 按钮垂直位置，可调整 */
-  left: 11%; /* 按钮水平位置，可调整 */
+  left: 70%; /* 按钮水平位置，可调整 */
   padding: 15px 25px;
   font-size: 20px;
   font-weight: bold;
