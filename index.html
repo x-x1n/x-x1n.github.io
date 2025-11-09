@@ -17,13 +17,20 @@
 <style>
   /* === 页面基础设置 === */
   body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden;
-    font-family: 'Elms Sans', 'Microsoft YaHei', sans-serif; /* ✅ 所有英文字体使用 Elms Sans */
-    background: url('your-background.jpg') no-repeat center center/cover;
-    /* ✅ 背景设置：将 'your-background.jpg' 替换为你自己的图片路径 */
-  }
+  margin: 0;
+  font-family: 'Poppins', 'Microsoft YaHei', sans-serif;
+  background-color: #f5f5f5;
+
+  /* 原先的 background-image 替换为本地图片路径 */
+  background-image: url('images/portback.png');
+  background-size: cover;           /* 背景铺满 */
+  background-position: center;      /* 居中显示 */
+  background-repeat: no-repeat;     /* 不重复 */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
   /* === 荧光色块，从上方滑入 === */
   .highlight {
