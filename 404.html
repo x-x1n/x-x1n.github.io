@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>顶部页面示例</title>
+<style>
+  /* 页面全局 */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background: #000; /* 背景黑色增强发光效果 */
+  }
+
+  /* 顶部容器 */
+  .header {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: url('images/portback.png') center/cover no-repeat;
+    color: white;
+    overflow: hidden;
+  }
+
+  /* 平行四边形覆盖层 */
+  .header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 平行四边形形状 */
+    clip-path: polygon(10% 0, 90% 0, 80% 100%, 0% 100%);
+    /* 黄色到白色渐变，底部约1/10渐变为白色 */
+    background: linear-gradient(to bottom, #FFD700 90%, white 100%);
+    opacity: 0.85;
+    z-index: 0;
+  }
+
+  /* 标题和简介内容 */
+  .header-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    padding: 0 20px;
+  }
+
+  /* 标题样式 */
+  .header-content h1 {
+    font-size: 4em;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+    color: white;
+    text-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white;
+  }
+
+  /* 简介样式 */
+  .header-content p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: white;
+  }
+</style>
+</head>
+<body>
+
+<section class="header">
+  <div class="header-content">
+    <h1>404!</h1>
+    <p>
+      Oops!<br>it looks like you entered the wrong site ...!
+    </p>
+  </div>
+</section>
+
+</body>
+</html>
