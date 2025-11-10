@@ -1,44 +1,305 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Xinyuan Li | Portfolio 2025</title>
   <link rel="icon" type="image/ico" href="images/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
   <style>
-    /* スタイル部分は省略（元のCSSをそのまま使用） */
+    /* ========== 全局基础样式 ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Helvetica Neue", Arial, sans-serif; }
+
+    body {
+      background: url("images/portback.png") no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ========== 顶部主页部分 ========== */
+    .hero { position: relative; height: 100vh; overflow: hidden; }
+
+    /* ✅ 平行四边形绿色渐变 */
+    .highlight {
+      position: absolute;
+      top: 0;
+      left: 20%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        rgba(215, 255, 95, 0.8) 0%,
+        rgba(215, 255, 95, 0.4) 90%,
+        rgba(255, 255, 255, 0.6) 100%
+      );
+      clip-path: polygon(10% 0, 90% 0, 80% 100%, 0% 100%);
+      opacity: 0;
+      animation: slideDown 1.5s ease forwards;
+      animation-delay: 0.2s;
+    }
+
+    /* 标题 + 简介 */
+    .content {
+      position: absolute;
+      top: 45%;
+      left: 10%;
+      transform: translateY(-50%);
+      text-align: left;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: #1f1f1f;
+      font-weight: 700;
+      font-family: "Roboto", sans-serif;
+    }
+
+    .intro-text {
+      max-width: 500px;
+      font-size: 1.1em;
+      color: #1f1f1f;
+      font-family: "Roboto", sans-serif;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    /* Scroll down + 倒三角箭头 */
+    .scroll-down-container {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 2;
+    }
+
+    .subtitle {
+      font-size: 1em;
+      color: #1f1f1f;
+      opacity: 0.8;
+      font-family: "Roboto", sans-serif;
+      margin-bottom: 10px;
+    }
+
+    .arrow {
+      font-size: 2em;
+      color: #1f1f1f;
+      animation: bounce 2s infinite;
+    }
+
+    .signature {
+      width: 180px;
+      opacity: 0;
+      animation: fadeInLeft 2s ease forwards;
+      animation-delay: 1s;
+    }
+
+    /* 右下角名字与签名 */
+    .bottom-right {
+      position: absolute;
+      bottom: 40px;
+      right: 50px;
+      text-align: center;
+      color: #1f1f1f;
+      font-size: 1.2em;
+    }
+    .bottom-right img {
+      margin-top: 10px;
+      width: 150px;
+    }
+
+    /* ========== 语言按钮：固定 + 延时消失 ========== */
+    .lang-menu { position: fixed; top: 20px; right: 30px; z-index: 50; }
+    .lang-icon { width: 30px; cursor: pointer; }
+    .lang-options {
+      display: none;
+      position: absolute;
+      right: 0;
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .lang-options a {
+      display: block;
+      color: #1f1f1f;
+      text-decoration: none;
+      padding: 8px 15px;
+    }
+    .lang-options a:hover { background: rgba(215, 255, 95, 0.2); }
+
+    /* ========== 左侧目录栏 ========== */
+    .sidebar {
+      position: fixed;
+      top: 50%;
+      left: 50px;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.3);
+      border-radius: 20px;
+      padding: 20px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    .sidebar.visible { opacity:1; pointer-events: all; }
+    .sidebar ul { list-style: none; text-align: center; }
+    .sidebar a { color:#d7ff5f; text-decoration:none; display:block; padding:8px 0; }
+    .sidebar a:hover { text-decoration:underline; }
+
+    /* ========== 时间轴部分 ========== */
+    .timeline {
+      background:#fff;
+      color:#000;
+      padding:100px 0;
+      position: relative;
+      text-align:center;
+      width:70%;
+      margin:0 auto;
+    }
+    .timeline h1 { color:#d7ff5f; margin-bottom:50px; }
+
+    .project {
+      display:flex;
+      flex-wrap: wrap; /* ✅ 允许多行排列，确保新内容在下方 */
+      align-items:flex-start;
+      justify-content:space-between;
+      width:50%;
+      margin:100px auto;
+      position:relative;
+      border-left:5px solid #d7ff5f;
+      padding-left:40px;
+      opacity:0;
+      transform:translateY(50px);
+      transition:all 1s ease;
+    }
+    
+    .project.visible { opacity:1; transform:translateY(0); }
+
+    .project-text { width:45%; text-align:left; font-family:"Roboto", sans-serif; }
+    .project-text h2 { color:#1f1f1f; margin-bottom:10px; font-family:"Roboto", sans-serif; }
+    .project-text h3 { color:#1f1f1f;font-size:1rem; margin-bottom:10px; font-family:"Roboto", sans-serif; }
+    .project-text p { font-size:1rem; line-height:1.6; font-family:"Roboto", sans-serif; }
+
+    .project-img { width:45%; overflow:hidden; border-radius:20px; }
+    .project-img img { width:100%; border-radius:20px; box-shadow:0 0 10px rgba(215,255,95,0.5); transition: transform 0.6s ease; }
+    .project-img:hover img { transform:scale(1.05); }
+
+    .timeline-top-text, .timeline-bottom-text { color:#000; font-size:1.2em; margin:50px 0; opacity:0.7; }
+
+    /* ========== 页脚 ========== */
+    footer { background:#000; color:#d7ff5f; text-align:center; padding:30px; font-size:0.9em; }
+    footer a { color:#d7ff5f; text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+
+    /* ========== 动画效果 ========== */
+    @keyframes slideDown { from{transform:translateY(-100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
+    @keyframes fadeInLeft { from{opacity:0; transform:translateX(-50px);} to{opacity:1; transform:translateX(0);} }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+    a {
+  color: #5587DD;         /* 普通状态：黑色 */
+  text-decoration: none;  /* 去掉下划线（可选） */
+}
+
+a:hover {
+  color: #d7ff5f;         /* 鼠标悬停时：荧光绿 */
+}
+
+a:active {
+  color: #d7ff5f;         /* 点击瞬间的颜色（可选） */
+}
+
+a:visited {
+  color: #3348A7;         /* 访问过的链接颜色（可选） */
+}
+
+.project-extra {
+  width: 100%;               /* ✅ 占满整行 */
+  max-width: 800px;
+  margin-top: 40px;
+  text-align: left;
+  line-height: 1.6;
+  margin: 40px auto 0 auto;
+  color: #000;
+}
+
+.project-extra img {
+  width: 100%;
+  display: block;
+  margin: 20px auto 0 auto;  /* ✅ 居中 */
+  border-radius: 10px;
+}
+
+    .project-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 60px; /* 每组之间的间距 */
+}
+
+.project-text {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.project-img {
+  flex: 1;
+  display: flex;
+  justify-content: center;  /* 在右半部分居中 */
+  padding-left: 20%; 
+  align-items: center;
+}
+
+.project-img img {
+  width: 80%;
+  border-radius: 10px;
+}
+
+/* 链接的默认颜色和悬停颜色 */
+.project-text a {
+  color: #ff9900;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.project-text a:hover {
+  color: #ffaa33;
+}
+    
   </style>
 </head>
 
 <body>
-  <!-- === トップページ === -->
+  <!-- === 顶部主页部分 === -->
   <section class="hero">
     <div class="highlight"></div>
     <div class="content">
       <h1>Portfolio 2025</h1>
-      <p class="intro-text">
-        こんにちは！<br>
-        PCでの閲覧を推奨します。<br>
-        PDF版のPortfolioも利用可能です。<br>
-        <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Google Drive</a> または 
-        <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Tencent File</a> からアクセスできます。
+      <p class="intro-text">こんにちは！<br>
+      PCでの閲覧を推奨します<br>
+      PDF version of Portfolio is also available. You can access through <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Google Drive</a> or <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Tencent File</a>
       </p>
     </div>
 
-    <!-- スクロールダウン & 矢印 -->
+    <!-- Scroll down & 倒三角箭头 -->
     <div class="scroll-down-container">
-      <p class="subtitle">さらに詳しく見るには下にスクロール</p>
+      <p class="subtitle">Scroll down for more information</p>
       <div class="arrow">▼</div>
     </div>
 
     <div class="bottom-right">
-      // Xinyuan Li
+      // Xinyuan LI
       <img src="images/signature.png" alt="Signature" />
     </div>
   </section>
 
-  <!-- === 言語切替ボタン === -->
+  <!-- === 语言切换按钮 === -->
   <div class="lang-menu">
     <img src="images/langue.png" alt="Language" class="lang-icon" />
     <div class="lang-options" id="langOptions">
@@ -49,156 +310,298 @@
     </div>
   </div>
 
-  <!-- === サイドバー === -->
+  <!-- === 左侧目录栏 === -->
   <nav class="sidebar">
     <ul>
-      <li><a href="#part0" style="color: #d7ff5f;">CV</a></li>
-      <li><a href="#part1" style="color: #d7ff5f;">Projects</a></li>
-      <li><a href="#part2" style="color: #d7ff5f;">Media Work</a></li>
-      <li><a href="#part3" style="color: #d7ff5f;">Other Work</a></li>
+       <li><a href="#part0" style="color: #d7ff5f; ">CV</a>.</li>
+      <li><a href="#part1" style="color: #d7ff5f; ">Projects</a>.</li>
+      <li><a href="#part2" style="color: #d7ff5f; ">Media Work</a>.</li>
+      <li><a href="#part3" style="color: #d7ff5f; ">Other Work</a></li>
     </ul>
   </nav>
 
-  <!-- === タイムライン === -->
+  <!-- === 时间轴部分 === -->
   <section class="timeline" id="timeline">
-    <p class="timeline-top-text">
-      <b>AI作品に関する注意</b><br>
-      以下で紹介するプロジェクトや作品はすべて私自身が制作したものです。<br>
-      AIの関与がある場合は明記しています。<br>
-      <i><span style="font-size: 0.8em;">追記：このウェブサイトのコーディングはAIと共同で行いました。GPTに感謝します。</span></i><br>
-      <b>——————————</b><br><br>
-      グループ作品の場合も、具体的な作業分担を明示します。
+    <p class="timeline-top-text"><b>Notice on AI work</b><br>
+    以下で紹介するプロジェクトや作品はすべて私自身が制作したものです<br>
+    AIの関与がある場合は明記しています<br>
+    <i><span style="font-size: 0.8em;">ps. the coding of this website is co-constructed with AI. thank you gpt.<span></span></i><br>
+    <b>——————————</b><br><br>
+      グループ作品の場合も、具体的な作業分担を明示します
     </p>
 
-    <!-- CV -->
-    <section id="part0" class="project">
+
+ <section id="part0" class="project">
       <div class="project-text">
         <h2>CV</h2>
-        <p>
-          こちらが私の<a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">CV</a>です。<br>
-          PDF版のPortfolioも同様にアクセス可能です。
+        <p>Here is my <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">CV</a><br>
+          PDF版のPortfolioも同様にアクセス可能です
         </p>
-      </div>
+     
     </section>
 
-    <!-- Projects -->
+
+    
+    <!-- p1 -->
+
+    
     <section id="part1" class="project">
       <div class="project-text">
         <h2>Projects</h2>
-        <p><i>理論を実践に応用した課題プロジェクト</i></p>
-      </div>
+        <p><i>Coursework projects that apply theories into practice</i><br><br></p>
 
-      <!-- Communication and Technology -->
-      <div class="project-row">
-        <div class="project-text">
-          <h3>Communication and Technology Project</h3>
-          <p style="text-align: justify;">
-            このグループプロジェクトは、ビデオゲームのデザインに関する様々なアイデアをパンフレット形式で示しています。<br>
-            テーマは「技術と進歩、利便性、身体的ニーズ、コミュニケーション」です。<br>
-            <a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">詳細はこちら ...</a>
-          </p>
-        </div>
-        <div class="project-img">
-          <img src="images/ctproject.png" alt="ctproject" />
-        </div>
-      </div>
+         </div>
 
-      <!-- Digital Games as Communication -->
-      <div class="project-row">
-        <div class="project-text">
-          <h3>Digital Games as Communication Project</h3>
-          <p style="text-align: justify;">
-            現在作業中です...<br>
-            <a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">詳細はこちら ...</a>
-          </p>
-        </div>
-        <div class="project-img">
-          <img src="images/dgacproject.png" alt="dgacproject" />
-        </div>
-      </div>
+  <!-- ct -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Communication and Technology Project</h3>
+      <p style="text-align: justify;">
+        このグループプロジェクトは、Communication and Technologyのコースの課題です<br>
+「技術と進歩、利便性、身体的ニーズ、コミュニケーション」をテーマにしたビデオゲームのデザインに関する様々なアイデアを、パンフレット形式で示しています
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/ctproject.png" alt="ctproject" />
+    </div>
+  </div>
 
-      <!-- Screen and Popular Culture -->
-      <div class="project-row">
-        <div class="project-text">
-          <h3>Screen and Popular Culture Project</h3>
-          <p style="text-align: justify;">
-            このプロジェクトは、Self、Persona、Commodity の社会学的概念に焦点を当て、現代ネットワーク社会における個人の状況を探究しています。<br>
-            指定テーマに関連する創造的プロジェクトを自由な形式で作成し、エグゼジスを添えています。<br>
-            <a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">詳細はこちら ...</a>
-          </p>
-        </div>
-        <div class="project-img">
-          <img src="images/spcproject.png" alt="spcproject" />
-        </div>
-      </div>
+        <!-- dgac -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Digital Games as Communication Project</h3>
+      <p style="text-align: justify;">
+        still working on it...
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/dgacproject.png" alt="dgacproject" />
+    </div>
+  </div>
 
-      <!-- Understanding Cultural Industries -->
-      <div class="project-row">
-        <div class="project-text">
-          <h3>Understanding Cultural Industries Project</h3>
-          <p style="text-align: justify;">
-            文化産業理解のプレゼン用資料です。<br>
-            グループでは、『Shan Hai Jing』の幻想的生物をテーマにした展示をデザインし、文化産業における異文化コミュニケーションを表現しました。<br>
-            アイデアをよりよく示すため、展示用ポスターや参考モデルを自分で制作しました。<br>
-            <a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">詳細はこちら ...</a>
-          </p>
-        </div>
-        <div class="project-img">
-          <img src="images/uciproject.png" alt="uciproject" />
-        </div>
-      </div>
-    </section>
+       <!-- spc -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Screen and Popular Culture Project</h3>
+      <p style="text-align: justify;">
+        これはUNNCのScreen and Popular Cultureの課題作品です<br> コースでは、指定テーマに関連する創造的プロジェクトを自由な形式で作成し、エグゼジスを添えることが求められます<br>
+        このプロジェクトでは、Self、Persona、Commodity の社会学的概念に焦点を当て、現代ネットワーク社会における個人の状況を探究しています
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/spcproject.png" alt="spcproject" />
+    </div>
+  </div>
 
-    <!-- Media Work -->
+     <!-- uci -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Understanding Cultural Industries Project</h3>
+      <p style="text-align: justify;">
+       これはUnderstanding Creative Industriesのプレゼン用資料です<br>
+        グループでは、古代中国の書物『山海经』に登場する幻想的生物をテーマにした展示をデザインし、文化産業における異文化コミュニケーションを表現しました<br>
+        アイデアをよりよく示すため、展示用ポスターや参考モデルを自分で制作しました
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/uciproject.png" alt="uciproject" />
+    </div>
+  </div>
+      
+</section>
+     
+
+
+  <!--   p2   -->
+
+  
     <section id="part2" class="project">
       <div class="project-text">
         <h2>Media Work</h2>
-        <p><i>ほとんどはグラフィックデザインです</i></p>
-      </div>
+        <p><i>While most of them are graphic design</i></p><br><br>
 
-      <!-- 以下、個別のメディアワークも同じ形式で修正 -->
-      <!-- CELE Internship -->
-      <div class="project-row">
-        <div class="project-text">
-          <h3>Internship at CELE</h3>
-          <p style="text-align: justify;">
-            大学のCELEでインターンを行い、主にキャンパス関連活動の運営や広報資料のデザインを担当しました。<br>
-            WeChat記事やイベント、ポスターなども制作しました。<br>
-            <a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">詳細はこちら ...</a>
-          </p>
-        </div>
-        <div class="project-img">
-          <img src="images/celework1.png" alt="celework1" />
-        </div>
-      </div>
+         </div>
 
-      <!-- 他のMedia Workも同じく同様に修正 -->
-    </section>
+  <!-- cele -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Internship at CELE</h3>
+      <p style="text-align: justify;">
+       大学のCELEでインターンを行い、主にキャンパス関連活動の運営や広報資料のデザインを担当しました<br>
+        WeChatやイベント、ポスターなども制作しました
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/celework1.png" alt="celework1" />
+    </div>
+  </div>
 
-    <!-- Other Work -->
-    <section id="part3" class="project">
-      <div class="project-row">
-        <div class="project-text">
-          <h2>Other Work</h2>
-          <p><i>他のカテゴリーに属さない作品...</i></p>
-        </div>
-      </div>
-      <!-- 個別のOther Workも同様に修正 -->
-    </section>
+  <!-- cele2 -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Design of UNNC Pre-Sessional Programme</h3>
+      <p style="text-align: justify;">
+        最近、UNNC Pre-Sessional Programmeのキービジュアルデザイン、学生ハンドブック、すべての広報資料のデザインを完成させました
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/celework6.png" alt="celework6" />
+    </div>
+  </div>
 
-    <p class="timeline-bottom-text">旅は続く...</p>
+<!-- lc -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Internship at LC</h3>
+      <p style="text-align: justify;">
+      大学のLanguage Centreでインターンを行い、主にLanguage Centreマガジン Cosmos L&C (Issue 9) の制作を担当しました<br>
+        記事のチェック・編集に加え、誌面デザインの半分も担当しました
+       <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/lcwork.png" alt="lcwork" />
+    </div>
+  </div>
+
+       <!-- na -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>News Agency</h3>
+      <p style="text-align: justify;">
+      大学のNews Agencyの一員として、活動運営や広報資料の整理・デザインに参加・主導しました
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/nawork.png" alt="nawork" />
+    </div>
+  </div>
+
+             <!-- fisu -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>FISU Internship</h3>
+      <p style="text-align: justify;">
+      2023年、成都で開催された第31回世界大学生競技大会の公式簡体字ウェブサイト運営のインターンを行いました
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/fisuwork.png" alt="fisuwork" />
+    </div>
+  </div>
+      
+</section>
+     
+
+
+    
+    <!-- p3 -->
+
+    
+ <section id="part3" class="project">
+  <!-- 第一组内容 -->
+  <div class="project-row">
+    <div class="project-text">
+      <h2>Other Work</h2>
+      <p><i>Ones do not belong to any other category ...</i></p><br><br>
+  </div>
+  </div>
+
+  <!-- ad -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Ads for Public Service</h3>
+      <p style="text-align: justify;">
+        公共サービス広告のテンプレート（実際には使用されていません）
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/adwork.png" alt="adwork" />
+    </div>
+  </div>
+
+  <!-- video -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Video Editing</h3>
+      <p style="text-align: justify;">
+       個人的にビデオ編集に興味があり、暇な時間に旅行動画をドキュメンタリー/スタイライズ形式で編集してみました
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/videowork.png" alt="videowork" />
+    </div>
+  </div>
+
+  <!-- fan -->
+  <div class="project-row">
+    <div class="project-text">
+      <h3>Fandom Work</h3>
+      <p style="text-align: justify;">
+      ゲームのアートスタイルを参考に、視覚要素を再構築し、自分でデザインしました。オリジナルのビジュアルスタイルと自分の美的表現を統合しています
+        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/fanwork.png" alt="fanwork" />
+    </div>
+  </div>
+    
+</section>
+
+
+    <p class="timeline-bottom-text">The journey continues ...</p>
   </section>
 
   <footer>
     <p>
-      Xinyuan Li | このサイトは
-      <a href="https://github.com/x-x1n/x-x1n.github.io" target="_blank">GitHub Pages</a> に基づいています |
+      Xinyuan Li | This site is based on
+      <a href="https://github.com/x-x1n/x-x1n.github.io" target="_blank">GitHub Pages</a> |
       <a href="mailto:lxy_0037@163.com">Contact</a>
     </p>
   </footer>
 
   <script>
-    /* スクリプト部分は変更なし */
+    // Scroll reveal
+    const observer = new IntersectionObserver(
+      (entries)=>{ entries.forEach((entry)=>{ if(entry.isIntersecting) entry.target.classList.add("visible"); }); },
+      {threshold:0.2}
+    );
+    document.querySelectorAll(".project").forEach(section => observer.observe(section));
+
+    // 左侧目录显示控制
+    const sidebar = document.querySelector(".sidebar");
+    const timeline = document.querySelector(".timeline");
+    window.addEventListener("scroll",()=>{
+      const rect = timeline.getBoundingClientRect();
+      if(rect.top<=window.innerHeight*0.5 && rect.bottom>=100){ sidebar.classList.add("visible"); }
+      else{ sidebar.classList.remove("visible"); }
+    });
+
+    // 语言切换按钮
+    const langMenu = document.querySelector(".lang-menu");
+    const langIcon = document.querySelector(".lang-icon");
+    const langOptions = document.querySelector(".lang-options");
+    let hideTimeout;
+    langIcon.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      langOptions.style.display="block";
+      clearTimeout(hideTimeout);
+      hideTimeout=setTimeout(()=>{ if(!langOptions.matches(":hover")) langOptions.style.display="none"; },1000);
+    });
+    langOptions.addEventListener("mouseenter",()=>clearTimeout(hideTimeout));
+    langOptions.addEventListener("mouseleave",()=>{ hideTimeout=setTimeout(()=>{ langOptions.style.display="none"; },1000); });
+    document.addEventListener("click",(e)=>{ if(!langMenu.contains(e.target)) langOptions.style.display="none"; });
   </script>
 </body>
 </html>
