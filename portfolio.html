@@ -198,6 +198,32 @@
     @keyframes slideDown { from{transform:translateY(-100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
     @keyframes fadeInLeft { from{opacity:0; transform:translateX(-50px);} to{opacity:1; transform:translateX(0);} }
     @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+    a {
+  color: #1f1f1f;         /* 普通状态：黑色 */
+  text-decoration: none;  /* 去掉下划线（可选） */
+}
+
+a:hover {
+  color: #d7ff5f;         /* 鼠标悬停时：荧光绿 */
+}
+
+a:active {
+  color: #d7ff5f;         /* 点击瞬间的颜色（可选） */
+}
+
+a:visited {
+  color: ##65C466;         /* 访问过的链接颜色（可选） */
+}
+
+.project-extra {
+  width: 60%;
+  margin: 30px auto 0 auto;
+  text-align: left;
+  line-height: 1.6;
+  color: #1f1f1f;
+}
+    
   </style>
 </head>
 
@@ -207,8 +233,8 @@
     <div class="highlight"></div>
     <div class="content">
       <h1>Portfolio 2025</h1>
-      <p class="intro-text">hi!
-      It is recommended to browse the website on your PC
+      <p class="intro-text">hi!<br>
+      It is recommended to browse the website on your PC<br>
       PDF version of Portfolio is also available. You can access through <a href="mailto:lxy_0037@163.com">Google Drive</a> or <a href="mailto:lxy_0037@163.com">Tencent File</a>
       </p>
     </div>
@@ -220,7 +246,7 @@
     </div>
 
     <div class="bottom-right">
-      XY L
+      // Xinyuan LI
       <img src="images/signature.png" alt="Signature" />
     </div>
   </section>
@@ -247,12 +273,18 @@
 
   <!-- === 时间轴部分 === -->
   <section class="timeline" id="timeline">
-    <p class="timeline-top-text">Notice on AI work</p>
+    <p class="timeline-top-text"><b>Notice on AI work</b><br>
+    The projects and works demonstrated below are all done by myself.<br>
+    Any participation of AI will be marked.<br>
+    <i>ps. the coding of this website is co-constructed with AI. thank you gpt.</i><br>
+    <b>——————————</b><br>
+      Group work projects will also be notified with specific work allocation.
+    </p>
 
     <section id="part1" class="project">
       <div class="project-text">
-        <h2>Project 1 Title</h2>
-        <p>简介1</p>
+        <h2>Projects</h2>
+        <p>Coursework projects that apply theories into practice</p>
       </div>
       <div class="project-img">
         <img src="images/work1.png" alt="Project 1" />
@@ -261,8 +293,8 @@
 
     <section id="part2" class="project">
       <div class="project-text">
-        <h2>Project 2 Title</h2>
-        <p>简介2</p>
+        <h2>Media Work</h2>
+        <p>While most of them are graphic design</p>
       </div>
       <div class="project-img">
         <img src="images/work2.png" alt="Project 2" />
@@ -271,12 +303,16 @@
 
     <section id="part3" class="project">
       <div class="project-text">
-        <h2>Project 3 Title</h2>
-        <p>简介3</p>
+        <h2>Other Work</h2>
+        <p>Ones do not belong to any other category ...</p>
       </div>
       <div class="project-img">
         <img src="images/work3.png" alt="Project 3" />
       </div>
+       <div class="project-extra">
+    <p><strong>Additional Description:</strong> details.</p>
+    <img src="images/work3-detail.png" alt="Project 3 Detail" style="width:60%; border-radius:10px; margin-top:20px;">
+        <div></div>
     </section>
 
     <p class="timeline-bottom-text">The journey continues ...</p>
