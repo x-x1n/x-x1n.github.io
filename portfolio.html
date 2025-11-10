@@ -166,7 +166,8 @@
 
     .project {
       display:flex;
-      align-items:center;
+      flex-wrap: wrap; /* ✅ 允许多行排列，确保新内容在下方 */
+      align-items:flex-start;
       justify-content:space-between;
       width:50%;
       margin:100px auto;
@@ -177,6 +178,7 @@
       transform:translateY(50px);
       transition:all 1s ease;
     }
+    
     .project.visible { opacity:1; transform:translateY(0); }
 
     .project-text { width:45%; text-align:left; font-family:"Roboto", sans-serif; }
@@ -200,7 +202,7 @@
     @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
 
     a {
-  color: #1f1f1f;         /* 普通状态：黑色 */
+  color: #5587DD;         /* 普通状态：黑色 */
   text-decoration: none;  /* 去掉下划线（可选） */
 }
 
@@ -213,15 +215,22 @@ a:active {
 }
 
 a:visited {
-  color: ##65C466;         /* 访问过的链接颜色（可选） */
+  color: #7A7D8D;         /* 访问过的链接颜色（可选） */
 }
 
 .project-extra {
-  width: 60%;
-  margin: 30px auto 0 auto;
+  width: 100%;               /* ✅ 占满整行 */
+  margin-top: 40px;
   text-align: left;
   line-height: 1.6;
-  color: #1f1f1f;
+  color: #000;
+}
+
+.project-extra img {
+  width: 60%;
+  display: block;
+  margin: 20px auto 0 auto;  /* ✅ 居中 */
+  border-radius: 10px;
 }
     
   </style>
@@ -235,7 +244,7 @@ a:visited {
       <h1>Portfolio 2025</h1>
       <p class="intro-text">hi!<br>
       It is recommended to browse the website on your PC<br>
-      PDF version of Portfolio is also available. You can access through <a href="mailto:lxy_0037@163.com">Google Drive</a> or <a href="mailto:lxy_0037@163.com">Tencent File</a>
+      PDF version of Portfolio is also available. You can access through <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Google Drive</a> or <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Tencent File</a>
       </p>
     </div>
 
@@ -265,6 +274,7 @@ a:visited {
   <!-- === 左侧目录栏 === -->
   <nav class="sidebar">
     <ul>
+       <li><a href="#part0">CV</a></li>
       <li><a href="#part1">Projects</a></li>
       <li><a href="#part2">Media Work</a></li>
       <li><a href="#part3">Other Work</a></li>
@@ -276,11 +286,19 @@ a:visited {
     <p class="timeline-top-text"><b>Notice on AI work</b><br>
     The projects and works demonstrated below are all done by myself.<br>
     Any participation of AI will be marked.<br>
-    <i>ps. the coding of this website is co-constructed with AI. thank you gpt.</i><br>
-    <b>——————————</b><br>
+    <i><span style="font-size: 0.8em;">ps. the coding of this website is co-constructed with AI. thank you gpt.<span></span></i><br>
+    <b>——————————</b><br><br>
       Group work projects will also be notified with specific work allocation.
     </p>
 
+
+ <section id="part0" class="project">
+      <div class="project-text">
+        <h2>CV</h2>
+        <p>Here is my <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">CV</a></p>
+     
+    </section>
+    
     <section id="part1" class="project">
       <div class="project-text">
         <h2>Projects</h2>
