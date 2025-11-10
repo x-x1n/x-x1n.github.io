@@ -1,231 +1,394 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/ico" href="images/favicon.ico">
-<title>xinyuan 2025</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xinyuan Li | Portfolio 2025</title>
+  <link rel="icon" href="images/favicon.png" type="image/png" />
 
-<!-- ================= Google Fonts ================= -->
-<link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&display=swap" rel="stylesheet">
+  <style>
+    /* ========== 全局基础样式 ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
 
-<style>
-/* === 全局基础设置 === */
-body {
-  margin: 0;
-  font-family: 'Poppins', 'Microsoft YaHei', sans-serif;
-  background-color: #f5f5f5;
-  background-image: url('images/portback.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
+    body {
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
 
-/* === 顶部语言切换按钮 === */
-.language-switch {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-}
-.language-switch button {
-  padding: 5px 12px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #fff;
-}
-.language-switch button:hover {
-  background-color: #d7ff5f; /* 荧光绿色提示 */
-}
+    /* ========== 顶部主页部分 ========== */
+    .hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-/* === 荧光色块 highlight === */
-.highlight {
-  position: absolute;
-  top: 0;
-  left: 20%; /* 色块整体右移，实现居中，可调节 */
-  width: 60%; /* 色块宽度，可调节 */
-  height: 100%;
-  /* 背景渐变，顶部亮绿色，中间透明，下方渐变为白色 */
-  background: linear-gradient(120deg, rgba(215,255,95,0.8) 0%, rgba(215,255,95,0.4) 90%, rgba(255,255,255,0.6) 100%);
-  /* 平行四边形形状：左上和左下顶点水平偏移形成倾斜 */
-  clip-path: polygon(10% 0, 90% 0, 80% 100%, 0% 100%);
-  opacity: 0;
-  animation: slideDown 1.5s ease forwards;
-  animation-delay: 0.2s;
-  /* 注释：
-     - left: 色块水平位置
-     - width: 色块宽度
-     - clip-path: 形成平行四边形，可调整四个顶点
-     - background: 渐变从上到下
-  */
-}
+    .highlight {
+      position: absolute;
+      top: 0;
+      left: 20%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        rgba(215, 255, 95, 0.8) 0%,
+        rgba(215, 255, 95, 0.4) 90%,
+        rgba(255, 255, 255, 0.6) 100%
+      );
+      clip-path: polygon(10% 0, 90% 0, 80% 100%, 0% 100%);
+      opacity: 0;
+      animation: slideDown 1.5s ease forwards;
+      animation-delay: 0.2s;
+    }
 
-/* === 主标题 title === */
-.title {
-  position: absolute;
-  top: 25%;
-  left: 10%;
-  font-size: 120px; /* 放大标题 */
-  font-weight: 900;
-  color: #000;
-  opacity: 0;
-  transform: translateY(50px);
-  animation: fadeUp 1s ease forwards;
-  animation-delay: 1.3s;
-  font-family: 'Elms Sans', sans-serif; /* 英文标题字体 */
-}
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
+    }
 
-/* === 中文副标题 subtitle === */
-.subtitle {
-  position: absolute;
-  top: 50%;
-  left: 11%;
-  background: #d7ff5f;
-  font-size: 28px;
-  padding: 8px 15px;
-  font-weight: 500;
-  opacity: 0;
-  transform: translateY(40px);
-  animation: fadeUp 1s ease forwards;
-  animation-delay: 1.6s;
-  font-family: 'Noto Sans', sans-serif; /* 中文字体 */
-}
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
 
-/* === 简介按钮 Button1 === */
-#btn1 {
-  position: absolute;
-  top: 65%; /* 按钮垂直位置，可调整 */
-  left: 70%; /* 按钮水平位置，可调整 */
-  padding: 15px 25px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #000;
-  background: linear-gradient(120deg, rgba(215,255,95,0.8), rgba(215,255,95,0.5));
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.5s ease;
-}
-#btn1.expanded {
-  transform: scale(1.5);
-}
+    .signature {
+      width: 180px;
+      opacity: 0;
+      animation: fadeInLeft 2s ease forwards;
+      animation-delay: 1s;
+    }
 
-/* === 年份 year === */
-.year {
-  position: absolute;
-  top: 60%;
-  left: 11%;
-  font-size: 70px;
-  font-weight: 800;
-  opacity: 0;
-  transform: translateY(40px);
-  animation: fadeUp 1s ease forwards;
-  animation-delay: 1.9s;
-}
+    .subtitle {
+      margin-top: 40px;
+      font-size: 1em;
+      color: #d7ff5f;
+      opacity: 0.8;
+      text-align: center;
+    }
 
-/* === 箭头图 arrow === */
-.arrow {
-  position: absolute;
-  top: 42%;
-  left: 65%;
-  width: 150px;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUp 1s ease forwards;
-}
+    .arrow {
+      margin-top: 20px;
+      font-size: 2em;
+      animation: bounce 2s infinite;
+    }
 
-/* === 作者信息 author === */
-.author {
-  position: absolute;
-  bottom: 60px;
-  right: 80px;
-  font-size: 20px;
-  font-weight: 600;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUp 1s ease forwards;
-}
-.author::before { content: "// "; }
+    /* ========== 语言按钮：改为常驻固定 ========== */
+    .lang-menu {
+      position: fixed; /* ✅ 固定 */
+      top: 20px;
+      right: 30px;
+      z-index: 50;
+    }
 
-/* === 签名图片 signature === */
-.signature {
-  position: absolute;
-  bottom: 20px; /* 签名垂直位置，可调整 */
-  right: 80px;  /* 与作者名字对齐 */
-  width: 200px; /* 签名宽度，可调整 */
-  opacity: 0;
-  transform: translateX(-50px); /* 从左侧偏移 */
-  animation: fadeInRight 1s ease forwards;
-  animation-delay: 3s; /* 入场延迟，可调整 */
-}
+    .lang-icon {
+      width: 30px;
+      cursor: pointer;
+    }
 
-/* === 动画关键帧 === */
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-100%); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeUp {
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeInRight {
-  to { opacity: 1; transform: translateX(0); }
-}
-</style>
+    .lang-options {
+      display: none;
+      position: absolute;
+      right: 0;
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .lang-options a {
+      display: block;
+      color: #d7ff5f;
+      text-decoration: none;
+      padding: 8px 15px;
+    }
+
+    .lang-options a:hover {
+      background: rgba(215, 255, 95, 0.2);
+    }
+
+    .lang-menu:hover .lang-options {
+      display: block;
+    }
+
+    /* ========== 左侧目录栏 ========== */
+    .sidebar {
+      position: fixed;
+      top: 50%;
+      left: 50px;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      padding: 20px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none; /* 默认不可点击 */
+      transition: opacity 0.6s ease;
+    }
+
+    .sidebar.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      text-align: center; /* ✅ 居中 */
+    }
+
+    .sidebar a {
+      color: #d7ff5f;
+      text-decoration: none;
+      display: block;
+      padding: 8px 0;
+    }
+
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+
+    /* ========== 时间轴部分 ========== */
+    .timeline {
+      background: #fff;
+      color: #000;
+      padding: 100px 0;
+      position: relative;
+      text-align: center;
+    }
+
+    .timeline h1 {
+      color: #d7ff5f;
+      margin-bottom: 50px;
+    }
+
+    .project {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 80%;
+      margin: 100px auto;
+      position: relative;
+      border-left: 5px solid #d7ff5f;
+      padding-left: 40px;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1s ease;
+    }
+
+    .project.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .project-text {
+      width: 45%;
+      text-align: left;
+    }
+
+    .project-text h2 {
+      color: #d7ff5f;
+      margin-bottom: 10px;
+    }
+
+    .project-text p {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .project-img {
+      width: 45%;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .project-img img {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(215, 255, 95, 0.5);
+      transition: transform 0.6s ease;
+    }
+
+    .project-img:hover img {
+      transform: scale(1.05);
+    }
+
+    .timeline-top-text,
+    .timeline-bottom-text {
+      color: #000;
+      font-size: 1.2em;
+      margin: 50px 0;
+      opacity: 0.7;
+    }
+
+    /* ========== 页脚 ========== */
+    footer {
+      background: #000;
+      color: #d7ff5f;
+      text-align: center;
+      padding: 30px;
+      font-size: 0.9em;
+    }
+
+    footer a {
+      color: #d7ff5f;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ========== 动画效果 ========== */
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes bounce {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <!-- 顶部语言切换按钮 -->
-  <div class="language-switch">
-    <button onclick="location.href='https://x-x1n.github.io/zh'">中</button>
-    <button onclick="location.href='https://x-x1n.github.io/fr'">FR</button>
-    <button onclick="location.href='https://x-x1n.github.io/jp'">日</button>
+  <!-- === 顶部主页部分 === -->
+  <section class="hero">
+    <div class="highlight"></div>
+    <div class="content">
+      <h1>Xinyuan Li</h1>
+      <img src="images/signature.png" alt="Signature" class="signature" />
+      <p class="subtitle">Scroll down for more information</p>
+      <div class="arrow">↓</div>
+    </div>
+  </section>
+
+  <!-- === 语言切换按钮（常驻） === -->
+  <div class="lang-menu">
+    <img src="images/langue.ico" alt="Language" class="lang-icon" />
+    <div class="lang-options">
+      <a href="/zh">中</a>
+      <a href="/">EN</a>
+      <a href="/jp">日</a>
+      <a href="/fr">FR</a>
+    </div>
   </div>
 
-  <!-- 荧光色块 -->
-  <div class="highlight"></div>
+  <!-- === 左侧目录栏（默认隐藏，滚动后出现） === -->
+  <nav class="sidebar">
+    <ul>
+      <li><a href="#part1">第一部分</a></li>
+      <li><a href="#part2">第二部分</a></li>
+      <li><a href="#part3">第三部分</a></li>
+    </ul>
+  </nav>
 
-  <!-- 主标题 -->
-  <div class="title">hi</div>
+  <!-- === 时间轴作品部分 === -->
+  <section class="timeline" id="timeline">
+    <p class="timeline-top-text">Selected Works & Research Highlights</p>
 
-  <!-- 中文副标题 -->
-  <div class="subtitle">这里是简介之类的</div>
+    <section id="part1" class="project">
+      <div class="project-text">
+        <h2>Project 1 Title</h2>
+        <p>简要说明作品内容、灵感来源或媒介特征。</p>
+      </div>
+      <div class="project-img">
+        <img src="images/work1.png" alt="Project 1" />
+      </div>
+    </section>
 
-  <!-- 简介按钮 -->
-  <button id="btn1">按钮1</button>
+    <section id="part2" class="project">
+      <div class="project-text">
+        <h2>Project 2 Title</h2>
+        <p>作品描述示例。你可以写创作思路、研究方向、或视觉语言特色。</p>
+      </div>
+      <div class="project-img">
+        <img src="images/work2.png" alt="Project 2" />
+      </div>
+    </section>
 
-  <!-- 年份 -->
-  <div class="year">2025</div>
+    <section id="part3" class="project">
+      <div class="project-text">
+        <h2>Project 3 Title</h2>
+        <p>作品说明，可自由扩展。</p>
+      </div>
+      <div class="project-img">
+        <img src="images/work3.png" alt="Project 3" />
+      </div>
+    </section>
 
-  <!-- 箭头图 -->
-  <img src="images/arrow.png" alt="arrow" class="arrow">
+    <p class="timeline-bottom-text">More projects coming soon...</p>
+  </section>
 
-  <!-- 作者信息 -->
-  <div class="author">Xinyuan Li</div>
+  <!-- === 页脚 === -->
+  <footer>
+    <p>
+      © 2025 Xinyuan Li |
+      <a href="https://github.com/x-x1n" target="_blank">GitHub</a> |
+      <a href="#">Contact</a>
+    </p>
+  </footer>
 
-  <!-- 签名图片 -->
-  <img src="images/signature.png" alt="signature" class="signature">
+  <!-- === Scroll Reveal 动画 & Sidebar 显示控制 === -->
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
 
-<script>
-  // 按钮点击切换动画和文字
-  const btn = document.getElementById('btn1');
-  btn.addEventListener('click', () => {
-    if(btn.classList.contains('expanded')){
-      btn.classList.remove('expanded');
-      btn.textContent = "按钮1";
-    } else {
-      btn.classList.add('expanded');
-      btn.textContent = "内容1";
-    }
-  });
-</script>
+    document.querySelectorAll(".project").forEach((section) => {
+      observer.observe(section);
+    });
+
+    // ✅ 当滚动到时间轴部分时显示左侧目录
+    const sidebar = document.querySelector(".sidebar");
+    const timeline = document.querySelector(".timeline");
+
+    window.addEventListener("scroll", () => {
+      const rect = timeline.getBoundingClientRect();
+      if (rect.top <= window.innerHeight * 0.5 && rect.bottom >= 100) {
+        sidebar.classList.add("visible");
+      } else {
+        sidebar.classList.remove("visible");
+      }
+    });
+  </script>
 </body>
 </html>
