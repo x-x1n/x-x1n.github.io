@@ -33,7 +33,6 @@
       text-align: center;
     }
 
-    /* ✅ 改为黄色渐变 */
     .highlight {
       position: absolute;
       top: 0;
@@ -42,9 +41,9 @@
       height: 100%;
       background: linear-gradient(
         120deg,
-        rgba(255, 235, 95, 0.8) 0%,
-        rgba(255, 235, 95, 0.4) 90%,
-        rgba(255, 255, 200, 0.6) 100%
+        rgba(215, 255, 95, 0.8) 0%,
+        rgba(215, 255, 95, 0.4) 90%,
+        rgba(200, 255, 200, 0.6) 100%
       );
       clip-path: polygon(10% 0, 90% 0, 80% 100%, 0% 100%);
       opacity: 0;
@@ -58,25 +57,24 @@
       z-index: 1;
     }
 
- .content h1 {
-  font-size: 3em;
-  margin-bottom: 20px;
-  color: #fff8b0;
-  text-shadow: 0 0 10px rgba(255, 255, 150, 0.6);
-  animation: glowPulse 3s ease-in-out infinite;
-}
+    .content h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(215, 255, 95, 0.6);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
 
-/* 呼吸发光动画 */
-@keyframes glowPulse {
-  0%, 100% {
-    color: #ffffff;
-    text-shadow: 0 0 10px rgba(255, 255, 150, 0.6);
-  }
-  50% {
-    color: #ffffff;
-    text-shadow: 0 0 25px rgba(255, 255, 200, 1);
-  }
-}
+    @keyframes glowPulse {
+      0%, 100% {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(215, 255, 95, 0.6);
+      }
+      50% {
+        color: #ffffff;
+        text-shadow: 0 0 25px rgba(215, 255, 95, 1);
+      }
+    }
 
     .content p {
       font-size: 1.2em;
@@ -84,14 +82,14 @@
       opacity: 0.9;
     }
 
-    /* ✅ Scroll down 按钮与箭头 */
+    /* Scroll Down 按钮 */
     .scroll-down {
       position: absolute;
       bottom: 40px;
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
-      color: #ffffff;
+      color: #d7ff5f;
       text-decoration: none;
       z-index: 2;
     }
@@ -135,7 +133,7 @@
       position: absolute;
       right: 0;
       margin-top: 10px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(0,0,0,0.6);
       backdrop-filter: blur(10px);
       border-radius: 10px;
       overflow: hidden;
@@ -143,7 +141,7 @@
 
     .lang-options a {
       display: block;
-      color: #1f1f1f;
+      color: #d7ff5f;
       text-decoration: none;
       padding: 8px 15px;
     }
@@ -204,10 +202,11 @@
 
     .project {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
+      align-items: flex-start;
       justify-content: space-between;
-      width: 100%; /* ✅ 缩窄为70% */
-      margin: 70px auto;
+      width: 50%;
+      margin: 100px auto;
       position: relative;
       border-left: 5px solid #d7ff5f;
       padding-left: 40px;
@@ -221,46 +220,15 @@
       transform: translateY(0);
     }
 
-    .project-text {
-      width: 45%;
-      text-align: left;
-    }
+    .project-text { width: 45%; text-align: left; }
+    .project-text h2, .project-text h3 { color: #1f1f1f; font-weight: bold; }
+    .project-text p { font-size: 1rem; line-height: 1.6; }
 
-    .project-text h2 {
-      color: #1f1f1f;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
+    .project-img { width: 45%; overflow: hidden; border-radius: 20px; display:flex; justify-content:center; }
+    .project-img img { width: 80%; border-radius: 10px; box-shadow: 0 0 10px rgba(215, 255, 95, 0.5); transition: transform 0.6s ease; }
+    .project-img:hover img { transform: scale(1.05); }
 
-    .project-text p {
-      font-size: 1rem;
-      line-height: 1.6;
-    }
-
-    .project-img {
-      width: 45%;
-      overflow: hidden;
-      border-radius: 20px;
-    }
-
-    .project-img img {
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 0 10px rgba(215, 255, 95, 0.5);
-      transition: transform 0.6s ease;
-    }
-
-    .project-img:hover img {
-      transform: scale(1.05);
-    }
-
-    .timeline-top-text,
-    .timeline-bottom-text {
-      color: #000;
-      font-size: 1.2em;
-      margin: 50px 0;
-      opacity: 0.7;
-    }
+    .timeline-top-text, .timeline-bottom-text { color: #000; font-size: 1.2em; margin: 50px 0; opacity: 0.7; }
 
     /* ========== 页脚 ========== */
     footer {
@@ -281,209 +249,7 @@
     }
 
     /* ========== 动画效果 ========== */
-    @keyframes slideDown {
-      from {
-        transform: translateY(-100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <!-- === 顶部主页部分 === -->
-  <section class="hero" id="top">
-    <div class="highlight"></div>
-    <div class="content">
-      <h1>UNDER CONSTRUCTION</h1>
-      <p>En progress...
-        desole si vous clicquez dans ce site...
-      Vous pouvez browser ce portfolio dans: <a href="mailto:lxy_0037@163.com">Google Drive</a> ｜ <a href="mailto:lxy_0037@163.com">Tencent Document</a>
-      </p>
-    </div>
-
-    <!-- Scroll Down 提示 -->
-    <a href="#timeline" class="scroll-down">
-      <span>Scroll Down</span>
-      <div class="arrow">&#x25BC;</div>
-    </a>
-  </section>
-
-  <!-- === 语言切换按钮 === -->
-  <div class="lang-menu">
-    <img src="images/langue.png" alt="Language" class="lang-png" />
-    <div class="lang-options">
-      <a href="https://x-x1n.github.io/zh.portfolio.html">中</a>
-      <a href="https://x-x1n.github.io/portfolio.html">EN</a>
-      <a href="https://x-x1n.github.io/jp.portfolio.html">日</a>
-      <a href="https://x-x1n.github.io/fr.portfolio.html">FR</a>
-    </div>
-  </div>
-
-  /* ========== 语言按钮：固定 + 延时消失 ========== */
-    .lang-menu { position: fixed; top: 20px; right: 30px; z-index: 50; }
-    .lang-icon { width: 30px; cursor: pointer; }
-    .lang-options {
-      display: none;
-      position: absolute;
-      right: 0;
-      margin-top: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .lang-options a {
-      display: block;
-      color: #1f1f1f;
-      text-decoration: none;
-      padding: 8px 15px;
-    }
-    .lang-options a:hover { background: rgba(215, 255, 95, 0.2); }
-
-    /* ========== 左侧目录栏 ========== */
-    .sidebar {
-      position: fixed;
-      top: 50%;
-      left: 50px;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.3);
-      border-radius: 20px;
-      padding: 20px;
-      z-index: 10;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.6s ease;
-    }
-    .sidebar.visible { opacity:1; pointer-events: all; }
-    .sidebar ul { list-style: none; text-align: center; }
-    .sidebar a { color:#d7ff5f; text-decoration:none; display:block; padding:8px 0; }
-    .sidebar a:hover { text-decoration:underline; }
-
-    /* ========== 时间轴部分 ========== */
-    .timeline {
-      background:#fff;
-      color:#000;
-      padding:100px 0;
-      position: relative;
-      text-align:center;
-      width:70%;
-      margin:0 auto;
-    }
-    .timeline h1 { color:#d7ff5f; margin-bottom:50px; }
-
-    .project {
-      display:flex;
-      flex-wrap: wrap; /* ✅ 允许多行排列，确保新内容在下方 */
-      align-items:flex-start;
-      justify-content:space-between;
-      width:50%;
-      margin:100px auto;
-      position:relative;
-      border-left:5px solid #d7ff5f;
-      padding-left:40px;
-      opacity:0;
-      transform:translateY(50px);
-      transition:all 1s ease;
-    }
-    
-    .project.visible { opacity:1; transform:translateY(0); }
-
-    .project-text { width:45%; text-align:left; font-family:"Roboto", sans-serif; }
-    .project-text h2 { color:#1f1f1f; margin-bottom:10px; font-family:"Roboto", sans-serif; }
-    .project-text h3 { color:#1f1f1f;font-size:1rem; margin-bottom:10px; font-family:"Roboto", sans-serif; }
-    .project-text p { font-size:1rem; line-height:1.6; font-family:"Roboto", sans-serif; }
-
-    .project-img { width:45%; overflow:hidden; border-radius:20px; }
-    .project-img img { width:100%; border-radius:20px; box-shadow:0 0 10px rgba(215,255,95,0.5); transition: transform 0.6s ease; }
-    .project-img:hover img { transform:scale(1.05); }
-
-    .timeline-top-text, .timeline-bottom-text { color:#000; font-size:1.2em; margin:50px 0; opacity:0.7; }
-
-    /* ========== 页脚 ========== */
-    footer { background:#000; color:#d7ff5f; text-align:center; padding:30px; font-size:0.9em; }
-    footer a { color:#d7ff5f; text-decoration:none; }
-    footer a:hover { text-decoration:underline; }
-
-    /* ========== 动画效果 ========== */
     @keyframes slideDown { from{transform:translateY(-100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
-    @keyframes fadeInLeft { from{opacity:0; transform:translateX(-50px);} to{opacity:1; transform:translateX(0);} }
-    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
-
-    a {
-  color: #5587DD;         /* 普通状态：黑色 */
-  text-decoration: none;  /* 去掉下划线（可选） */
-}
-
-a:hover {
-  color: #d7ff5f;         /* 鼠标悬停时：荧光绿 */
-}
-
-a:active {
-  color: #d7ff5f;         /* 点击瞬间的颜色（可选） */
-}
-
-a:visited {
-  color: #3348A7;         /* 访问过的链接颜色（可选） */
-}
-
-.project-extra {
-  width: 100%;               /* ✅ 占满整行 */
-  max-width: 800px;
-  margin-top: 40px;
-  text-align: left;
-  line-height: 1.6;
-  margin: 40px auto 0 auto;
-  color: #000;
-}
-
-.project-extra img {
-  width: 100%;
-  display: block;
-  margin: 20px auto 0 auto;  /* ✅ 居中 */
-  border-radius: 10px;
-}
-
-    .project-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 60px; /* 每组之间的间距 */
-}
-
-.project-text {
-  flex: 1;
-  padding-right: 40px;
-}
-
-.project-img {
-  flex: 1;
-  display: flex;
-  justify-content: center;  /* 在右半部分居中 */
-  padding-left: 20%; 
-  align-items: center;
-}
-
-.project-img img {
-  width: 80%;
-  border-radius: 10px;
-}
-
-/* 链接的默认颜色和悬停颜色 */
-.project-text a {
-  color: #ff9900;
-  text-decoration: underline;
-  transition: color 0.3s ease;
-}
-
-.project-text a:hover {
-  color: #ffaa33;
-}
-    
   </style>
 </head>
 
@@ -493,22 +259,17 @@ a:visited {
     <div class="highlight"></div>
     <div class="content">
       <h1>Portfolio 2025</h1>
-      <p class="intro-text">hi!<br>
-      It is recommended to browse the website on your PC<br>
-      PDF version of Portfolio is also available. You can access through <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Google Drive</a> or <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Tencent File</a>
+      <p class="intro-text">Bonjour! Le site est maintenant en construction...<br>
+        It is recommended to browse the website on your PC<br>
+        PDF version of Portfolio is also available. You can access through <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Google Drive</a> or <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">Tencent File</a>
       </p>
     </div>
 
-    <!-- Scroll down & 倒三角箭头 -->
-    <div class="scroll-down-container">
-      <p class="subtitle">Scroll down for more information</p>
-      <div class="arrow">▼</div>
-    </div>
-
-    <div class="bottom-right">
-      // Xinyuan LI
-      <img src="images/signature.png" alt="Signature" />
-    </div>
+    <!-- Scroll down -->
+    <a href="#timeline" class="scroll-down">
+      <span>Scroll Down</span>
+      <div class="arrow">&#x25BC;</div>
+    </a>
   </section>
 
   <!-- === 语言切换按钮 === -->
@@ -525,28 +286,27 @@ a:visited {
   <!-- === 左侧目录栏 === -->
   <nav class="sidebar">
     <ul>
-       <li><a href="#part0" style="color: #d7ff5f; ">CV</a>.</li>
-      <li><a href="#part1" style="color: #d7ff5f; ">Projects</a>.</li>
-      <li><a href="#part2" style="color: #d7ff5f; ">Media Work</a>.</li>
-      <li><a href="#part3" style="color: #d7ff5f; ">Other Work</a></li>
+      <li><a href="#part0">CV</a></li>
+      <li><a href="#part1">Projects</a></li>
+      <li><a href="#part2">Media Work</a></li>
+      <li><a href="#part3">Other Work</a></li>
     </ul>
   </nav>
 
   <!-- === 时间轴部分 === -->
   <section class="timeline" id="timeline">
     <p class="timeline-top-text"><b>Notice on AI work</b><br>
-    The projects and works demonstrated below are all done by myself.<br>
-    Any participation of AI will be marked.<br>
-    <i><span style="font-size: 0.8em;">ps. the coding of this website is co-constructed with AI. thank you gpt.<span></span></i><br>
-    <b>——————————</b><br><br>
+      The projects and works demonstrated below are all done by myself.<br>
+      Any participation of AI will be marked.<br>
+      <i><span style="font-size: 0.8em;">ps. the coding of this website is co-constructed with AI. thank you gpt.</span></i><br>
+      <b>——————————</b><br><br>
       Group work projects will also be notified with specific work allocation.
     </p>
-
 
  <section id="part0" class="project">
       <div class="project-text">
         <h2>CV</h2>
-        <p>Here is my <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">CV</a><br>
+        <p>Ici est la <a href="https://docs.qq.com/pdf/DRWxqY09CZmt3dU1q">CV</a><br>
           The PDF version of this Portfolio can also be accessed through ...
         </p>
      
@@ -559,19 +319,14 @@ a:visited {
     
     <section id="part1" class="project">
       <div class="project-text">
-        <h2>Projects</h2>
-        <p><i>Coursework projects that apply theories into practice</i><br><br></p>
+        <h2>Projets</h2>
 
          </div>
 
   <!-- ct -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Communication and Technology Project</h3>
-      <p style="text-align: justify;">
-        This is the group project of the course Communication and Technology.<br>
-It demonstrates various thoughts of the design of a video game with the theme of ‘technology and progress, convenience, bodily needs and communication’, through the form of a brochure.
-
+      <h3>Projet de <i>Communication and Technology</i></h3>
         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
       </p>
     </div>
@@ -583,9 +338,7 @@ It demonstrates various thoughts of the design of a video game with the theme of
         <!-- dgac -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Digital Games as Communication Project</h3>
-      <p style="text-align: justify;">
-        still working on it...
+      <h3>Projet de <i>Digital Games as Communication Project</i></h3>
         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
       </p>
     </div>
@@ -597,12 +350,8 @@ It demonstrates various thoughts of the design of a video game with the theme of
        <!-- spc -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Screen and Popular Culture Project</h3>
-      <p style="text-align: justify;">
-        This is the work of Screen and Popular Culture in UNNC. The course requires students to make a creative project in any form that is related to given topics with an exegesis.<br>
-The project focuses on sociological concepts of Self, Persona and Commodity, and further explores the status quo of individuals in the contemporary networked societal environment.
-
-        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      <h3>Projet de <i>Screen and Popular Culture Project</i></h3>
+         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
       </p>
     </div>
     <div class="project-img">
@@ -613,11 +362,8 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
      <!-- uci -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Understanding Cultural Industries Project</h3>
-      <p style="text-align: justify;">
-        This is the material used for the presentation of Understanding Creative Industries. As for the presentation, our group designed an exhibition featuring fantastic beasts in ancient Chinese book Classic of Mountains and Seas (Shan Hai Jing) with the theme of intercultural communication in cultural industries. To better illustrate our ideas, I voluntarily designed several posters and reference models of the exhibition by myself.
-
-        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      <h3>Projet de <i>Understanding Cultural Industries Project</i></h3>
+         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>
       </p>
     </div>
     <div class="project-img">
@@ -634,18 +380,14 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   
     <section id="part2" class="project">
       <div class="project-text">
-        <h2>Media Work</h2>
-        <p><i>While most of them are graphic design</i></p><br><br>
-
-         </div>
+        <h2>Média Oeuvre</h2>
+           </div>
 
   <!-- cele -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Internship at CELE</h3>
-      <p style="text-align: justify;">
-        I did the internship job at the university’s Centre of English Language Education (CELE), and was mainly responsible for the organisation of campus related activities and design of promotional materials. I’ve done work such as WeChat account articles, activities (as well as promotional posters, products, etc.). 
-        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      <h3>Internship dans CELE</h3>
+         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
     <div class="project-img">
@@ -656,9 +398,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   <!-- cele2 -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Design of UNNC Pre-Sessional Programme</h3>
-      <p style="text-align: justify;">
-        Recently, I completed the work of the design of key visual of UNNC Pre-sessional Programme, as well as student handbook and all the promotional materials.
+      <h3>Dessin de UNNC Pre-Sessional Programme</h3>
         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
@@ -670,10 +410,8 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
 <!-- lc -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Internship at LC</h3>
-      <p style="text-align: justify;">
-        I did the internship job at the university’s Language Centre, and was mainly responsible for the making of the Language Centre magazine Cosmos L&C (Issue 9). Apart from checking and editing the articles, I also did half of the magazine’s layout design work.
-        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+      <h3>Internship dans LC</h3>
+         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
     <div class="project-img">
@@ -685,8 +423,6 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   <div class="project-row">
     <div class="project-text">
       <h3>News Agency</h3>
-      <p style="text-align: justify;">
-        As a member of university's News Agency, I've participated in and led several Activity arrangement, promotional materials arrangement & design works
         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
@@ -699,8 +435,6 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   <div class="project-row">
     <div class="project-text">
       <h3>FISU Internship</h3>
-      <p style="text-align: justify;">
-        I did the internship job of operation of official Simplified Chinese website of the 31th World University Games in 2023, Chengdu, Sichuan.
         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
@@ -721,17 +455,14 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   <!-- 第一组内容 -->
   <div class="project-row">
     <div class="project-text">
-      <h2>Other Work</h2>
-      <p><i>Ones do not belong to any other category ...</i></p><br><br>
+      <h2>Les Autres</h2>
   </div>
   </div>
 
   <!-- ad -->
   <div class="project-row">
     <div class="project-text">
-      <h3>Ads for Public Service</h3>
-      <p style="text-align: justify;">
-        Templates of public service advertisements (but is not used in reality)
+      <h3>Ads pour Public Service</h3>
         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
@@ -744,9 +475,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   <div class="project-row">
     <div class="project-text">
       <h3>Video Editing</h3>
-      <p style="text-align: justify;">
-        Personally, I am interested in the field of video editing. In my spare time, I once tried to edit my travelling videos in a documentary/stylized form
-        <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
+         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
     <div class="project-img">
@@ -758,8 +487,6 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   <div class="project-row">
     <div class="project-text">
       <h3>Fandom Work</h3>
-      <p style="text-align: justify;">
-        Taking the art style of the game as the reference, I reconstructed the visual elements and designed them by myself, integrating original visual style and my personal aesthetic expression.
         <br><a href="https://bilibili.com" style="color: #ff9900; text-decoration: underline;">more about ...</a>.
       </p>
     </div>
@@ -769,8 +496,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   </div>
     
 </section>
-
-
+    
     <p class="timeline-bottom-text">The journey continues ...</p>
   </section>
 
@@ -804,12 +530,14 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
     const langIcon = document.querySelector(".lang-icon");
     const langOptions = document.querySelector(".lang-options");
     let hideTimeout;
+
     langIcon.addEventListener("click",(e)=>{
       e.stopPropagation();
       langOptions.style.display="block";
       clearTimeout(hideTimeout);
       hideTimeout=setTimeout(()=>{ if(!langOptions.matches(":hover")) langOptions.style.display="none"; },1000);
     });
+
     langOptions.addEventListener("mouseenter",()=>clearTimeout(hideTimeout));
     langOptions.addEventListener("mouseleave",()=>{ hideTimeout=setTimeout(()=>{ langOptions.style.display="none"; },1000); });
     document.addEventListener("click",(e)=>{ if(!langMenu.contains(e.target)) langOptions.style.display="none"; });
