@@ -232,6 +232,39 @@ a:visited {
   margin: 20px auto 0 auto;  /* ✅ 居中 */
   border-radius: 10px;
 }
+
+    .project-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 60px; /* 每组之间的间距 */
+}
+
+.project-text {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.project-img {
+  flex: 1;
+  text-align: right;
+}
+
+.project-img img {
+  width: 80%;
+  border-radius: 10px;
+}
+
+/* 链接的默认颜色和悬停颜色 */
+.project-text a {
+  color: #ff9900;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.project-text a:hover {
+  color: #ffaa33;
+}
     
   </style>
 </head>
