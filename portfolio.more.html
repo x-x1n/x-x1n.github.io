@@ -11,7 +11,7 @@
   <style>
         /* hi if anyone is reading this through f12 or com+op+i */
       /* this site is basically co-constructed with gpt, thank you gpt, and thank you github */
-      /* that's what i call a shi山代码 */
+      /* this is the second page qwq */
       /* anyway. have a nice day! :3 */
     /* ========== 全局基础样式 ========== */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Helvetica Neue", Arial, sans-serif; }
@@ -171,7 +171,7 @@
 
     .project {
       display:flex;
-      flex-wrap: wrap; /* ✅ 允许多行排列，确保新内容在下方 */
+      flex-wrap: wrap; /*  允许多行排列，确保新内容在下方 */
       align-items:flex-start;
       justify-content:space-between;
       width:80%;
@@ -225,7 +225,7 @@ a:visited {
 }
 
 .project-extra {
-  width: 100%;               /* ✅ 占满整行 */
+  width: 100%;               /* 占满整行 */
   max-width: 800px;
   margin-top: 40px;
   text-align: left;
@@ -237,7 +237,7 @@ a:visited {
 .project-extra img {
   width: 100%;
   display: block;
-  margin: 20px auto 0 auto;  /* ✅ 居中 */
+  margin: 20px auto 0 auto;  /* 居中 */
   border-radius: 10px;
 }
 
@@ -287,13 +287,17 @@ a:visited {
   display: inline-block;
 }
 .back-triangle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
   width: 0;
   height: 0;
-  border-top: 22px solid transparent;
-  border-bottom: 22px solid transparent;
-  border-left: 35px solid rgba(255,255,255,0.95); /* 左向三角 */
-  transition: transform 0.15s ease, opacity 0.15s ease;
-  opacity: 0.95;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 25px solid #DFFE78; /* 荧光绿 + 朝左 */
+  cursor: pointer;
+  z-index: 1000;
+}
 }
 .back-triangle-wrapper:hover .back-triangle { transform: translateX(-3px); opacity: 1; }
 
@@ -324,18 +328,18 @@ a:visited {
   <!-- === 左侧目录栏（已替换为所有项目级别标题的链接） === -->
   <nav class="sidebar">
     <ul>
-      <li><a href="#communication-and-technology-project" style="color: #d7ff5f;">Communication and Technology Project</a></li>
-      <li><a href="#digital-games-as-communication-project" style="color: #d7ff5f;">Digital Games as Communication Project</a></li>
-      <li><a href="#screen-and-popular-culture-project" style="color: #d7ff5f;">Screen and Popular Culture Project</a></li>
-      <li><a href="#understanding-cultural-industries-project" style="color: #d7ff5f;">Understanding Cultural Industries Project</a></li>
+      <li><a href="#communication-and-technology-project" style="color: #d7ff5f;">CT Project</a></li>
+      <li><a href="#digital-games-as-communication-project" style="color: #d7ff5f;">DGAC Project</a></li>
+      <li><a href="#screen-and-popular-culture-project" style="color: #d7ff5f;">SPC Project</a></li>
+      <li><a href="#understanding-cultural-industries-project" style="color: #d7ff5f;">UCI Project</a></li>
 
-      <li><a href="#internship-at-cele" style="color: #d7ff5f;">Internship at CELE</a></li>
-      <li><a href="#design-of-unnc-pre-sessional-programme" style="color: #d7ff5f;">Design of UNNC Pre-Sessional Programme</a></li>
-      <li><a href="#internship-at-lc" style="color: #d7ff5f;">Internship at LC</a></li>
+      <li><a href="#internship-at-cele" style="color: #d7ff5f;">CELE Intern</a></li>
+      <li><a href="#design-of-unnc-pre-sessional-programme" style="color: #d7ff5f;">Uni Programme</a></li>
+      <li><a href="#internship-at-lc" style="color: #d7ff5f;">LC Intern</a></li>
       <li><a href="#news-agency" style="color: #d7ff5f;">News Agency</a></li>
       <li><a href="#fisu-internship" style="color: #d7ff5f;">FISU Internship</a></li>
 
-      <li><a href="#ads-for-public-service" style="color: #d7ff5f;">Ads for Public Service</a></li>
+      <li><a href="#ads-for-public-service" style="color: #d7ff5f;">Ads</a></li>
       <li><a href="#video-editing" style="color: #d7ff5f;">Video Editing</a></li>
       <li><a href="#fandom-work" style="color: #d7ff5f;">Fandom Work</a></li>
     </ul>
@@ -351,55 +355,60 @@ a:visited {
       Group work projects will also be notified with specific work allocation.
     </p>
 
-    <!-- ---------------------
-         CV 被移除（按你要求删除原 h2: CV 与其说明）
-         --------------------- -->
+
 
     <!-- p1 -->
     <section id="part1" class="project">
       <div class="project-text">
-        <!-- 原 "Projects" 的 h2 与说明已移除 -->
+   
       </div>
 
   <!-- ct -->
   <div class="project-row" id="communication-and-technology-project">
     <div class="project-text">
-      <h1>Communication and Technology Project</h1>
+      <h1><i>Communication and Technology</i> Project</h1>
       <p style="text-align: justify;">
-        This is the group project of the course Communication and Technology.<br>
+        This is the group project of the course <i>Communication and Technology</i>.<br>
 It demonstrates various thoughts of the design of a video game with the theme of ‘technology and progress, convenience, bodily needs and communication’, through the form of a brochure.
-
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        <br>Was commented as: ‘This project on <i>“Technology within a Social Context” stood out for its extremely impressive output, exploring the chosen concept with depth and clarity. ’</i> by the teacher
+        <br>
+        <br>Due to limited time, we were unable to make it out as a real game.
+        <br>However, we did build up the imagined scenes with the help of digital tools, and we also completed the writing of overall plan.
+        <br>The game requires player to decipher a fictive language to communicate with local habitants and find a way to leave the island. With the progression of the game, different technological tools will be unlocked to support players’ deciphering. Through the adopting of different technology, the game critically asks the players to examine the relationship between technology and communication.
+        <br>The idea was proposed by me. During the making of the project, I was responsible for the majority part of mechanism design, text writing and group arrangements. The layout (including the design of icons and brochure logo) was done all by myself, and I also participated in the building of scenes in Blender.
       </p>
     </div>
     <div class="project-img">
-      <img src="images/ctproject.png" alt="ctproject" />
+      <img src="images/m_ctproject.png" alt="m_ctproject" />
     </div>
   </div>
 
         <!-- dgac -->
   <div class="project-row" id="digital-games-as-communication-project">
     <div class="project-text">
-      <h1>Digital Games as Communication Project</h1>
+      <h1><i>Digital Games as Communication</i> Project</h1>
       <p style="text-align: justify;">
-        still working on it...
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        I am currently working on this project for the course <i>Digital Games as Communication</i> in UNNC.
+        <br>Although the project is not finalised, I’ve made some conceptual work & introduction to preview and demonstrate my ideas.
+        <br>Since the assessment required “Take a text that is not a game and adapt it into a Twine game”, this project chose Stanisław Lem’s 1961 novel <i>Solaris</i> (and also its 1972 film version directed by Andrei Tarkovsky) as the source text. The project adopted the background of the original text: Humanity was trying to communicate with the alien creature on the planet of Solaris, which was later found out that the ‘sea’ that covers the ocean turns out to be the single, planet-encompassing entity that can materialise physical simulacra based on repressed memories of the researchers in the space station.
+        <br>In the game, you are playing the role as the fourth researcher in space station. However, due to some accidents, you found that certain clips of your memories are missing, and your colleagues seem hiding something from you. With confusion, you are still making an effort to complete your research task as a linguistic, until …
+        <br>Regarding on the mechanism, the game adopts a traditional adventure game that require players to select different dialogue or action options to proceed the story, and different choices may lead to different endings. However, the real mechanism will be hidden under it: although the game seems to be multi-playthrough, the storyline is actually linear: the avatar of the player is actually the simulacra of Solaris, and each ending represents the reformation of you after every attempt your colleagues tried to get rid of you – since the person you’re playing is actually dead. The truth will be revealed in the final playthrough, making the full use of interactivity and narrative of video games.
+        <br>At the same time, it utilises Twine’s html function, inserting a mechanism of exploration through dragging different nodes that generates new ones as a form of narration interaction.
+        <br>Apart from the original text of <i>Solaris</i>, the idea was also greatly inspired by games such as <i>Raging Loop</i> and <i>Disco Elysium</i>, as well as books such as <i>Cybertext</i> and <i>The Garden of Forking Paths</i>.
       </p>
     </div>
     <div class="project-img">
-      <img src="images/dgacproject.png" alt="dgacproject" />
+      <img src="images/m_dgacproject.png" alt="m_dgacproject" />
     </div>
   </div>
 
        <!-- spc -->
   <div class="project-row" id="screen-and-popular-culture-project">
     <div class="project-text">
-      <h1>Screen and Popular Culture Project</h1>
+      <h1><i>Screen and Popular Culture</i> Project</h1>
       <p style="text-align: justify;">
-        This is the work of Screen and Popular Culture in UNNC. The course requires students to make a creative project in any form that is related to given topics with an exegesis.<br>
-The project focuses on sociological concepts of Self, Persona and Commodity, and further explores the status quo of individuals in the contemporary networked societal environment.
-
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        This is the work of <i>Screen and Popular Culture</i> in UNNC. The course requires students to make a creative project in any form that is related to given topics with an exegesis.<br>
+The project focuses on sociological concepts of <i>Self, Persona and Commodity</i>, and further explores the status quo of individuals in the contemporary networked societal environment.
       </p>
     </div>
     <div class="project-img">
@@ -410,15 +419,15 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
      <!-- uci -->
   <div class="project-row" id="understanding-cultural-industries-project">
     <div class="project-text">
-      <h1>Understanding Cultural Industries Project</h1>
+      <h1><i>Understanding Cultural Industries</i> Project</h1>
       <p style="text-align: justify;">
-        This is the material used for the presentation of Understanding Creative Industries. As for the presentation, our group designed an exhibition featuring fantastic beasts in ancient Chinese book Classic of Mountains and Seas (Shan Hai Jing) with the theme of intercultural communication in cultural industries. To better illustrate our ideas, I voluntarily designed several posters and reference models of the exhibition by myself.
-
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        This is the material used for the presentation of <i>Understanding Creative Industries</i>.
+        <br>As for the presentation, our group designed an exhibition featuring fantastic beasts in ancient Chinese book <i>Classic of Mountains and Seas (Shan Hai Jing)</i> with the theme of intercultural communication in cultural industries. To better illustrate our ideas, I voluntarily designed several posters and reference models of the exhibition by myself.
+        
       </p>
     </div>
     <div class="project-img">
-      <img src="images/uciproject.png" alt="uciproject" />
+      <img src="images/m_uciproject.png" alt="m_uciproject" />
     </div>
   </div>
       
@@ -431,7 +440,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
   
     <section id="part2" class="project">
       <div class="project-text">
-        <!-- 原 "Media Work" 的 h2 与说明已移除 -->
+       
       </div>
 
   <!-- cele -->
@@ -440,11 +449,11 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       <h1>Internship at CELE</h1>
       <p style="text-align: justify;">
         I did the internship job at the university’s Centre of English Language Education (CELE), and was mainly responsible for the organisation of campus related activities and design of promotional materials. I’ve done work such as WeChat account articles, activities (as well as promotional posters, products, etc.). 
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        <br>
       </p>
     </div>
     <div class="project-img">
-      <img src="images/celework1.png" alt="celework1" />
+      <img src="images/m_celework1.png" alt="m_celework1" />
     </div>
   </div>
 
@@ -454,11 +463,12 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       <h1>Design of UNNC Pre-Sessional Programme</h1>
       <p style="text-align: justify;">
         Recently, I completed the work of the design of key visual of UNNC Pre-sessional Programme, as well as student handbook and all the promotional materials.
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        <br>It includes banners, road signs, coupons, bags, card coats, roadmaps, etc.
+        <br>I was also responsible for the design of its Student Handbook in 2024's programme.
       </p>
     </div>
     <div class="project-img">
-      <img src="images/celework6.png" alt="celework6" />
+      <img src="images/m_celework6.png" alt="m_celework6" />
     </div>
   </div>
 
@@ -467,8 +477,9 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
     <div class="project-text">
       <h1>Internship at LC</h1>
       <p style="text-align: justify;">
-        I did the internship job at the university’s Language Centre, and was mainly responsible for the making of the Language Centre magazine Cosmos L&C (Issue 9). Apart from checking and editing the articles, I also did half of the magazine’s layout design work.
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        I did the internship job at the university’s Language Centre, and was mainly responsible for the making of the Language Centre magazine <i>Cosmos L&C</i> (Issue 9).
+        <br>It is a magazine organised by Language Centre, co-created by students of language courses as authors, editors, and designers, featuring with the articles in six languages taught in UNNC (apart from English): French, German, Spanish, Japanese, Korean and Chinese.
+        <br>Apart from checking and editing the articles, I also did half of the magazine’s layout design work.
       </p>
     </div>
     <div class="project-img">
@@ -482,7 +493,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       <h1>News Agency</h1>
       <p style="text-align: justify;">
         As a member of university's News Agency, I've participated in and led several Activity arrangement, promotional materials arrangement & design works
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        <br>Such as organisation of university's programmes and activities, as well as the making of university's magazine <i>"Nottingzin"</i> and newspapers.
       </p>
     </div>
     <div class="project-img">
@@ -496,7 +507,8 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       <h1>FISU Internship</h1>
       <p style="text-align: justify;">
         I did the internship job of operation of official Simplified Chinese website of the 31th World University Games in 2023, Chengdu, Sichuan.
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        <br>During FISU 2021 (postponed to 2023 due to the pandemic), I was responsible for activities organsation, article writing & editing, etc.
+        <br><i>*The official website of FISU 2021 (https://www.2021chengdu.com/) has been shut down on Feb 8th, 2024. Currently, some of pages can be viewed on Web Archive (web.archive.org)</i>
       </p>
     </div>
     <div class="project-img">
@@ -512,7 +524,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
     <!-- p3 -->
     
  <section id="part3" class="project">
-  <!-- 原 "Other Work" 的 h2 与说明已移除 -->
+  
 
   <!-- ad -->
   <div class="project-row" id="ads-for-public-service">
@@ -520,7 +532,6 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       <h1>Ads for Public Service</h1>
       <p style="text-align: justify;">
         Templates of public service advertisements (but is not used in reality)
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
       </p>
     </div>
     <div class="project-img">
@@ -534,7 +545,9 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       <h1>Video Editing</h1>
       <p style="text-align: justify;">
         Personally, I am interested in the field of video editing. In my spare time, I once tried to edit my travelling videos in a documentary/stylized form
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        <br>Well... It is sometimes really intersting to insert my ideas of graphic design into video editing...
+        <br>And I always believe that narration of media can be expressed through means without verbalisation.
+        <br><i>Access the video</i>: <a href="https://www.xiaohongshu.com/discovery/item/68e241b5000000000703869f?source=webshare&xhsshare=pc_web&xsec_token=ABiE4wun2GeL2G9D3-534Jj5jqwnrEUOJVQBzLU5asxPg=&xsec_source=pc_share" style="color: #ff9900; text-decoration: underline;">Jp_kansai</a> And <a href="https://www.xiaohongshu.com/discovery/item/68e24aa10000000007030ff5?source=webshare&xhsshare=pc_web&xsec_token=ABiE4wun2GeL2G9D3-534Jj9RzOAzgAejUf9vqIyOAPIo=&xsec_source=pc_share" style="color: #ff9900; text-decoration: underline;">Jp_kantou</a>
       </p>
     </div>
     <div class="project-img">
@@ -548,7 +561,8 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       <h1>Fandom Work</h1>
       <p style="text-align: justify;">
         Taking the art style of the game as the reference, I reconstructed the visual elements and designed them by myself, integrating original visual style and my personal aesthetic expression.
-        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+        <br>These are some work people share and exchange with other fans – as <i>muryo</i> (meaning ‘free’ in Japanese) in fandom culture – which is a little bit similar to business card.
+        <br>I connect this idea closely with the concept of <i>fandom</i> proposed by Jenkins - as a form and a practice of participatory culture.
       </p>
     </div>
     <div class="project-img">
@@ -559,7 +573,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
 </section>
 
 
-    <p class="timeline-bottom-text">The journey continues ...</p>
+    <p class="timeline-bottom-text"><i>Thank you for reading!</i> :)</p>
   </section>
 
   <footer>
@@ -587,8 +601,7 @@ The project focuses on sociological concepts of Self, Persona and Commodity, and
       else{ sidebar.classList.remove("visible"); }
     });
 
-    // NOTE: 语言切换功能在本版本已从 HTML 中移除（你要求保留白色下方区域并去掉语言切换）
-    // 原来的语言切换脚本逻辑保留在注释或可删，如需我保留或恢复请告知。
+
 
     // Smooth-scroll for internal links (optional improvement)
     document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
