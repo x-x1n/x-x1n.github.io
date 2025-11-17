@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xinyuan Li | Portfolio 2025</title>
+  <link rel="icon" type="image/ico" href="images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+  
+  <style>
+        /* hi if anyone is reading this through f12 or com+op+i */
+      /* this site is basically co-constructed with gpt, thank you gpt, and thank you github */
+      /* that's what i call a shi山代码 */
+      /* anyway. have a nice day! :3 */
+    /* ========== 全局基础样式 ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Helvetica Neue", Arial, sans-serif; }
+
+    body {
+      background: url("images/portback.png") no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ========== 顶部主页部分 ========== */
+    .hero { position: relative; height: 100vh; overflow: hidden; }
+
+    /* ✅ 平行四边形绿色渐变 */
+    .highlight {
+      position: absolute;
+      top: 0;
+      left: 20%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        rgba(215, 255, 95, 0.8) 0%,
+        rgba(215, 255, 95, 0.4) 90%,
+        rgba(255, 255, 255, 0.6) 100%
+      );
+      clip-path: polygon(10% 0, 90% 0, 80% 100%, 0% 100%);
+      opacity: 0;
+      animation: slideDown 1.5s ease forwards;
+      animation-delay: 0.2s;
+    }
+
+    /* 标题 + 简介 */
+    .content {
+      position: absolute;
+      top: 45%;
+      left: 10%;
+      transform: translateY(-50%);
+      text-align: left;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #1f1f1f;
+      font-weight: 700;
+      font-family: "Roboto", sans-serif;
+    }
+
+    .intro-text {
+      max-width: 500px;
+      font-size: 1.1em;
+      color: #1f1f1f;
+      font-family: "Roboto", sans-serif;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    /* Scroll down + 倒三角箭头 */
+    .scroll-down-container {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 2;
+    }
+
+    .subtitle {
+      font-size: 1em;
+      color: #1f1f1f;
+      opacity: 0.8;
+      font-family: "Roboto", sans-serif;
+      margin-bottom: 10px;
+    }
+
+    .arrow {
+      font-size: 2em;
+      color: #1f1f1f;
+      animation: bounce 2s infinite;
+    }
+
+    .signature {
+      width: 180px;
+      opacity: 0;
+      animation: fadeInLeft 2s ease forwards;
+      animation-delay: 1s;
+    }
+
+    /* 右下角名字与签名 */
+    .bottom-right {
+      position: absolute;
+      bottom: 40px;
+      right: 50px;
+      text-align: center;
+      color: #1f1f1f;
+      font-size: 1.2em;
+    }
+    .bottom-right img {
+      margin-top: 10px;
+      width: 150px;
+    }
+
+    /* ========== 语言按钮：固定 + 延时消失 ========== */
+    .lang-menu { position: fixed; top: 20px; right: 30px; z-index: 50; }
+    .lang-icon { width: 30px; cursor: pointer; }
+    .lang-options {
+      display: none;
+      position: absolute;
+      right: 0;
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .lang-options a {
+      display: block;
+      color: #1f1f1f;
+      text-decoration: none;
+      padding: 8px 15px;
+    }
+    .lang-options a:hover { background: rgba(215, 255, 95, 0.2); }
+
+    /* ========== 左侧目录栏 ========== */
+    .sidebar {
+      position: fixed;
+      top: 50%;
+      left: 50px;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.3);
+      border-radius: 20px;
+      padding: 20px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    .sidebar.visible { opacity:1; pointer-events: all; }
+    .sidebar ul { list-style: none; text-align: center; max-height:80vh; overflow:auto; padding-right:10px; }
+    .sidebar a { color:#d7ff5f; text-decoration:none; display:block; padding:8px 0; font-size:0.9rem; }
+    .sidebar a:hover { text-decoration:underline; }
+
+    /* ========== 时间轴部分 ========== */
+    .timeline {
+      background:#fff;
+      color:#000;
+      padding:100px 0;
+      position: relative;
+      text-align:center;
+      width:80%;
+      margin:0 auto;
+    }
+    .timeline h1 { color:#d7ff5f; margin-bottom:50px; }
+
+    .project {
+      display:flex;
+      flex-wrap: wrap; /* ✅ 允许多行排列，确保新内容在下方 */
+      align-items:flex-start;
+      justify-content:space-between;
+      width:80%;
+      margin:100px auto;
+      position:relative;
+      border-left:5px solid #d7ff5f;
+      padding-left:40px;
+      opacity:0;
+      transform:translateY(50px);
+      transition:all 1s ease;
+    }
+    
+    .project.visible { opacity:1; transform:translateY(0); }
+
+    .project-text { width:45%; text-align:left; font-family:"Roboto", sans-serif; }
+    .project-text h2 { color:#1f1f1f; margin-bottom:10px; font-family:"Roboto", sans-serif; }
+    .project-text h3 { color:#1f1f1f;font-size:1rem; margin-bottom:10px; font-family:"Roboto", sans-serif; }
+    .project-text p { font-size:1rem; line-height:1.6; font-family:"Roboto", sans-serif; }
+
+    .project-img { width:45%; overflow:hidden; border-radius:20px; }
+    .project-img img { width:100%; border-radius:20px; box-shadow:0 0 10px rgba(215,255,95,0.5); transition: transform 0.6s ease; }
+    .project-img:hover img { transform:scale(1.05); }
+
+    .timeline-top-text, .timeline-bottom-text { color:#000; font-size:1.2em; margin:50px 0; opacity:0.7; }
+
+    /* ========== 页脚 ========== */
+    footer { background:#000; color:#d7ff5f; text-align:center; padding:30px; font-size:0.9em; }
+    footer a { color:#d7ff5f; text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+
+    /* ========== 动画效果 ========== */
+    @keyframes slideDown { from{transform:translateY(-100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
+    @keyframes fadeInLeft { from{opacity:0; transform:translateX(-50px);} to{opacity:1; transform:translateX(0);} }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+    a {
+  color: #5587DD;         /* 普通状态：黑色 */
+  text-decoration: none;  /* 去掉下划线（可选） */
+}
+
+a:hover {
+  color: #d7ff5f;         /* 鼠标悬停时：荧光绿 */
+}
+
+a:active {
+  color: #d7ff5f;         /* 点击瞬间的颜色（可选） */
+}
+
+a:visited {
+  color: #3348A7;         /* 访问过的链接颜色（可选） */
+}
+
+.project-extra {
+  width: 100%;               /* ✅ 占满整行 */
+  max-width: 800px;
+  margin-top: 40px;
+  text-align: left;
+  line-height: 1.6;
+  margin: 40px auto 0 auto;
+  color: #000;
+}
+
+.project-extra img {
+  width: 100%;
+  display: block;
+  margin: 20px auto 0 auto;  /* ✅ 居中 */
+  border-radius: 10px;
+}
+
+    .project-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 60px; /* 每组之间的间距 */
+}
+
+.project-text {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.project-img {
+  flex: 1;
+  display: flex;
+  justify-content: center;  /* 在右半部分居中 */
+  padding-left: 20%; 
+  align-items: center;
+}
+
+.project-img img {
+  width: 80%;
+  border-radius: 10px;
+}
+
+/* 链接的默认颜色和悬停颜色 */
+.project-text a {
+  color: #ff9900;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.project-text a:hover {
+  color: #ffaa33;
+}
+
+/* ========== 左上角返回三角（常驻） ========== */
+.back-triangle-wrapper {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 60;
+  cursor: pointer;
+  display: inline-block;
+}
+.back-triangle {
+  width: 0;
+  height: 0;
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  border-left: 35px solid rgba(255,255,255,0.95); /* 左向三角 */
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  opacity: 0.95;
+}
+.back-triangle-wrapper:hover .back-triangle { transform: translateX(-3px); opacity: 1; }
+
+/* 使新 H1 在白底上样式更明显（覆盖默认 h1 设定） */
+.timeline .project-row h1 {
+  color: #1f1f1f;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  line-height:1.2;
+}
+
+/* 响应式微调 */
+@media (max-width:900px){
+  .sidebar { left: 10px; top: auto; bottom: 20px; transform: none; max-height:40vh; }
+  .project { width:90%; margin:60px auto; padding-left:20px; }
+  .project-img { padding-left: 0; }
+  .timeline { width:92%; padding:60px 0; }
+}
+  </style>
+</head>
+
+<body>
+  <!-- === 左上角返回三角（常驻） === -->
+  <a class="back-triangle-wrapper" href="https://x-x1n.github.io/portfolio.html" title="返回 Portfolio">
+    <span class="back-triangle" aria-hidden="true"></span>
+  </a>
+
+  <!-- === 左侧目录栏（已替换为所有项目级别标题的链接） === -->
+  <nav class="sidebar">
+    <ul>
+      <li><a href="#communication-and-technology-project" style="color: #d7ff5f;">Communication and Technology Project</a></li>
+      <li><a href="#digital-games-as-communication-project" style="color: #d7ff5f;">Digital Games as Communication Project</a></li>
+      <li><a href="#screen-and-popular-culture-project" style="color: #d7ff5f;">Screen and Popular Culture Project</a></li>
+      <li><a href="#understanding-cultural-industries-project" style="color: #d7ff5f;">Understanding Cultural Industries Project</a></li>
+
+      <li><a href="#internship-at-cele" style="color: #d7ff5f;">Internship at CELE</a></li>
+      <li><a href="#design-of-unnc-pre-sessional-programme" style="color: #d7ff5f;">Design of UNNC Pre-Sessional Programme</a></li>
+      <li><a href="#internship-at-lc" style="color: #d7ff5f;">Internship at LC</a></li>
+      <li><a href="#news-agency" style="color: #d7ff5f;">News Agency</a></li>
+      <li><a href="#fisu-internship" style="color: #d7ff5f;">FISU Internship</a></li>
+
+      <li><a href="#ads-for-public-service" style="color: #d7ff5f;">Ads for Public Service</a></li>
+      <li><a href="#video-editing" style="color: #d7ff5f;">Video Editing</a></li>
+      <li><a href="#fandom-work" style="color: #d7ff5f;">Fandom Work</a></li>
+    </ul>
+  </nav>
+
+  <!-- === 时间轴部分（保留） === -->
+  <section class="timeline" id="timeline">
+    <p class="timeline-top-text"><b>Notice on AI work</b><br>
+    The projects and works demonstrated below are all done by myself.<br>
+    Any participation of AI will be marked.<br>
+    <i><span style="font-size: 0.8em;">   <span></span></i><br>
+    <b>——————————</b><br><br>
+      Group work projects will also be notified with specific work allocation.
+    </p>
+
+    <!-- ---------------------
+         CV 被移除（按你要求删除原 h2: CV 与其说明）
+         --------------------- -->
+
+    <!-- p1 -->
+    <section id="part1" class="project">
+      <div class="project-text">
+        <!-- 原 "Projects" 的 h2 与说明已移除 -->
+      </div>
+
+  <!-- ct -->
+  <div class="project-row" id="communication-and-technology-project">
+    <div class="project-text">
+      <h1>Communication and Technology Project</h1>
+      <p style="text-align: justify;">
+        This is the group project of the course Communication and Technology.<br>
+It demonstrates various thoughts of the design of a video game with the theme of ‘technology and progress, convenience, bodily needs and communication’, through the form of a brochure.
+
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/ctproject.png" alt="ctproject" />
+    </div>
+  </div>
+
+        <!-- dgac -->
+  <div class="project-row" id="digital-games-as-communication-project">
+    <div class="project-text">
+      <h1>Digital Games as Communication Project</h1>
+      <p style="text-align: justify;">
+        still working on it...
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/dgacproject.png" alt="dgacproject" />
+    </div>
+  </div>
+
+       <!-- spc -->
+  <div class="project-row" id="screen-and-popular-culture-project">
+    <div class="project-text">
+      <h1>Screen and Popular Culture Project</h1>
+      <p style="text-align: justify;">
+        This is the work of Screen and Popular Culture in UNNC. The course requires students to make a creative project in any form that is related to given topics with an exegesis.<br>
+The project focuses on sociological concepts of Self, Persona and Commodity, and further explores the status quo of individuals in the contemporary networked societal environment.
+
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/spcproject.png" alt="spcproject" />
+    </div>
+  </div>
+
+     <!-- uci -->
+  <div class="project-row" id="understanding-cultural-industries-project">
+    <div class="project-text">
+      <h1>Understanding Cultural Industries Project</h1>
+      <p style="text-align: justify;">
+        This is the material used for the presentation of Understanding Creative Industries. As for the presentation, our group designed an exhibition featuring fantastic beasts in ancient Chinese book Classic of Mountains and Seas (Shan Hai Jing) with the theme of intercultural communication in cultural industries. To better illustrate our ideas, I voluntarily designed several posters and reference models of the exhibition by myself.
+
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/uciproject.png" alt="uciproject" />
+    </div>
+  </div>
+      
+</section>
+     
+
+
+  <!--   p2   -->
+
+  
+    <section id="part2" class="project">
+      <div class="project-text">
+        <!-- 原 "Media Work" 的 h2 与说明已移除 -->
+      </div>
+
+  <!-- cele -->
+  <div class="project-row" id="internship-at-cele">
+    <div class="project-text">
+      <h1>Internship at CELE</h1>
+      <p style="text-align: justify;">
+        I did the internship job at the university’s Centre of English Language Education (CELE), and was mainly responsible for the organisation of campus related activities and design of promotional materials. I’ve done work such as WeChat account articles, activities (as well as promotional posters, products, etc.). 
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/celework1.png" alt="celework1" />
+    </div>
+  </div>
+
+  <!-- cele2 -->
+  <div class="project-row" id="design-of-unnc-pre-sessional-programme">
+    <div class="project-text">
+      <h1>Design of UNNC Pre-Sessional Programme</h1>
+      <p style="text-align: justify;">
+        Recently, I completed the work of the design of key visual of UNNC Pre-sessional Programme, as well as student handbook and all the promotional materials.
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/celework6.png" alt="celework6" />
+    </div>
+  </div>
+
+<!-- lc -->
+  <div class="project-row" id="internship-at-lc">
+    <div class="project-text">
+      <h1>Internship at LC</h1>
+      <p style="text-align: justify;">
+        I did the internship job at the university’s Language Centre, and was mainly responsible for the making of the Language Centre magazine Cosmos L&C (Issue 9). Apart from checking and editing the articles, I also did half of the magazine’s layout design work.
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/lcwork.png" alt="lcwork" />
+    </div>
+  </div>
+
+       <!-- na -->
+  <div class="project-row" id="news-agency">
+    <div class="project-text">
+      <h1>News Agency</h1>
+      <p style="text-align: justify;">
+        As a member of university's News Agency, I've participated in and led several Activity arrangement, promotional materials arrangement & design works
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/nawork.png" alt="nawork" />
+    </div>
+  </div>
+
+             <!-- fisu -->
+  <div class="project-row" id="fisu-internship">
+    <div class="project-text">
+      <h1>FISU Internship</h1>
+      <p style="text-align: justify;">
+        I did the internship job of operation of official Simplified Chinese website of the 31th World University Games in 2023, Chengdu, Sichuan.
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/fisuwork.png" alt="fisuwork" />
+    </div>
+  </div>
+      
+</section>
+     
+
+
+    
+    <!-- p3 -->
+    
+ <section id="part3" class="project">
+  <!-- 原 "Other Work" 的 h2 与说明已移除 -->
+
+  <!-- ad -->
+  <div class="project-row" id="ads-for-public-service">
+    <div class="project-text">
+      <h1>Ads for Public Service</h1>
+      <p style="text-align: justify;">
+        Templates of public service advertisements (but is not used in reality)
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/adwork.png" alt="adwork" />
+    </div>
+  </div>
+
+  <!-- video -->
+  <div class="project-row" id="video-editing">
+    <div class="project-text">
+      <h1>Video Editing</h1>
+      <p style="text-align: justify;">
+        Personally, I am interested in the field of video editing. In my spare time, I once tried to edit my travelling videos in a documentary/stylized form
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/videowork.png" alt="videowork" />
+    </div>
+  </div>
+
+  <!-- fan -->
+  <div class="project-row" id="fandom-work">
+    <div class="project-text">
+      <h1>Fandom Work</h1>
+      <p style="text-align: justify;">
+        Taking the art style of the game as the reference, I reconstructed the visual elements and designed them by myself, integrating original visual style and my personal aesthetic expression.
+        <br><a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">more about ...</a>
+      </p>
+    </div>
+    <div class="project-img">
+      <img src="images/fanwork.png" alt="fanwork" />
+    </div>
+  </div>
+    
+</section>
+
+
+    <p class="timeline-bottom-text">The journey continues ...</p>
+  </section>
+
+  <footer>
+    <p>
+      Xinyuan Li | This site is based on
+      <a href="https://github.com/x-x1n/x-x1n.github.io" target="_blank">GitHub Pages</a> |
+      <a href="mailto:lxy_0037@163.com">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver(
+      (entries)=>{ entries.forEach((entry)=>{ if(entry.isIntersecting) entry.target.classList.add("visible"); }); },
+      {threshold:0.2}
+    );
+    document.querySelectorAll(".project").forEach(section => observer.observe(section));
+
+    // 左侧目录显示控制
+    const sidebar = document.querySelector(".sidebar");
+    const timeline = document.querySelector(".timeline");
+    window.addEventListener("scroll",()=>{
+      const rect = timeline.getBoundingClientRect();
+      if(rect.top<=window.innerHeight*0.5 && rect.bottom>=100){ sidebar.classList.add("visible"); }
+      else{ sidebar.classList.remove("visible"); }
+    });
+
+    // NOTE: 语言切换功能在本版本已从 HTML 中移除（你要求保留白色下方区域并去掉语言切换）
+    // 原来的语言切换脚本逻辑保留在注释或可删，如需我保留或恢复请告知。
+
+    // Smooth-scroll for internal links (optional improvement)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+      anchor.addEventListener('click', function(e){
+        // allow default for top-level anchors; but do smooth scroll
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if(target){
+          const top = target.getBoundingClientRect().top + window.pageYOffset - 40; // offset
+          window.scrollTo({ top, behavior: 'smooth' });
+          history.replaceState(null, '', this.getAttribute('href'));
+        }
+      });
+    });
+  </script>
+</body>
+</html>
