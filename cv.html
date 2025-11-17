@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blog Page</title>
+
+<!-- Google Fonts（与你原本相同） -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+<style>
+/* 全局配色 */
+:root {
+  --accent: ##DFFE78;  
+  --text-color: #111;
+  --bg-white: #ffffff;
+}
+
+/* 页面背景 */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: url('images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text-color);
+  line-height: 1.7;
+}
+
+/* 单列博客容器 */
+.blog-container {
+  width: 70%;
+  max-width: 850px;
+  margin: 120px auto;
+  padding: 40px;
+  background: var(--bg-white);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* 主标题 */
+.blog-container h1.main-title {
+  font-size: 2.8rem;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 30px;
+  border-left: 8px solid var(--accent);
+  padding-left: 16px;
+}
+
+/* 一级标题 */
+.blog-container h1.section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 60px;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+/* 正文段落 */
+.blog-container p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+/* 图片（自动居中） */
+.blog-container img {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 25px 0;
+}
+
+/* 荧光绿返回按钮：向左三角形 */
+.triangle-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 25px solid var(--accent);
+  cursor: pointer;
+  z-index: 2000;
+  color: #DFFE78;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 返回按钮 -->
+<div class="triangle-button" onclick="history.back()"></div>
+
+<!-- 博客内容主体 -->
+<div class="blog-container">
+  
+  <h1 class="main-title">CV</h1>
+
+  <h1 class="section-title"><b>General Info</b></h1>
+  <p>
+<br>Born: 2004.3
+<br>Email: lxy_0037@163.com
+<br>Phone: (+86) 135 5106 1328
+<br>Undergraduate of University of Nottingham, Ningbo, China
+<br>(International Communication, in Faculty of Humanity and Social Science)
+
+  </p>
+
+/*  <img src="images/sample1.jpg" alt="Sample Image">    */
+
+
+
+ <h1 class="section-title"><b>cademic Experience</b></h1>
+  <p>
+    <br>My primary research interest is Game Studies. Besides investigating how certain identities are represented in games, I am also interested in the form of narrative and the function of visual interface in video games.
+<br>  - In Communication and Technology (2023), I learned about the critical function of various technology in the field of communication, and led the group to design a video game prototype as the final project.
+<br>  - In Media and Society (2023), I learned about how media operates within and influence the society, and conducted research in video games through content analysis.
+<br>  - In Digital Games as Communication (2025), I learned about video games design and its cultural representation.
+<br><br>Apart from it, I am also interested in investigating the wider field of Media Studies.
+<br>  - In Communication and Culture (2024), I learned about cultural analysis through a sociological lens.
+<br>  - In Understanding Cultural Industries (2024), I learned about the operation of the creative industries.
+<br>  - In Reading Film and Television (2025), I learned about practical film-making techniques.
+<br><br>Language learning: English (IELTS 8.0); French (B1 Certificate); Japanese (equivalent to N3)
+  </p>
+
+
+    <h1 class="section-title"><b>Internship Experience</b></h1>
+  <p>
+    <br><b>Internship of operation of the official Chinese website of the Chengdu 2021 FISU World University Games (2023.6 ~ 2023.8)</b>
+<br>  - Internship at Department of Marketing & Interacting of Media Operation Centre in Chengdu International Communication Corporation, mainly responsible for operation of Chengdu 2021 FISU World University Games official Chinese (Simplified) website.
+<br>  - Participated in writing, editing, translation, & proofreading of related articles.
+<br>  - Participated in organizing domestic and international activities about FISU Games.
+<br>  - Participated in Public Relations activities through official websites.
+<br><br><b>Internship at New Media Department of Sichuan Boray Vista Media Co., Ltd (2025.7)</b>
+<br>  - Internship at Department of New Media in Sichuan Boray Vista Media (Sichuan Borui Yanjie Wenhua) Co., Ltd, mainly responsible for New Media & Business and related issues.
+<br>  - Participated in activities such as Xiaohongshu Culture & Tourism Sharing Activity, Chengdu, Sichuan.
+<br><br><b>Internship at Designing group of Centre of English Language Education, in University of Nottingham, Ningbo, China (2024.2 ~ 2024.8）</b>
+<br>  - Mainly responsible for design & operation of official WeChat accounts, organization & promotion of university activities of Centre of English Language Education (CELE) in the university.
+<br>  - In 2025.6, was responsible for the design of visual promotion material of UNNC Pre-sessional Programme as an outsourcing, individually designed key visuals, banners, road signs, canvas bags, student handbook, etc.
+<br><br><b>Internship at Designing group of Language Centre, in University of Nottingham, Ningbo, China (2023.3 ~ 2023.6)</b>
+<br>  - Mainly responsible for design & editing of the magazine Cosmos L&C Issue 9 released by Language Centre in the university.
+  </p>
+
+
+
+    <h1 class="section-title"><b>On-campus Experience</b></h1>
+  <p>
+<br>  - As a member of News Agency in the university, participated in making of university newspaper & magazine, organization & promotion of campus activities.
+<br>  - As a volunteer of 2023 UNNC EAP/ESP Conference in 2023.5.
+
+  </p>
+
+
+
+<h1 class="section-title"><b>Skills</b></h1>
+  <p>
+<br>  - Office software: MS Word, MS PowerPoint, MS Excel
+<br>  - Image & Design & Layout: Adobe Photoshop, Illustrator, InDesign, Affinity (sets), Xiumi
+<br>  - Video Editing: Premiere Pro, DaVinci Resolve, Jianying
+<br>  - Language: English CET 6 (617) & IELTS 8, French DELF B1 (Certificate obtained), basic Japanese reading & writing (equivalent to Level N3).
+  </p>
+
+  
+  
+  
+  <p>
+    <a href="https://x-x1n.github.io/xxx" style="color: #ff9900; text-decoration: underline;">Go back to the portfolio</a>
+  </p>
+
+</div>
+
+</body>
+</html>
