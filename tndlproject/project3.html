@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV_XY - TMDL PROJECT</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #DFFE78;
+            --beige: #F5F5DC;
+            --text-color: #111;
+            --bg-white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            font-family: "ITC Avant Garde Gothic", "Montserrat", sans-serif;
+            background: url('tndlproject/portback.png') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        /* --- 顶部导航栏 --- */
+        .top-nav {
+            width: 90%; max-width: 1200px; height: 60px; margin: 20px auto;
+            background-color: var(--beige); border-radius: 15px; display: grid;
+            grid-template-columns: 3fr 2fr 2fr 2fr; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .nav-item {
+            display: flex; align-items: center; justify-content: center; text-decoration: none;
+            color: #333; font-weight: 700; text-transform: uppercase; font-size: 0.8rem;
+            transition: background-color 0.4s ease;
+        }
+        .nav-item:hover { background-color: var(--accent); }
+
+        /* --- 主体部分 --- */
+        .blog-container {
+            width: 85%; max-width: 1100px; margin: 40px auto; padding: 50px;
+            background: var(--bg-white); border-radius: 18px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+            display: flex; gap: 50px; align-items: center;
+        }
+        .video-section { flex: 1; position: relative; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16 / 9; z-index: 2; border-radius: 8px; overflow: hidden; background: #000; }
+        .video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+        .video-shadow { position: absolute; top: 15px; left: 15px; width: 100%; height: 100%; background-color: var(--accent); z-index: 1; border-radius: 8px; }
+        .text-section { flex: 1; }
+        .text-section h2 { font-family: 'Playfair Display', serif; border-left: 8px solid var(--accent); padding-left: 15px; }
+
+        /* --- Soundmap --- */
+        .soundmap-section {
+            width: 85%; max-width: 1100px; margin: 40px auto; padding: 50px;
+            background: var(--bg-white); border-radius: 18px; text-align: center;
+        }
+        .map-building { fill: #e0e0e0; stroke: #fff; stroke-width: 2; transition: all 0.3s ease; cursor: pointer; }
+        .map-building:hover { fill: var(--accent); filter: drop-shadow(4px 4px 0px #111); transform: translate(-2px, -2px); }
+
+        /* --- 评论区 --- */
+        .comment-section { width: 85%; max-width: 1100px; margin: 40px auto; padding: 0 50px; }
+        .comment-card { background: #fff; border-radius: 18px; padding: 25px; margin-bottom: 25px; display: flex; gap: 20px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .avatar-container { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+        .avatar-img { width: 60px; height: 60px; position: relative; z-index: 2; object-fit: cover; }
+        .avatar-shadow { position: absolute; top: 6px; left: 6px; width: 60px; height: 60px; background-color: var(--accent); z-index: 1; }
+        .like-btn { position: absolute; right: 20px; bottom: 20px; background: none; border: none; cursor: pointer; font-size: 1.2rem; }
+
+        /* 音频播放器 */
+        .audio-player { display: flex; align-items: center; gap: 10px; background: #f4f4f4; padding: 8px 15px; border-radius: 30px; margin-top: 10px; width: fit-content; min-width: 220px; }
+        .play-pause-btn { background: var(--accent); border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; box-shadow: 2px 2px 0px #000; font-size: 10px; }
+        .progress-bg { flex: 1; height: 4px; background: #ccc; border-radius: 2px; position: relative; }
+        .progress-fill { width: 0%; height: 100%; background: var(--accent); position: absolute; }
+
+        /* 发送区 */
+        .input-area { display: flex; gap: 15px; margin-top: 40px; align-items: center; }
+        .comment-input { flex: 1; padding: 15px 25px; border-radius: 30px; border: none; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); outline: none; }
+        .submit-btn { background: var(--accent); color: #000; font-weight: 700; border: none; padding: 15px 30px; border-radius: 30px; cursor: pointer; }
+        .voice-btn { background: #fff; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; }
+
+        /* 弹窗 */
+        .toast { visibility: hidden; min-width: 200px; background-color: #333; color: var(--accent); text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 700; }
+        .toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        /* --- 底部 --- */
+        footer {
+            background-color: #000; color: var(--accent); padding: 30px 0; text-align: center;
+            font-weight: 100; letter-spacing: 2px; margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="https://www.bilibili.com" class="nav-item">Project Overview</a>
+        <a href="https://www.nottingham.edu.cn/en/index.aspx" class="nav-item">Product 1</a>
+        <a href="https://ak.hypergryph.com" class="nav-item">Product 2</a>
+        <a href="https://comic.hypergryph.com" class="nav-item">Product 3</a>
+    </nav>
+
+    <main>
+        <div class="blog-container">
+            <div class="video-section">
+                <div class="video-wrapper">
+                    <video src="tndlproject/video.mp4" controls></video>
+                </div>
+                <div class="video-shadow"></div>
+            </div>
+            <div class="text-section">
+                <h2>VISUAL EXPERIENCE</h2>
+                <p>Digital archive focusing on the architectural acoustics of UNNC. A study of silence and echoes.</p>
+            </div>
+        </div>
+
+        <div class="soundmap-section">
+            <h2 style="font-family: 'Playfair Display';">UNNC SOUNDMAP</h2>
+            <div class="map-container">
+                <svg viewBox="0 0 800 300" class="unnc-map">
+                    <rect class="map-building" x="350" y="50" width="100" height="60" onclick="playSound('Trent Building')"/>
+                    <rect class="map-building" x="150" y="150" width="80" height="80" onclick="playSound('Library')"/>
+                    <circle class="map-building" cx="600" cy="180" r="40" onclick="playSound('Gym')"/>
+                </svg>
+            </div>
+        </div>
+
+        <section class="comment-section">
+            <div class="comment-card">
+                <div class="avatar-container">
+                    <img class="avatar-img" src="//i1.hdslb.com/bfs/face/252f10c205455e3de13eef4addbdd24308531827.jpg@240w_240h_1c_1s_!web-avatar-nav.avif">
+                    <div class="avatar-shadow"></div>
+                </div>
+                <div class="comment-content">
+                    <span class="comment-user">Kal'tsit</span>
+                    <p>The Witness.</p>
+                </div>
+                <button class="like-btn" onclick="toggleLike(this)">⬆️</button>
+            </div>
+
+            <div class="comment-card">
+                <div class="avatar-container">
+                    <img class="avatar-img" src="https://i0.hdslb.com/bfs/new_dyn/0c357158c15968da73c7ce9a0e0f614287057284.jpg">
+                    <div class="avatar-shadow"></div>
+                </div>
+                <div class="comment-content">
+                    <span class="comment-user">Logos</span>
+                    <p>echoes of the legends</p>
+                    <div class="audio-player">
+                        <button class="play-pause-btn" onclick="toggleAudio(this)">▶</button>
+                        <div class="progress-bg"><div class="progress-fill"></div></div>
+                        <audio src="tndlproject/audio.mp3"></audio>
+                    </div>
+                </div>
+                <button class="like-btn" onclick="toggleLike(this)">⬆️</button>
+            </div>
+
+            <div class="input-area">
+                <button class="voice-btn" onclick="showToast('Your device does not support this function')">🎙️</button>
+                <input type="text" class="comment-input" placeholder="Comment here." id="commentInput">
+                <button class="submit-btn" onclick="showToast('Uploaded')">SUBMIT</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        TMDL PROJECT · © 2026 UNNC SOUNDMAP
+    </footer>
+
+    <div id="toast" class="toast">Uploaded</div>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "toast show";
+            setTimeout(() => { toast.className = "toast"; }, 3000);
+            if(message === 'Uploaded') document.getElementById('commentInput').value = "";
+        }
+        function toggleLike(btn) { btn.innerText = (btn.innerText === "⬆️") ? "👍" : "⬆️"; }
+        function playSound(area) { showToast("Playing ambient: " + area); }
+        function toggleAudio(btn) {
+            const player = btn.parentElement;
+            const audio = player.querySelector('audio');
+            const progress = player.querySelector('.progress-fill');
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = "II";
+                audio.ontimeupdate = () => { progress.style.width = (audio.currentTime / audio.duration * 100) + "%"; };
+            } else {
+                audio.pause();
+                btn.innerText = "▶";
+            }
+            audio.onended = () => { btn.innerText = "▶"; progress.style.width = "0%"; };
+        }
+    </script>
+</body>
+</html>
