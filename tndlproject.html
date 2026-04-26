@@ -19,7 +19,7 @@
         body {
             margin: 0;
             font-family: "ITC Avant Garde Gothic", "Montserrat", sans-serif;
-            background: url('tndlproject/portback.png') no-repeat center center fixed;
+            background: url('images/portback.png') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-color);
             line-height: 1.7;
@@ -55,14 +55,15 @@
             background: var(--bg-white); border-radius: 18px; text-align: center;
         }
         
-        #park:hover, #metro:hover, #sport:hover, #resi:hover, 
-        #food:hover, #teaching:hover, #leftbottom:hover, #lib:hover, #trent:hover {
-            fill: var(--accent); 
-            filter: drop-shadow(4px 4px 0px #000); 
-            transform: translate(-2px, -2px); 
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+        /* 鼠标悬停在地图内任何一个组或路径上时触发 */
+.unnc-map g:hover, 
+.unnc-map path:hover {
+    fill: var(--accent) !important;       /* 颜色变为你在 :root 定义的淡绿色 */
+    filter: drop-shadow(4px 4px 0px #000); /* 添加黑色阴影 */
+    transform: translate(-2px, -2px);    /* 向上向左偏移一点点，产生点击感 */
+    transition: all 0.3s ease;           /* 平滑过渡效果 */
+    cursor: pointer;                     /* 鼠标变为手型 */
+}
 
         .unnc-map { width: 100%; height: auto; max-width: 600px; }
 
