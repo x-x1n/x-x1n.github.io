@@ -3,400 +3,46 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/ico" href="images/favicon.ico">
-    <title>TMDL PROJECT</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-
+    <title>Xinyuan LI | PROJECT</title>
+    <link rel="icon" href="tndlproject/iiicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* 全局变量 */
-        :root {
-            --accent: #DFFE78;        /* 荧光绿 */
-            --beige: #F5F5DC;         /* 米色 */
-            --text-color: #111;
-            --bg-white: #ffffff;
-            --nav-height: 60px;
-        }
-
-        /* 全局样式 */
-        body {
-            margin: 0;
-            /* 优先使用 ITC Avant Garde，若无则使用 Montserrat */
-            font-family: "ITC Avant Garde Gothic", "Montserrat", sans-serif;
-            background: url('images/portback.png') no-repeat center center fixed;
-            background-size: cover;
-            color: var(--text-color);
-            line-height: 1.7;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* --- 顶部导航栏 --- */
-        .top-nav {
-            width: 90%;
-            max-width: 1200px;
-            height: var(--nav-height);
-            margin: 20px auto;
-            background-color: var(--beige);
-            border-radius: 15px;
-            display: grid;
-            /* 比例分配：Overview占1/3(3份)，其余各占2/9(2份)，总计9份 */
-            grid-template-columns: 3fr 2fr 2fr 2fr;
-            overflow: hidden; /* 确保子元素hover背景不溢出圆角 */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            color: #333;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            transition: background-color 0.4s ease;
-            border-right: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .nav-item:last-child { border-right: none; }
-
-        .nav-item:hover {
-            background-color: var(--accent);
-        }
-
-        /* --- 主体部分 --- */
-        .main-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            padding: 40px 0;
-        }
-
-        .blog-container {
-            width: 85%;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 50px;
-            background: var(--bg-white);
-            border-radius: 18px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-            
-            /* 左右排布布局 */
-            display: flex;
-            gap: 50px;
-            align-items: center;
-        }
-
-        /* 左侧视频区域 */
-        .video-section {
-            flex: 1;
-            position: relative;
-            z-index: 1;
-        }
-
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            z-index: 2;
-        }
-
-        .video-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 8px;
-            display: block;
-        }
-
-        /* 视频下的荧光绿阴影矩形 */
-        .video-shadow {
-            position: absolute;
-            top: 15px;    /* 向下偏移 */
-            left: 15px;   /* 向右偏移 */
-            width: 100%;
-            height: 100%;
-            background-color: var(--accent);
-            z-index: -1;
-            border-radius: 8px;
-        }
-
-        /* 右侧文字区域 */
-        .text-section {
-            flex: 1;
-        }
-
-        .text-section h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            border-left: 6px solid var(--accent);
-            padding-left: 15px;
-        }
-
-        /* --- 底部 --- */
-        footer {
-            background-color: #000;
-            color: var(--accent);
-            padding: 30px 0;
-            text-align: center;
-            font-weight: 100;
-            letter-spacing: 2px;
-            margin-top: 30px;
-        }
-
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .blog-container {
-                flex-direction: column;
-                padding: 20px;
-            }
-            .top-nav {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-            .nav-item { padding: 15px 0; border-right: none; border-bottom: 1px solid rgba(0,0,0,0.1); }
-        }
-      /* --- 评论区环节 --- */
-.comment-section {
-    width: 85%;
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 30px 50px;
-}
-
-.comment-card {
-    background: #fff;
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    display: flex;
-    gap: 25px;
-    position: relative;
-}
-
-/* 头像与阴影效果 */
-.avatar-container {
-    position: relative;
-    width: 60px;
-    height: 60px;
-    flex-shrink: 0;
-}
-
-.avatar-img {
-    width: 60px;
-    height: 60px;
-    background-color: #eee;
-    position: relative;
-    z-index: 2;
-    object-fit: cover;
-}
-
-.avatar-shadow {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 60px;
-    height: 60px;
-    background-color: var(--accent);
-    z-index: 1;
-}
-
-/* 评论内容 */
-.comment-content {
-    flex-grow: 1;
-    position: relative;
-}
-
-.comment-user {
-    font-weight: 700;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.comment-text {
-    font-weight: 400;
-    font-size: 1rem;
-    color: #444;
-}
-
-/* 点赞按钮 */
-.like-btn {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: transform 0.2s;
-}
-
-.like-btn:active {
-    transform: scale(1.3);
-}
-
-/* 发送评论区 */
-.input-area {
-    margin-top: 50px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.comment-input {
-    flex-grow: 1;
-    background: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: 15px 25px;
-    font-family: inherit;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    outline: none;
-}
-
-.comment-input::placeholder {
-    color: #aaa;
-}
-
-.submit-btn {
-    background-color: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 50px;
-    padding: 15px 35px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.submit-btn:hover {
-    opacity: 0.8;
-}
-
-/* 弹窗提示 */
-#toast {
-    visibility: hidden;
-    min-width: 150px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 8px;
-    padding: 16px;
-    position: fixed;
-    z-index: 100;
-    left: 50%;
-    bottom: 30px;
-    transform: translateX(-50%);
-}
-
-#toast.show {
-    visibility: visible;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        :root { --accent: #DFFE78; --beige: #F5F5DC; --text-color: #111; --bg-white: #ffffff; }
+        body { margin: 0; font-family: "Montserrat", sans-serif; background: url('tndlproject/bbbbg.png') no-repeat center center fixed; background-size: cover; color: var(--text-color); line-height: 1.7; }
+        .top-nav { width: 90%; max-width: 1200px; height: 60px; margin: 20px auto; background-color: var(--beige); border-radius: 15px; display: grid; grid-template-columns: 3fr 2fr 2fr 2fr; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .nav-item { display: flex; align-items: center; justify-content: center; text-decoration: none; color: #333; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; transition: background-color 0.4s ease; }
+        .nav-item:hover { background-color: var(--accent); }
+        .blog-container { width: 85%; max-width: 1100px; margin: 40px auto; padding: 50px; background: var(--bg-white); border-radius: 18px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12); display: flex; gap: 50px; align-items: center; }
+        .video-section { flex: 1; position: relative; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16 / 9; z-index: 2; border-radius: 8px; overflow: hidden; background: #000; }
+        .video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+        .video-shadow { position: absolute; top: 15px; left: 15px; width: 100%; height: 100%; background-color: var(--accent); z-index: 1; border-radius: 8px; }
+        .text-section { flex: 1; text-align: left; }
+        .text-section h2 { font-family: 'Playfair Display', serif; border-left: 8px solid var(--accent); padding-left: 15px; }
+        footer { background-color: #000; color: var(--accent); padding: 30px 0; text-align: center; font-weight: 100; letter-spacing: 2px; margin-top: 30px; }
     </style>
 </head>
 <body>
-
-        <nav class="top-nav">
+    <nav class="top-nav">
         <a href="https://x-x1n.github.io/tndlproject.html" class="nav-item">Project Overview</a>
         <a href="https://x-x1n.github.io/tndlproject/project1.html" class="nav-item">Product 1</a>
         <a href="https://x-x1n.github.io/tndlproject/project2.html" class="nav-item">Product 2</a>
         <a href="https://x-x1n.github.io/tndlproject/project3.html" class="nav-item">Product 3</a>
     </nav>
-
-    <main class="main-content">
+    <main>
         <div class="blog-container">
             <div class="video-section">
                 <div class="video-wrapper">
-                    <iframe src="//player.bilibili.com/player.html?bvid=BV1UeoSBaEYZ&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+                    <video src="tndlproject/video.mp4" controls></video>
                 </div>
                 <div class="video-shadow"></div>
             </div>
-
             <div class="text-section">
-                <h2>DESIGN CONCEPT</h2>
-                <p>Here is the main body of description.写点什么写点什么然后再写点什么，哦耶。</p>
-                <p>oh here is also for testing the font. omg so much work to do before may. there is still dt to revise. omg so tiring</p>
+                <h2>Video Project</h2>
+                <p>This is a video that collect & reconstruct everyday sounds in campus.<br>yeah.</p>
             </div>
         </div>
     </main>
-
-<section class="comment-section">
-    <div id="comments-list">
-        <div class="comment-card">
-            <div class="avatar-container">
-                <img class="avatar-img" src="//i1.hdslb.com/bfs/face/252f10c205455e3de13eef4addbdd24308531827.jpg@240w_240h_1c_1s_!web-avatar-nav.avif" alt="avatar">
-                <div class="avatar-shadow"></div>
-            </div>
-            <div class="comment-content">
-                <span class="comment-user">Kal'tsit</span>
-                <p class="comment-text">The Witness.</p>
-                <button class="like-btn" onclick="toggleLike(this)">⬆️</button>
-            </div>
-        </div>
-
-        <div class="comment-card">
-            <div class="avatar-container">
-                <img class="avatar-img" src="https://i0.hdslb.com/bfs/new_dyn/0c357158c15968da73c7ce9a0e0f614287057284.jpg" alt="avatar">
-                <div class="avatar-shadow"></div>
-            </div>
-            <div class="comment-content">
-                <span class="comment-user">Logos</span>
-                <p class="comment-text">echoes of the legends</p>
-                <button class="like-btn" onclick="toggleLike(this)">⬆️</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="input-area">
-        <input type="text" class="comment-input" placeholder="Comment here." id="commentInput">
-        <button class="submit-btn" onclick="handleUpload()">SUBMIT</button>
-    </div>
-</section>
-
-<div id="toast">Uploaded</div>
-  
-    <footer>
-        <div class="footer-content">
-            Xinyuan LI  |  20514181  |  hnyxl27@nottingham.edu.cn</br>This is the project for Transmedia Narratives and Digital Literacy (INCM3069 UNNC)
-        </div>
-    </footer>
-
+    <footer>Xinyuan LI 20514181  |  TNDL Project</footer>
 </body>
-
-<script>
-    // 点赞切换功能
-    function toggleLike(btn) {
-        if (btn.innerText === "⬆️") {
-            btn.innerText = "👍";
-        } else {
-            btn.innerText = "⬆️";
-        }
-    }
-
-    // 提交提示功能
-    function handleUpload() {
-        const input = document.getElementById('commentInput');
-        if(input.value.trim() !== "") {
-            const toast = document.getElementById("toast");
-            toast.className = "show";
-            
-            // 3秒后消失
-            setTimeout(function(){ 
-                toast.className = toast.className.replace("show", ""); 
-            }, 3000);
-            
-            // 清空输入框
-            input.value = "";
-        }
-    }
-</script>
-  
 </html>
