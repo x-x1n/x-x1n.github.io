@@ -51,10 +51,31 @@
             text-align: center;
         }
 
-        /* 评论区样式 (保留完整结构) */
-        .comments-section { padding: 40px; }
-        .comment-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .audio-player-mock { margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+         /* --- 评论区 --- */
+        .comment-section { width: 85%; max-width: 1100px; margin: 40px auto; padding: 0 50px; }
+        .comment-card { background: #fff; border-radius: 18px; padding: 25px; margin-bottom: 25px; display: flex; gap: 20px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .avatar-container { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+        .avatar-img { width: 60px; height: 60px; position: relative; z-index: 2; object-fit: cover; }
+        .avatar-shadow { position: absolute; top: 6px; left: 6px; width: 60px; height: 60px; background-color: var(--accent); z-index: 1; }
+        .like-btn { position: absolute; right: 20px; bottom: 20px; background: none; border: none; cursor: pointer; font-size: 1.2rem; }
+
+        /* 音频播放器 */
+        .audio-player { display: flex; align-items: center; gap: 10px; background: #f4f4f4; padding: 8px 15px; border-radius: 30px; margin-top: 10px; width: fit-content; min-width: 220px; }
+        .play-pause-btn { background: var(--accent); border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; box-shadow: 2px 2px 0px #000; font-size: 10px; }
+        .progress-bg { flex: 1; height: 4px; background: #ccc; border-radius: 2px; position: relative; }
+        .progress-fill { width: 0%; height: 100%; background: var(--accent); position: absolute; }
+
+        /* 发送区 */
+        .input-area { display: flex; gap: 15px; margin-top: 40px; align-items: center; }
+        .comment-input { flex: 1; padding: 15px 25px; border-radius: 30px; border: none; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); outline: none; }
+        .submit-btn { background: var(--accent); color: #000; font-weight: 700; border: none; padding: 15px 30px; border-radius: 30px; cursor: pointer; }
+        .voice-btn { background: #fff; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; }
+
+        /* 弹窗 */
+        .toast { visibility: hidden; min-width: 200px; background-color: #333; color: var(--accent); text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 700; }
+        .toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
         footer {
             background-color: #000; color: var(--accent); padding: 30px 0; text-align: center;
@@ -76,30 +97,115 @@
             <h2>VISUAL EXPERIENCE</h2>
             <p>Digital archive focusing on the architectural acoustics of UNNC. A study of silence and echoes.</p>
         </div>
-
-        <div class="box component-container">
-            <h3 style="color: #888; margin: 0;">Component Placeholder Area</h3>
-        </div>
-
-        <div class="box comments-section">
-            <h3 style="margin-top: 0;">Comments</h3>
-            
-            <div class="comment-item">
-                <strong>User A:</strong> Great project!
-                <div class="audio-player-mock">🔊 Audio feedback attached</div>
-            </div>
-            <div class="comment-item">
-                <strong>User B:</strong> Interesting acoustics.
-            </div>
-
-            <div id="comment-widget-area">
-                </div>
-        </div>
     </main>
+       
+
+ <section class="comment-section">
+            <div class="comment-card">
+                <div class="avatar-container">
+                    <img class="avatar-img" src="//i1.hdslb.com/bfs/face/252f10c205455e3de13eef4addbdd24308531827.jpg@240w_240h_1c_1s_!web-avatar-nav.avif">
+                    <div class="avatar-shadow"></div>
+                </div>
+                <div class="comment-content">
+                    <span class="comment-user">Kal'tsit</span>
+                    <p>The Witness.</p>
+                </div>
+                <button class="like-btn" onclick="toggleLike(this)">⬆️</button>
+            </div>
+
+            <div class="comment-card">
+                <div class="avatar-container">
+                    <img class="avatar-img" src="https://i0.hdslb.com/bfs/new_dyn/0c357158c15968da73c7ce9a0e0f614287057284.jpg">
+                    <div class="avatar-shadow"></div>
+                </div>
+                <div class="comment-content">
+                    <span class="comment-user">Logos</span>
+                    <p>echoes of the legends</p>
+                    <div class="audio-player">
+                        <button class="play-pause-btn" onclick="toggleAudio(this)">▶</button>
+                        <div class="progress-bg"><div class="progress-fill"></div></div>
+                        <audio src="tndlproject/audio.mp3"></audio>
+                    </div>
+                </div>
+                <button class="like-btn" onclick="toggleLike(this)">⬆️</button>
+            </div>
+
+            <div class="input-area">
+                <button class="voice-btn" onclick="showToast('Your device does not support this function')">🎙️</button>
+                <input type="text" class="comment-input" placeholder="Comment here." id="commentInput">
+                <button class="submit-btn" onclick="showToast('Uploaded')">SUBMIT</button>
+            </div>
+        </section>
+    
 
     <footer>
         Xinyuan LI 20514181  |  TNDL Project
     </footer>
 
+
+  <div id="toast" class="toast">Uploaded</div>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "toast show";
+            setTimeout(() => { toast.className = "toast"; }, 3000);
+            if(message === 'Uploaded') document.getElementById('commentInput').value = "";
+        }
+        function toggleLike(btn) { btn.innerText = (btn.innerText === "⬆️") ? "👍" : "⬆️"; }
+        function playSound(area) { showToast("Playing ambient: " + area); }
+        function toggleAudio(btn) {
+            const player = btn.parentElement;
+            const audio = player.querySelector('audio');
+            const progress = player.querySelector('.progress-fill');
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = "II";
+                audio.ontimeupdate = () => { progress.style.width = (audio.currentTime / audio.duration * 100) + "%"; };
+            } else {
+                audio.pause();
+                btn.innerText = "▶";
+            }
+            audio.onended = () => { btn.innerText = "▶"; progress.style.width = "0%"; };
+        }
+
+// 全局变量，用于存储当前正在播放的音频，避免声音重叠
+let currentAudio = null;
+
+function playSound(buildingName) {
+    // 1. 停止当前正在播放的声音
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+
+    // 2. 构造文件路径
+    // 注意：文件名必须与你在 onclick 中传入的名称完全一致（区分大小写）
+    const filePath = `tndlproject/${buildingName}.mp3`;
+
+    // 3. 创建并播放新音频
+    currentAudio = new Audio(filePath);
+    
+    // 播放并在控制台输出状态
+    currentAudio.play()
+        .then(() => {
+            showToast("Playing: " + buildingName);
+        })
+        .catch((error) => {
+            console.error("Audio playback failed:", error);
+            showToast("Error: Audio file not found");
+        });
+}
+
+        function updateInfo(name) {
+    const displayBox = document.getElementById('locationName');
+    displayBox.innerText = name;
+}
+        
+        
+    </script>
+
+    
 </body>
 </html>
