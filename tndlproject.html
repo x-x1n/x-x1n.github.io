@@ -9,6 +9,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
     <style>
+
+/* 设置普通文本链接的颜色 */
+/* :not(.nav-item) 确保导航栏链接不受影响 */
+a:not(.nav-item):link {
+    color: var(--accent); /* 点击前：荧光绿 */
+    text-decoration: underline; /* 通常文字链接会带下划线，若不需要可设为 none */
+}
+
+a:not(.nav-item):visited {
+    color: #FFC107; /* 点击后：橙黄色 */
+}
+
+/* 如果你希望鼠标悬停时也有反馈 */
+a:not(.nav-item):hover {
+    filter: brightness(1.2); /* 悬停时稍微变亮一点 */
+}
+
+        
         :root {
             --accent: #DFFE78;
             --beige: #F5F5DC;
