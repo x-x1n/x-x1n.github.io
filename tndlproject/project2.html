@@ -25,6 +25,87 @@
             line-height: 1.7;
         }
 
+        /* 地图背景 */
+        #map-container {
+            position: relative;
+            width: 100vw; height: 100vh;
+            background-image: url('YOUR_MAP_IMAGE.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* 轴线容器 */
+        #axis-wrapper {
+            position: relative;
+            width: 80%; height: 300px; /* 给垂直副节点预留高度 */
+            display: flex; align-items: center;
+        }
+
+        /* 横向轴线 */
+        .axis-line {
+            position: absolute; width: 100%; height: 2px;
+            background: rgba(0,0,0,0.1); top: 50%; transform: translateY(-50%);
+        }
+
+        /* 节点组容器 */
+        .node-group {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 2px;
+        }
+
+        /* 垂直连线 */
+        .vertical-line {
+            position: absolute; width: 1px; left: 50%;
+            top: 20%; bottom: 20%;
+            background: rgba(0,0,0,0.1);
+            transform: translateX(-50%);
+        }
+
+        /* 节点样式 (通用) */
+        .node {
+            position: absolute; width: 16px; height: 16px;
+            background: rgba(0, 0, 0, 0.2); border-radius: 50%;
+            left: 50%; transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+        /* 主节点位置在轴中心 */
+        .node.main { top: 50%; }
+        /* 副节点位置 */
+        .node.top { top: 20%; }
+        .node.bottom { top: 80%; }
+
+        /* 滑块 */
+        #dragger {
+            position: absolute; width: 36px; height: 36px;
+            background: #FF5722; border-radius: 50%;
+            left: 0%; top: 50%; /* 初始位置 */
+            transform: translate(-50%, -50%);
+            cursor: grab; z-index: 100;
+            box-shadow: 0 0 15px rgba(255,87,34,0.4);
+            transition: transform 0.1s ease;
+        }
+        #dragger:active { cursor: grabbing; }
+
+        /* 弹窗样式 */
+        .popup {
+            position: absolute; bottom: 30px; left: 50%;
+            transform: translateX(-50%); width: 180px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ddd; padding: 12px;
+            border-radius: 8px; display: none;
+            text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            pointer-events: auto; /* 允许点击弹窗内音频 */
+        }
+        .popup.active { display: block; animation: fadeIn 0.3s ease; }
+        .popup h3 { margin: 0 0 8px 0; font-size: 14px; }
+        .popup audio { width: 100%; height: 25px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, 5px); } to { opacity: 1; } }
+
+
+        
         /* 导航栏 */
         .top-nav {
             width: 90%; max-width: 1200px; height: 60px; margin: 20px auto;
@@ -98,6 +179,18 @@
             <p>OMG我真的做得完吗</p>
         </div>
     </main>
+
+
+    
+
+<div id="map-container">
+    <div id="axis-wrapper">
+        <div class="axis-line"></div>
+        <div id="nodes-container"></div>
+        <div id="dragger"></div>
+    </div>
+</div>
+
        
 
  <section class="comment-section">
@@ -146,6 +239,104 @@
   <div id="toast" class="toast">Uploaded</div>
 
     <script>
+
+ /**
+     * 模块化配置区：在此处增删节点
+     * x: 水平位置百分比 (0-100)
+     * title/desc/audio: 弹窗内容
+     */
+    const nodeData = [
+        { x: 0,   title: "A", desc: "a", audio: "AUDIO_A.mp3" },
+        { x: 30,  title: "B", desc: "b", audio: "AUDIO_B.mp3" },
+        { x: 65,  title: "C", desc: "c", audio: "AUDIO_C.mp3" },
+        { x: 100, title: "D", desc: "d", audio: "AUDIO_D.mp3" }
+    ];
+
+    const axisWrapper = document.getElementById('axis-wrapper');
+    const nodesContainer = document.getElementById('nodes-container');
+    const dragger = document.getElementById('dragger');
+    
+    // 存储所有可感应的点（包括主点和副点）
+    let activePoints = [];
+
+    // 初始化：渲染节点
+    function initNodes() {
+        nodeData.forEach((data, index) => {
+            const group = document.createElement('div');
+            group.className = 'node-group';
+            group.style.left = `${data.x}%`;
+
+            // HTML结构：垂直线 + 3个感应点
+            group.innerHTML = `
+                <div class="vertical-line"></div>
+                <div class="node top" id="n-${index}-t"></div>
+                <div class="node main" id="n-${index}-m"></div>
+                <div class="node bottom" id="n-${index}-b"></div>
+                <div class="popup" id="p-${index}">
+                    <h3>${data.title}</h3>
+                    <p style="font-size:11px; color:#666;">${data.desc}</p>
+                    <audio controls src="${data.audio}"></audio>
+                </div>
+            `;
+            nodesContainer.appendChild(group);
+
+            // 记录感应坐标 (y轴：20%为top, 50%为main, 80%为bottom)
+            const popup = document.getElementById(`p-${index}`);
+            activePoints.push({ x: data.x, y: 20, popup });
+            activePoints.push({ x: data.x, y: 50, popup });
+            activePoints.push({ x: data.x, y: 80, popup });
+        });
+    }
+
+    initNodes();
+
+    // 拖动逻辑
+    let isDragging = false;
+
+    dragger.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        let rect = axisWrapper.getBoundingClientRect();
+        
+        // 计算鼠标相对于容器的百分比位置
+        let xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        let yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+        // 边界限制
+        xPercent = Math.max(0, Math.min(100, xPercent));
+        yPercent = Math.max(0, Math.min(100, yPercent));
+
+        // 更新滑块位置
+        dragger.style.left = `${xPercent}%`;
+        dragger.style.top = `${yPercent}%`;
+
+        checkProximity(xPercent, yPercent);
+    });
+
+    function checkProximity(x, y) {
+        const xThreshold = 4; // 水平感应范围
+        const yThreshold = 8; // 垂直感应范围
+        let anyActive = false;
+
+        // 重置所有弹窗
+        document.querySelectorAll('.popup').forEach(p => p.classList.remove('active'));
+
+        activePoints.forEach(point => {
+            const dx = Math.abs(x - point.x);
+            const dy = Math.abs(y - point.y);
+
+            if (dx < xThreshold && dy < yThreshold) {
+                point.popup.classList.add('active');
+                anyActive = true;
+            }
+        });
+    }
+
+
+        
         function showToast(message) {
             const toast = document.getElementById("toast");
             toast.innerText = message;
