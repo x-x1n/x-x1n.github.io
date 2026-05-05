@@ -201,6 +201,30 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
+.audio-controls {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#playPauseBtn {
+    background: #000;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#playPauseBtn:hover {
+    background: var(--accent);
+    color: #000;
+}
+        
+
         footer {
             background-color: #000; color: var(--accent); padding: 30px 0; text-align: center;
             font-weight: 100; letter-spacing: 2px; margin-top: 30px;
@@ -223,32 +247,38 @@
         </div>
     </main>
 
+    
+<div class="audio-controls">
+    <button onclick="toggleGlobalAudio()" id="playPauseBtn">PAUSE / RESUME</button>
+</div>
+    
+
         <div class="map-container">
             <svg class="unnc-map" viewBox="0 0 504.11 484.59" xmlns="http://www.w3.org/2000/svg" 
                  onmouseout="updateInfo('....')">
                 <defs><style>.cls-1{fill:#fff;stroke:#231815;stroke-miterlimit:10}</style></defs>
                 <g id="图层_2" data-name="图层 2">
-                    <g id="park" onclick="playSound('Park')" onmouseover="updateInfo('Gardens')">
+                    <g id="park" onclick="playSound('TASCAM_0053S1_bird3')" onmouseover="updateInfo('Gardens')">
                         <path d="M179.73 150.18 194.67 167s6.51 3 9.57 1.87 20.64-17.19 20.64-17.19l-15.66-17.55s-5.74-2.75-8.23-1.79-21.26 17.84-21.26 17.84ZM157.33 170.09 174 188.67s3 2.68.94 7.47-19.54 19.34-19.54 19.34l-15.7-17.62s-4.78-3.06 0-10.53 17.63-17.24 17.63-17.24Z" class="cls-1"/>
                     </g>
-                    <path id="metro" onclick="playSound('Metro')" onmouseover="updateInfo('Xuefu Road Station')" d="M.5.5h33.19v18H.5z" class="cls-1"/>
-                    <g id="sport" onclick="playSound('Sport')" onmouseover="updateInfo('Sports Center')">
+                    <path id="metro" onclick="playSound('地铁报站')" onmouseover="updateInfo('Xuefu Road Station')" d="M.5.5h33.19v18H.5z" class="cls-1"/>
+                    <g id="sport" onclick="playSound('体育馆鸟叫')" onmouseover="updateInfo('Sports Center')">
                         <path d="m400.44 381.6 2.08-8a2 2 0 0 0-1.23-2.41l-2.2-.87a2 2 0 0 1-1.22-2.43l.53-2a2 2 0 0 1 2.48-1.45l13.95 3.56a2 2 0 0 1 1.48 2.47l-12.83 51.63a2 2 0 0 1-2.53 1.47l-14.08-4a2 2 0 0 1-1.4-2.54l.23-.78a2 2 0 0 1 2.09-1.47l4.19.28a2 2 0 0 0 2.15-1.7l2-11.69a2.05 2.05 0 0 0-1.17-2.2 2 2 0 0 0-2.32.45c-3.32 3.51-15 13.7-28.16-.31-14.69-15.65 2.89-27.48 5.49-28.85.54-.29 7-1.63 7.25-1.65 2.21-.23 11.9-1.8 19.54 13a2 2 0 0 0 3.68-.51ZM330.37 424.2s-24.76-1.28-28.59 17.36 17.1 29.36 17.1 29.36l54.9 12s25.78 8.19 28.34-18.36S384 437.73 384 437.73Z" class="cls-1"/>
                     </g>
-                    <g id="resi" onclick="playSound('Resi')" onmouseover="updateInfo('Residential Area')">
+                    <g id="resi" onclick="playSound('喷泉')" onmouseover="updateInfo('Residential Area')">
                         <path d="m402.34 320.8 22.76 4.85 2-6.13 7.15 1.28 1.78-9.71 10.73 2.17-7.15 29.49-5.87-2.8-2.3 11.48s-10.72 1.79-10.72 0 3.81-12 3.81-12l-3.53-7.77-.51 6-21.19-6ZM413.61 275.35l37.27 9.19h4.6l4.08-7.66-42.12-10.98zM361.52 262.33l37.79 9.25 1.53-9.25-42.17-11.75-3.28 4.34 3.28 2.3-1.49 2.55zM422.21 242.29l37.28 9.19h4.59l4.09-7.66-42.13-10.98zM370.12 229.27l37.79 9.25 1.53-9.25-42.17-11.75-3.27 4.35 3.27 2.29-1.49 2.56zM429.44 221.6c.51 0 41.1 10.22 41.1 10.22l6.26-25.28-36.51-9.45.12-1.66h-3.19l-.63 3.07-4-1-.64 2.68-2.55-.51-1.4 8.15 2.17-.26-.89 6.07 4.59.57-.89 3.32h-2.68ZM372.88 187.39l2.05-6.76s37.78 8.55 37.78 9.32a15.5 15.5 0 0 1-.76 2.93l5.23 1.28v3.44s2.43-.76 2.3 0-1.53 5-1.53 5h-1.54l-.38 2.17-7.27-1.53-.26 3.83-.77 5.24-4-.64v-2.07l-2.94-.12v1.4l-24-6.64L379.9 191l-2.8-.9-.26 2.81-3.19-.76.51-4ZM384.12 153.31c-.13-.51 2.29-9.58 2.29-9.58l7.15.9-1.91 7.4 28.59 7.4 3.83-17.23-27.89-7-1.59 7.66s-7.28-1.41-7.54-1.79 4.22-15.07 4.22-15.07L432 136.46v4.59l2.17.77-6.17 23.49-2.68-.77-1.15 3.58h-2.93l-.64 1.65-34.06-7.77.77-2.68-3.2-.64ZM434.16 87.05l-9.06 37.66s12.76 3.06 13.14 2.55S447.05 90 447.05 90ZM457.14 92.54l-18.38 75.19h3.7s-1.79 5.36-1.28 5.36a36 36 0 0 1 3.58.9l-.26 1.91 38.81 9.7 3.45-14.29L449.61 161l3.83-20.3 38.29 9.57 2.43-12.51-36.89-8.81 6-21.73 36.73 9.32s3.45-12 3.58-12.51-46.44-11.49-46.44-11.49Z" class="cls-1"/>
                     </g>
-                    <g id="food" onclick="playSound('Food')" onmouseover="updateInfo('Canteen')">
+                    <g id="food" onclick="playSound('食堂响铃')" onmouseover="updateInfo('Canteen')">
                         <path d="M228 48.31c.38-.77 5.55-2.11 5.55-2.11l1.92 4.4s12.64-7.46 31.21-2.2 25.91 6 25.91 6l2.24-8.23-2.24-1 .9-4.59-35.62-9.19s-13.79-.2-21.64 4S224 42 224 42ZM313.78 54.43l5.93 1.34 1.73-3.06 80 19.53.76-3.06 19 5-1.15 2.68-2.1-1-5.56 17.64-6.51-1.73s-5.36 17.24-18.95 11.3-6.13-22.21-6.13-22.21l-34.47-11.3-1.72 4.6 4.4 1.53s-5.55 10.91-18.19 12.45-14.94 0-14.94 0l.77-3.26L306.12 83Z" class="cls-1"/>
                     </g>
-                    <g id="teaching" onclick="playSound('Teaching')" onmouseover="updateInfo('Teaching Buildings')">
+                    <g id="teaching" onclick="playSound('TASCAM_0049S1_campusvibe_birdconver')" onmouseover="updateInfo('Teaching Buildings')">
                         <path d="m204.44 214 7.75 10.53-8.19 5.6 4.69 7.18 7.66-5 12 14.84-5.94 5.07-3.54-5.84-18.48 13.69 4.31 5.46-10.82 6-4.88-6.17v-1.72l-19.24-25.28 7.18-4.21 17.42 23.26 7.57-5.07-3.83-5.17 9.95-6.42s-3.73-5-4-5-9.19 7-9.19 7l-8-11.06-6.89 5-2.39-3.54ZM217.69 201.91l9.93 8.65 6.23-7.86 6.82 5.3-5.6 7.32L249 228.57l5.56-5.59L249 219l15.2-17.54 5.13 4.78 6.91-10.43-5.86-5.32-1.73-.13-23.8-21.41-4.8 6.91L262 195.22l-5.69 7.22-4.87-4.27-7.23 9.52s-4.69-4.15-4.67-4.44 7.79-8.71 7.79-8.71l-10.45-8.89 5.54-6.55-3.42-2.69ZM209.22 216.63c.29-.29 10.06-9.77 10.15-9.39s21.16 17.24 21.16 17.24-16.08 13.88-16.08 13.59-15.23-21.44-15.23-21.44ZM57.95 272.8l8.93 41.61 40.85-8.42-1.53-4.6 1.53-.76-3.57-16.86h-2.55l-3.07-19.65zM114.12 262.33c.25.76 4.08 13 4.08 13h1.8l9.45 25.79 11.76-4.66 3.2-.15 12.31-5.26 4.07-2 7.08-2.78 4.26-.72L156 246.4Z" class="cls-1"/>
                     </g>
-                    <g id="leftbottom" onclick="playSound('AreaB')" onmouseover="updateInfo('IEB & Auditorium')">
+                    <g id="leftbottom" onclick="playSound('TASCAM_0048S1_cafeshop')" onmouseover="updateInfo('IEB & Auditorium')">
                         <path d="M105.05 361.77s4 22.41 15.71 28.54 28.87 12.82 29.87 13.78c.72.7-2.11 21.45-2.11 21.45s-28.34-2.49-48.45-23.74-16.27-37.54-16.27-37.54ZM162.24 336.24l11 5.11 2.56-4 1.27.38s-1.27 31.15-8.68 36.64-13.29 13.83-13.29 13.83l-1.79-.77 2.3-5.36-12.49-4.34ZM217.27 323.86l-2.3-3.7 17.23-3.58 2.81-3.32s5 1.28 5 2.05 1.91 20.93 1.91 20.93 4.34-.64 3.71 2.68-2.3 3.32-5.11 3.2-2.68 7-2.68 7l-2 7.27s1.15 6 1.53 5.81 3.83-3.38 3.83-3.38l12-8 1.66 3.44-5 5.24s9.45 2.81 6.38 7.66-10 2.17-10-3.45-3.7.13-3.7.13l.13 3.95-2.43 1.89-5.1-5 2.55-1.28-4.47-10.34-4.08 2.05-12.14-5.46s-13.4-17.88-12.89-17.62 7-.38 7-.38Z" class="cls-1"/>
                     </g>
-                    <path id="lib" onclick="playSound('Library')" onmouseover="updateInfo('Library')" d="m253.27 155.35 14.8-31.4 1.28-13.54 6.38-1.53 7.41 10-1.79 7.85.77 2.17 2.55-1.66 3.32 1.66 5.87-10 5.87 2.49 10.27 14.3-7.15 6.38-3.07-.51.51 8.43 11.24 5.36-1.53 25.28s-6.13 2.8-6.13 2-6.64-16.34-6.64-16.34l-4.6 1 2.3 3.83-2.3 3.32Z" class="cls-1"/>
-                    <g id="trent" onclick="playSound('Trent')" onmouseover="updateInfo('Trent')">
+                    <path id="lib" onclick="playSound('lib')" onmouseover="updateInfo('Library')" d="m253.27 155.35 14.8-31.4 1.28-13.54 6.38-1.53 7.41 10-1.79 7.85.77 2.17 2.55-1.66 3.32 1.66 5.87-10 5.87 2.49 10.27 14.3-7.15 6.38-3.07-.51.51 8.43 11.24 5.36-1.53 25.28s-6.13 2.8-6.13 2-6.64-16.34-6.64-16.34l-4.6 1 2.3 3.83-2.3 3.32Z" class="cls-1"/>
+                    <g id="trent" onclick="playSound('TASCAM_0055S1_trentbell')" onmouseover="updateInfo('Trent')">
                         <path d="m102.88 177.31 33.45-43.41-3.83-4.85-10.21 9.45L110 124.71l23.49-24.25 12.8 13.54-8.43 6.89 6.64 6.89 40.34-29.1-4.34-5.62-26.5 15.57S137.86 91 137.1 91s-38.56 34.21-38.56 34.21l17.11 18.38-17.11 26.82Z" class="cls-1"/>
                         <path d="m142.71 87.82 18.64-17S174.63 84.24 174 84.63s-11.23 10.85-11.23 10.85l6.63 12.12-21.4 14.94 2.93 7.66s-4.08 3.7-4.34 3.06-9.32-11.36-9.32-11.36l6-5.74-11.49-11.24-18.81 16.81 12.3 11.61 6.26-5.82 9.06 11.36-6.18 4.12-7-4.22-18.78 17.72-7-5.11-10.49 11.36L77.1 149l19.53-18.51 1.91 2.29 3.32-3.06-3.32-4 7.47-7.25-1.21-3.22s7.4-6.76 7.27-7.14a22 22 0 0 0-1.53-2.3l7.15-5.36 1.53 2.17 5.62-6.62 2.81 3.06 9.57-9.32 3.19 3.32 4-3.06Z" class="cls-1"/>
                         <path d="m118.2 114.24 4.21 4.22 2.18-1.66 10.85 12.12s2.68-1.91 2.29-2.29-11-12.39-11-12.39l1.23-1.4-4.3-4Z" class="cls-1"/>
@@ -440,7 +470,7 @@
             audio.onended = () => { btn.innerText = "▶"; progress.style.width = "0%"; };
         }
 
-// 全局变量，用于存储当前正在播放的音频，避免声音重叠
+// 全局变量，用于存储当前播放的音频对象
 let currentAudio = null;
 
 function playSound(buildingName) {
@@ -450,27 +480,53 @@ function playSound(buildingName) {
         currentAudio.currentTime = 0;
     }
 
-    // 2. 构造文件路径
-    // 注意：文件名必须与你在 onclick 中传入的名称完全一致（区分大小写）
-    const filePath = `tndlproject/${buildingName}.mp3`;
+    // 2. 构造 GitHub Raw 文件路径
+    // 指向你的 repositoryforpics 仓库下的具体路径
+    const baseUrl = "https://raw.githubusercontent.com/x-x1n/repositoryforpics/main/coursework/transmediaaudiofiles/";
+    
+    // 使用 encodeURIComponent 处理中文文件名，防止因特殊字符导致加载失败
+    const filePath = `${baseUrl}${encodeURIComponent(buildingName)}.mp3`;
 
     // 3. 创建并播放新音频
     currentAudio = new Audio(filePath);
     
-    // 播放并在控制台输出状态
+    // 播放并在页面/控制台输出状态
     currentAudio.play()
         .then(() => {
-            showToast("Playing: " + buildingName);
+            // 如果你有定义 showToast 函数则会执行，否则请确保该函数存在
+            if (typeof showToast === "function") {
+                showToast("Playing: " + buildingName);
+            }
+            console.log("Now playing: " + buildingName);
         })
         .catch((error) => {
             console.error("Audio playback failed:", error);
-            showToast("Error: Audio file not found");
+            if (typeof showToast === "function") {
+                showToast("Error: Audio file not found on GitHub");
+            }
         });
 }
 
-        function updateInfo(name) {
+function updateInfo(name) {
     const displayBox = document.getElementById('locationName');
-    displayBox.innerText = name;
+    if (displayBox) {
+        displayBox.innerText = name;
+    }
+}
+
+function toggleGlobalAudio() {
+    if (!currentAudio) {
+        showToast("No audio playing");
+        return;
+    }
+
+    if (currentAudio.paused) {
+        currentAudio.play();
+        showToast("Resumed");
+    } else {
+        currentAudio.pause();
+        showToast("Paused");
+    }
 }
         
         
