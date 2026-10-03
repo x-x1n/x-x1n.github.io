@@ -1,8 +1,10 @@
+```html
 <!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff">
   <title>自习室</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,43 +13,42 @@
 
   <style>
     html {
+      width: 100%;
+      height: 100%;
+      margin: 0;
       font-family: "DotGothic16", monospace;
+      writing-mode: horizontal-tb;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    html,
     body {
       width: 100%;
       height: 100%;
       margin: 0;
-    }
-
-    body {
       overflow: hidden;
       background: #fff;
       color: #111;
       -webkit-text-size-adjust: 100%;
+      writing-mode: horizontal-tb;
+      text-orientation: mixed;
+      direction: ltr;
     }
 
     .screen {
       position: relative;
-      width: 100vw;
-      height: 100vh;
-      min-height: 100vh;
-      padding: 4vh 5vw;
+      width: 100%;
+      height: 100%;
+      padding: 24px 5%;
     }
 
     .screen.rotated {
       position: fixed;
       top: 50%;
       left: 50%;
-      width: 100vh;
-      height: 100vw;
       min-height: 0;
-      padding: 4vh 5vh;
       transform: translate(-50%, -50%) rotate(90deg);
     }
 
@@ -58,9 +59,8 @@
     }
 
     .time {
-      font-family: "Tiny5", monospace;
-      font-size: 18vw;
-      font-size: min(18vw, 13rem);
+      font-family: "Tiny5", "DotGothic16", monospace;
+      font-size: 112px;
       line-height: 0.95;
       letter-spacing: 0.015em;
       font-variant-numeric: tabular-nums;
@@ -69,7 +69,7 @@
     .details {
       display: block;
       margin-top: 0.8em;
-      font-size: 2.4vw;
+      font-size: 22px;
       line-height: 1.45;
     }
 
@@ -79,8 +79,8 @@
 
     .note {
       position: absolute;
-      width: 30vw;
-      height: 15vh;
+      width: 30%;
+      height: 15%;
       resize: none;
       border: 0;
       border-radius: 0;
@@ -89,6 +89,7 @@
       background: transparent;
       color: #111;
       font: inherit;
+      writing-mode: horizontal-tb;
     }
 
     /* テキストボックス 1：画面中央 */
@@ -116,8 +117,8 @@
     }
 
     .sticky-button {
-      width: 5vw;
-      height: 9vw;
+      width: 64px;
+      height: 76px;
       min-width: 36px;
       min-height: 54px;
       padding: 0;
@@ -128,20 +129,15 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .sticky-button:focus-visible {
-      outline: 2px solid #555;
-      outline-offset: -3px;
-    }
-
     .edit-dialog {
       display: none;
       position: fixed;
       z-index: 10;
       top: 50%;
       left: 50%;
-      width: 86vw;
+      width: 86%;
       max-width: 38rem;
-      max-height: 80vh;
+      max-height: 80%;
       overflow: auto;
       transform: translate(-50%, -50%);
       padding: 1rem;
@@ -176,6 +172,7 @@
     }
 
     .edit-fields textarea {
+      display: block;
       width: 100%;
       min-height: 6rem;
       margin-bottom: 0.8rem;
@@ -199,14 +196,18 @@
       font: inherit;
     }
 
-    @media (orientation: portrait) {
+    @media (max-width: 700px) {
       .time {
-        font-size: 20vw;
+        font-size: 76px;
+      }
+
+      .details {
+        font-size: 18px;
       }
 
       .note {
-        width: 38vw;
-        height: 13vh;
+        width: 38%;
+        height: 13%;
       }
     }
   </style>
@@ -267,6 +268,28 @@
     var editDialog = document.getElementById('editDialog');
     var dialogShade = document.getElementById('dialogShade');
 
+    function fitScreen() {
+      var width = window.innerWidth ||
+        document.documentElement.clientWidth ||
+        document.body.clientWidth;
+      var height = window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight;
+
+      if (height > width) {
+        screenEl.className = 'screen rotated';
+        screenEl.style.width = height + 'px';
+        screenEl.style.height = width + 'px';
+      } else {
+        screenEl.className = 'screen';
+        screenEl.style.width = '100%';
+        screenEl.style.height = '100%';
+      }
+    }
+
+    fitScreen();
+    window.onresize = fitScreen;
+
     function toggleRotated() {
       if ((' ' + screenEl.className + ' ').indexOf(' rotated ') >= 0) {
         screenEl.className = screenEl.className.replace(' rotated', '');
@@ -302,6 +325,7 @@
           editors[index].onkeyup = editors[index].oninput = function () {
             frontNotes[index].value = editors[index].value;
           };
+
           frontNotes[index].onkeyup = frontNotes[index].oninput = function () {
             editors[index].value = frontNotes[index].value;
           };
@@ -382,3 +406,4 @@
   </script>
 </body>
 </html>
+```
