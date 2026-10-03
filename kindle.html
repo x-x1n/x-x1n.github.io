@@ -2,70 +2,108 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fff">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>自习室</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Tiny5&display=swap" rel="stylesheet">
+
   <style>
-    :root { color-scheme: light; font-family: "DotGothic16", monospace; }
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; }
+    html {
+      font-family: "DotGothic16", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
     body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
       background: #fff;
       color: #111;
-      overflow: hidden;
       -webkit-text-size-adjust: 100%;
     }
+
     .screen {
       position: relative;
       width: 100vw;
-      height: 100dvh;
+      height: 100vh;
       min-height: 100vh;
-      padding: max(4vw, env(safe-area-inset-top)) max(5vw, env(safe-area-inset-right)) max(4vw, env(safe-area-inset-bottom)) max(5vw, env(safe-area-inset-left));
+      padding: 4vh 5vw;
     }
+
     .screen.rotated {
       position: fixed;
       top: 50%;
       left: 50%;
-      width: 100dvh;
+      width: 100vh;
       height: 100vw;
       min-height: 0;
       padding: 4vh 5vh;
       transform: translate(-50%, -50%) rotate(90deg);
     }
-    .info { position: absolute; top: 5%; left: 5%; }
+
+    .info {
+      position: absolute;
+      top: 5%;
+      left: 5%;
+    }
+
     .time {
-      font-size: clamp(4.5rem, 18vw, 13rem);
-      line-height: .95;
-      letter-spacing: .015em;
+      font-family: "Tiny5", monospace;
+      font-size: 18vw;
+      font-size: min(18vw, 13rem);
+      line-height: 0.95;
+      letter-spacing: 0.015em;
       font-variant-numeric: tabular-nums;
     }
+
     .details {
-      display: grid;
-      gap: .25em;
-      margin-top: .8em;
-      font-size: clamp(1rem, 2.4vw, 1.8rem);
+      display: block;
+      margin-top: 0.8em;
+      font-size: 2.4vw;
       line-height: 1.45;
     }
+
+    .details div {
+      margin-bottom: 0.25em;
+    }
+
     .note {
       position: absolute;
-      width: min(30vw, 28rem);
-      height: min(15vh, 8rem);
+      width: 30vw;
+      height: 15vh;
       resize: none;
       border: 0;
       border-radius: 0;
+      outline: none;
+      padding: 0.5rem;
       background: transparent;
       color: #111;
       font: inherit;
-      padding: .5rem;
-      outline: none;
     }
+
     /* テキストボックス 1：画面中央 */
-    .note-center { left: 50%; top: 50%; transform: translate(-50%, -50%); }
+    .note-center {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
     /* テキストボックス 2：画面右下 */
-    .note-corner { right: 5%; bottom: 5%; }
+    .note-corner {
+      right: 5%;
+      bottom: 5%;
+    }
+
     .side-actions {
       position: fixed;
       z-index: 5;
@@ -73,57 +111,107 @@
       right: 0;
       display: flex;
       flex-direction: column;
-      gap: .55rem;
+      gap: 0.55rem;
       transform: translateY(-50%);
     }
+
     .sticky-button {
-      width: clamp(2.5rem, 5vw, 4rem);
-      height: clamp(3.5rem, 9vw, 6rem);
+      width: 5vw;
+      height: 9vw;
+      min-width: 36px;
+      min-height: 54px;
       padding: 0;
       border: 0;
-      border-radius: .5rem 0 0 .5rem;
+      border-radius: 0.5rem 0 0 0.5rem;
       background: #E8F3FE;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
-    .sticky-button:focus-visible { outline: 2px solid #555; outline-offset: -3px; }
+
+    .sticky-button:focus-visible {
+      outline: 2px solid #555;
+      outline-offset: -3px;
+    }
+
     .edit-dialog {
-      width: min(90vw, 38rem);
+      display: none;
+      position: fixed;
+      z-index: 10;
+      top: 50%;
+      left: 50%;
+      width: 86vw;
+      max-width: 38rem;
+      max-height: 80vh;
+      overflow: auto;
+      transform: translate(-50%, -50%);
       padding: 1rem;
       border: 1px solid #888;
       background: #fff;
       color: #111;
       font: inherit;
     }
-    .edit-dialog::backdrop { background: rgb(0 0 0 / 35%); }
-    .edit-fields { display: grid; gap: .8rem; }
+
+    .edit-dialog.open {
+      display: block;
+    }
+
+    .dialog-shade {
+      display: none;
+      position: fixed;
+      z-index: 9;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: #888;
+      opacity: 0.45;
+    }
+
+    .dialog-shade.open {
+      display: block;
+    }
+
+    .edit-fields {
+      display: block;
+    }
+
     .edit-fields textarea {
       width: 100%;
       min-height: 6rem;
+      margin-bottom: 0.8rem;
       resize: vertical;
       border: 1px solid #aaa;
       border-radius: 0;
+      padding: 0.5rem;
       background: #fff;
       color: #111;
       font: inherit;
-      padding: .5rem;
     }
+
     .dialog-close {
       display: block;
-      margin: .8rem 0 0 auto;
-      padding: .35rem .8rem;
+      margin: 0.8rem 0 0 auto;
+      padding: 0.35rem 0.8rem;
       border: 1px solid #777;
       border-radius: 0;
       background: #fff;
       color: #111;
       font: inherit;
     }
+
     @media (orientation: portrait) {
-      .time { font-size: clamp(4rem, 20vw, 8rem); }
-      .note { width: 38vw; height: 13vh; }
+      .time {
+        font-size: 20vw;
+      }
+
+      .note {
+        width: 38vw;
+        height: 13vh;
+      }
     }
   </style>
 </head>
+
 <body>
   <main class="screen">
     <section class="info" aria-label="日時と香港島の天気">
@@ -136,73 +224,159 @@
 
     <!-- テキストボックス 1：画面中央。内容は空欄のまま。 -->
     <textarea class="note note-center" aria-label="中央のメモ" spellcheck="false"></textarea>
+
     <!-- テキストボックス 2：画面右下。内容は空欄のまま。 -->
     <textarea class="note note-corner" aria-label="右下のメモ" spellcheck="false"></textarea>
   </main>
+
   <nav class="side-actions" aria-label="ページ操作">
-    <button class="sticky-button" id="rotateButton" type="button" aria-label="画面を時計回りに90度回転"></button>
-    <button class="sticky-button" id="editButton" type="button" aria-label="メモ編集ウィンドウを開く"></button>
+    <button
+      class="sticky-button"
+      id="rotateButton"
+      type="button"
+      aria-label="画面を時計回りに90度回転">
+    </button>
+    <button
+      class="sticky-button"
+      id="editButton"
+      type="button"
+      aria-label="メモ編集ウィンドウを開く">
+    </button>
   </nav>
-  <dialog class="edit-dialog" id="editDialog" aria-label="メモを編集">
+
+  <div class="dialog-shade" id="dialogShade"></div>
+
+  <div class="edit-dialog" id="editDialog" role="dialog" aria-label="メモを編集">
     <div class="edit-fields">
       <textarea id="centerEditor" aria-label="中央のメモを編集" spellcheck="false"></textarea>
       <textarea id="cornerEditor" aria-label="右下のメモを編集" spellcheck="false"></textarea>
     </div>
     <button class="dialog-close" id="closeDialog" type="button">閉じる</button>
-  </dialog>
+  </div>
+
   <script>
-    const timeEl = document.getElementById('time');
-    const dateEl = document.getElementById('date');
-    const weatherEl = document.getElementById('weather');
-    const screenEl = document.querySelector('.screen');
-    const frontNotes = [...document.querySelectorAll('.note')];
-    const editors = [document.getElementById('centerEditor'), document.getElementById('cornerEditor')];
-    const editDialog = document.getElementById('editDialog');
-    document.getElementById('rotateButton').addEventListener('click', () => screenEl.classList.toggle('rotated'));
-    document.getElementById('editButton').addEventListener('click', () => {
-      editors.forEach((editor, i) => { editor.value = frontNotes[i].value; });
-      editDialog.showModal();
-    });
-    document.getElementById('closeDialog').addEventListener('click', () => editDialog.close());
-    editors.forEach((editor, i) => editor.addEventListener('input', () => { frontNotes[i].value = editor.value; }));
-    frontNotes.forEach((note, i) => note.addEventListener('input', () => { editors[i].value = note.value; }));
-    editDialog.addEventListener('click', event => {
-      if (event.target === editDialog) editDialog.close();
-    });
-    const hk = 'Asia/Hong_Kong';
+    var timeEl = document.getElementById('time');
+    var dateEl = document.getElementById('date');
+    var weatherEl = document.getElementById('weather');
+    var screenEl = document.querySelector('.screen');
+    var frontNotes = document.querySelectorAll('.note');
+    var editors = [
+      document.getElementById('centerEditor'),
+      document.getElementById('cornerEditor')
+    ];
+    var editDialog = document.getElementById('editDialog');
+    var dialogShade = document.getElementById('dialogShade');
+
+    function toggleRotated() {
+      if ((' ' + screenEl.className + ' ').indexOf(' rotated ') >= 0) {
+        screenEl.className = screenEl.className.replace(' rotated', '');
+      } else {
+        screenEl.className += ' rotated';
+      }
+    }
+
+    document.getElementById('rotateButton').onclick = toggleRotated;
+
+    function openEditor() {
+      var i;
+      for (i = 0; i < editors.length; i++) {
+        editors[i].value = frontNotes[i].value;
+      }
+      editDialog.className += ' open';
+      dialogShade.className += ' open';
+    }
+
+    function closeEditor() {
+      editDialog.className = editDialog.className.replace(' open', '');
+      dialogShade.className = dialogShade.className.replace(' open', '');
+    }
+
+    document.getElementById('editButton').onclick = openEditor;
+    document.getElementById('closeDialog').onclick = closeEditor;
+    dialogShade.onclick = closeEditor;
+
+    (function () {
+      var i;
+      for (i = 0; i < editors.length; i++) {
+        (function (index) {
+          editors[index].onkeyup = editors[index].oninput = function () {
+            frontNotes[index].value = editors[index].value;
+          };
+          frontNotes[index].onkeyup = frontNotes[index].oninput = function () {
+            editors[index].value = frontNotes[index].value;
+          };
+        }(i));
+      }
+    }());
 
     function updateClock() {
-      const now = new Date();
-      timeEl.textContent = new Intl.DateTimeFormat('ja-JP', {
-        timeZone: hk, hour: '2-digit', minute: '2-digit', hour12: false
-      }).format(now);
-      dateEl.textContent = new Intl.DateTimeFormat('ja-JP', {
-        timeZone: hk, year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long'
-      }).format(now);
+      var now = new Date(new Date().getTime() + 8 * 60 * 60 * 1000);
+      var days = [
+        '日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'
+      ];
+      var hour = now.getUTCHours();
+      var minute = now.getUTCMinutes();
+      var month = now.getUTCMonth() + 1;
+      var day = now.getUTCDate();
+
+      timeEl.textContent =
+        (hour < 10 ? '0' : '') + hour + ':' +
+        (minute < 10 ? '0' : '') + minute;
+
+      dateEl.textContent =
+        now.getUTCFullYear() + '年' +
+        (month < 10 ? '0' : '') + month + '月' +
+        (day < 10 ? '0' : '') + day + '日（' +
+        days[now.getUTCDay()] + '）';
     }
+
     updateClock();
     setInterval(updateClock, 15000);
 
-    const weatherText = {
+    var weatherText = {
       0: '快晴', 1: '晴れ', 2: '一部曇り', 3: '曇り',
       45: '霧', 48: '霧', 51: '弱い霧雨', 53: '霧雨', 55: '強い霧雨',
       56: '弱い凍雨', 57: '凍雨', 61: '弱い雨', 63: '雨', 65: '強い雨',
       66: '弱い凍雨', 67: '凍雨', 71: '弱い雪', 73: '雪', 75: '強い雪',
       77: '霧雪', 80: 'にわか雨', 81: '雨', 82: '強いにわか雨',
-      85: 'にわか雪', 86: '強いにわか雪', 95: '雷雨', 96: '雹を伴う雷雨', 99: '強い雹を伴う雷雨'
+      85: 'にわか雪', 86: '強いにわか雪', 95: '雷雨',
+      96: '雹を伴う雷雨', 99: '強い雹を伴う雷雨'
     };
-    async function updateWeather() {
-      try {
-        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=22.27&longitude=114.16&current=temperature_2m,weather_code&timezone=Asia%2FHong_Kong');
-        if (!response.ok) throw new Error('weather unavailable');
-        const data = await response.json();
-        const current = data.current;
-        const condition = weatherText[current.weather_code] || '天気情報なし';
-        weatherEl.textContent = `香港島　${condition}　${Math.round(current.temperature_2m)}℃`;
-      } catch {
+
+    function updateWeather() {
+      var request = new XMLHttpRequest();
+
+      request.open(
+        'GET',
+        'https://api.open-meteo.com/v1/forecast?latitude=22.27&longitude=114.16&current=temperature_2m,weather_code&timezone=Asia%2FHong_Kong',
+        true
+      );
+
+      request.onreadystatechange = function () {
+        if (request.readyState === 4) {
+          if (request.status >= 200 && request.status < 300) {
+            try {
+              var current = JSON.parse(request.responseText).current;
+              var condition = weatherText[current.weather_code] || '天気情報なし';
+              weatherEl.textContent =
+                '香港島　' + condition + '　' +
+                Math.round(current.temperature_2m) + '℃';
+            } catch (e) {
+              weatherEl.textContent = '香港島　天気情報なし';
+            }
+          } else {
+            weatherEl.textContent = '香港島　天気情報なし';
+          }
+        }
+      };
+
+      request.onerror = function () {
         weatherEl.textContent = '香港島　天気情報なし';
-      }
+      };
+
+      request.send();
     }
+
     updateWeather();
     setInterval(updateWeather, 30 * 60 * 1000);
   </script>
