@@ -67,7 +67,7 @@ a:not(.nav-item):hover {
         .top-nav {
             width: 90%; max-width: 1200px; height: 60px; margin: 20px auto;
             background-color: var(--beige); border-radius: 15px; display: grid;
-            grid-template-columns: 3fr 2fr 2fr 2fr; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            grid-template-columns: 2.5fr 2fr 2fr 2fr 1.5fr; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         .nav-item {
             display: flex; align-items: center; justify-content: center; text-decoration: none;
@@ -75,6 +75,11 @@ a:not(.nav-item):hover {
             transition: background-color 0.4s ease;
         }
         .nav-item:hover { background-color: var(--accent); }
+
+        /* 语言切换按钮样式（与导航栏风格一致） */
+        .lang-btn {
+            background: none; border: none; cursor: pointer; font-family: inherit;
+        }
 
         /* --- 主体文本部分 --- */
         .blog-container {
@@ -122,6 +127,10 @@ a:not(.nav-item):hover {
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
+        /* --- 多语言默认状态：英文默认显示，中文默认隐藏 --- */
+        .lang-en { display: block; }
+        .lang-zh { display: none; }
+
         footer {
             background-color: #000; color: var(--accent); padding: 30px 0; text-align: center;
             font-weight: 100; letter-spacing: 2px; margin-top: 30px;
@@ -135,29 +144,76 @@ a:not(.nav-item):hover {
         <a href="https://x-x1n.github.io/tndlproject/project1.html" class="nav-item">Product 1</a>
         <a href="https://x-x1n.github.io/tndlproject/project2.html" class="nav-item">Product 2</a>
         <a href="https://x-x1n.github.io/tndlproject/project3.html" class="nav-item">Product 3</a>
+        <!-- 切换按钮：当前是英文，按钮显示提示文字切换到中文 -->
+        <button class="nav-item lang-btn" onclick="toggleLanguage()" id="langBtn">切换中文</button>
     </nav>
 
     <main>
         <div class="blog-container">
             <div class="text-section">
-                <h2>Echoes of Memories</h2>
-                <p>This is the overview & navigation site for the project <em>Echoes of Memories</em>.
-                <br><br>It is recommended to access the websites on your PC, as certain function may not work well on mobile phones. It also requires a network environment that can access Github (e.g., eduroam), otherwise the website may not be fully loaded.
-                <br><br>Each product of the project is distributed on different platforms (social media/webpage/physical booklet); However, for the convenience of viewing, they are all accessible under this web domain.
-                    Therefore, this project is still a <i>transmedia</i> one, rather than a <i>multimedia</i> one.
-                    <br><br>For the same reason (convenience for viewing), the navigation bar above will be displayed in every website. However, it should not be considered as a part of the product, and each product provides their own means to access other products.
-                <br><br><b>Note on AI & Copyright & Ethics</b>: the coding of this website has utilised AI tools. The rest part of the project (video/recorded sound/booklet design/soundmap SVG/etc.) does <b>not</b> contain AI work, and are all made/recorded by myself.
-                    <br>The background music of the video comes from <a href="https://www.youtube.com/watch?v=i_7bLbrbz-k">a Youtube video</a>. As this project is for nonprofit use in the field of education, it aligns with Youtube's <a href="https://support.google.com/youtube/answer/9783148#">Fair Use</a>
-                    of <a href="https://support.google.com/youtube/answer/2797466?hl=en#">Copyrights</a>, and thus the project should not be considered as an infringement of copyright.
-                    <br><b>The video product does not contain human actors/participants to be specifically filmed, and the locations filmed in the video are within the campus.
+                
+                <!-- ================= 英文版内容 (默认显示) ================= -->
+                <div class="lang-en">
+                    <h2>Echoes of Memories</h2>
+                    <p>This is the overview & navigation site for the project <em>Echoes of Memories</em>.
+                      <br><div style="border: 2px solid #DFFE78; padding: 15px; border-radius: 6px;">
+                        <small><b>Add-up Information for ICONIC</b>
+                      <br>This project was submitted as a coursework project for <em>INCM 3069 Transmedia Narratives and Digital Literacy</em>, 
+                        led by Prof Filippo Gilardi. The module and the coursework requirement provide a chance to explore the concept of transmedia narrative,
+                         as well as practical workshops on hardware & software.
+                      <br><br><b>More about this project...</b>
+                          <br><br><em>“Like prolonged echoes mingling in the distance / In a deep and tenebrous unity” (Correspondences, by Charles Baudelaire)</em>
+                          <br><br>This non-fictional project focuses on everyday sonic experience on UNNC campus. 
+                          Through a transmedia means of distributing different but cohesive products across separated platforms, 
+                          it aims to construct a world of collective memories of Year 4 graduating students and provide a hauntological experience. 
+                          With theoretical framework based on <b>hauntology</b> and Jenkins’s <b>transmedia studies</b>, 
+                          this project will explore how different products of this project organically collaborate across different platforms and form a cohesive transmedia experience.
+                      
+                      </small><br></div>
+                    <br><br>It is recommended to access the websites on your PC, as certain function may not work well on mobile phones. It also requires a network environment that can access Github (e.g., eduroam), otherwise the website may not be fully loaded.
+                    <br><br>Each product of the project is distributed on different platforms (social media/webpage/physical booklet); However, for the convenience of viewing, they are all accessible under this web domain.
+                        Therefore, this project is still a <i>transmedia</i> one, rather than a <i>multimedia</i> one.
+                        <br><br>For the same reason (convenience for viewing), the navigation bar above will be displayed in every website. However, it should not be considered as a part of the product, and each product provides their own means to access other products.
+                    <small><br><br><b>Note on AI & Copyright & Ethics</b>: the coding of this website has utilised AI tools. The rest part of the project (video/recorded sound/booklet design/soundmap SVG/etc.) does <b>not</b> contain AI work, and are all made/recorded by myself.
+                        <br>The background music of the video comes from <a href="https://www.youtube.com/watch?v=i_7bLbrbz-k">a Youtube video</a>. As this project is for nonprofit use in the field of education, it aligns with Youtube's <a href="https://support.google.com/youtube/answer/9783148#">Fair Use</a>
+                        of <a href="https://support.google.com/youtube/answer/2797466?hl=zh-CN#">Copyrights</a>, and thus the project should not be considered as an infringement of copyright.
+                        <br><b>The video product does not contain human actors/participants to be specifically filmed, and the locations filmed in the video are within the campus.</b></small>
+                    </p>
+                </div>
+
+                <!-- ================= 中文版内容 (默认隐藏) ================= -->
+                <div class="lang-zh">
+                    <h2>“拾影余音”</h2>
+                    <p>这里是项目“拾影余音”的概览与导航网站。
+                      <br><div style="border: 2px solid #DFFE78; padding: 15px; border-radius: 6px;">
+                        <small><b>ICONIC展特别追加说明</b>
+                      <br><s>ICONIC的各位大家好啊</s>本项目作为Prof Filippo Gilardi指导的 <em>INCM 3069 Transmedia Narratives and Digital Literacy</em> 课程的期末作业提交。<s>对于正在或即将纠结选课的朋友们，如果你想探索“跨媒体”的概念/做些东西出来/体验学校各种高科技设备设施，可以选来试试（反正还能换）（而且做好的话分还挺好看的）</s>
+                      <br><br><b>一些关于这个项目的东西...</b>
+                          <br><br><em>“宛如那遥远的余音 / 拾入深邃而幽暗的统一”</em>（《契合》，波德莱尔）
+                          <br><br>这个项目聚焦于UNNC校园中的日常声音体验。
+                          通过在不同平台上分发不同但具有凝聚力的产品这一跨媒体手段，
+                          旨在通过构建与解构大四毕业生的集体记忆，提供一种幽灵学（Hauntological）体验。
+                          以<b>幽灵学（Hauntology）</b>和詹姆斯的<b>跨媒体研究（Transmedia Studies）</b>为理论框架，
+                          本项目将探讨该项目的不同产品如何在不同平台上有机协作并形成连贯的跨媒体体验。
+                      
+                      </small><br></div>
+                    <br><br>建议在电脑（PC）上访问本网站，因为我没做手机适配（毕竟当时还有毕业论文诶）。同时，需要能够访问 Github 的网络环境（所以eduroam是没问题的），否则网站可能无法完整加载。
+                    <br><br>项目的每个产品都分布在不同的平台上（社交媒体/网页/实体小册子）；然而为了方便查看<s>为了交作业也是不想真的发出去</s>，它们都可以通过这个网站访问（感谢GitHub）。
+                        因此，本项目仍然是一个<i>跨媒体</i>项目，而不是一个<i>多媒体</i>项目。<s>（这里是提交作业时的安全声明，不用管）</s>
+                        <br><br>出于同样的原因（方便查看），上方的导航栏将显示在每个网站中。但是，它不应被视为产品的一部分，且每个产品都提供了各自访问其他产品的方式。
+                    <small><br><br><b>关于人工智能、版权与伦理的说明</b>：本html网页的代码使用了 AI 工具。项目的其余部分（视频/录制声音/小册子设计/声音地图 SVG 等）<b>不</b>包含 AI 工作，全部由本人独立制作/录制。
+                        <br>视频的背景音乐来自 <a href="https://www.youtube.com/watch?v=i_7bLbrbz-k">YouTube 视频</a><s>（其实灵感来源还有一个明日方舟的meme视频，搜索明日方舟meme，或BV1iwfJBfEUC，不过溯源回来还是这个视频，所以没问题，嗯。</s>。由于本项目用于教育领域的非营利用途，这符合 YouTube 关于<a href="https://support.google.com/youtube/answer/2797466?hl=zh-CN#">版权</a>的<a href="https://support.google.com/youtube/answer/9783148#">合理使用 (Fair Use)</a> 原则，因此本项目不应被视为侵权。
+                        <br><b>视频产品中不包含需要特别拍摄的人类演员/参与者，视频中拍摄的地点均在校园内。</b></small>
+                    </p>
+                </div>
+
             </div>
         </div>
-        
-       
     </main>
 
     <footer>
-        Xinyuan LI 20514181  |  TNDL Project  |  <a href="https://x-x1n.github.io/portfolio.html">Personal Portfolio Link</a>
+        <span class="lang-en">Xinyuan LI 20514181  |  TNDL Project  |  <a href="https://x-x1n.github.io/portfolio.html" onclick="return confirm('Are you sure to leave this page? For ICONIC Exhibition, it is recommended to stay on this site.')";>Personal Portfolio Link</a>  ｜  <a href="mailto:lxy_0037@163.com">Contact</a></span>
+        <span class="lang-zh">Xinyuan LI 20514181  |  TNDL 项目  |  <a href="https://x-x1n.github.io/portfolio.html" onclick="return confirm('确定离开此页面吗？对于 ICONIC 展览，建议留在此网站上。')";>个人作品集链接</a>  ｜  <a href="mailto:lxy_0037@163.com">邮箱</a></span>
     </footer>
 
     <div id="toast" class="toast">Uploaded</div>
@@ -190,6 +246,29 @@ a:not(.nav-item):hover {
         function updateInfo(name) {
             const displayBox = document.getElementById('locationName');
             displayBox.innerText = name;
+        }
+
+        /* --- 语言切换核心逻辑 --- */
+        let currentLang = 'en'; // 默认当前状态为英文
+
+        function toggleLanguage() {
+            const enElements = document.querySelectorAll('.lang-en');
+            const zhElements = document.querySelectorAll('.lang-zh');
+            const btn = document.getElementById('langBtn');
+
+            if (currentLang === 'en') {
+                // 切换到中文
+                enElements.forEach(el => el.style.display = 'none');
+                zhElements.forEach(el => el.style.display = 'block');
+                btn.textContent = 'English'; // 按钮变成提示可以切回英文
+                currentLang = 'zh';
+            } else {
+                // 切换到英文
+                zhElements.forEach(el => el.style.display = 'none');
+                enElements.forEach(el => el.style.display = 'block');
+                btn.textContent = '中文'; // 按钮变成提示可以切到中文
+                currentLang = 'en';
+            }
         }
     </script>
 </body>
