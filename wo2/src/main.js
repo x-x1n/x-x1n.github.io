@@ -45,7 +45,7 @@ const cameraDirection = new THREE.Vector3();
 const cameraTarget = new THREE.Vector3();
 const scatterUniform = { value: 0 };
 const scatterOriginUniform = { value: new THREE.Vector3() };
-const scatterRadiusUniform = { value: 0.62 };
+const scatterRadiusUniform = { value: 0.155 };
 
 const audioListener = new THREE.AudioListener();
 camera.add(audioListener);
@@ -72,14 +72,16 @@ let gestureGeneration = 0;
 let gestureLastSeen = 0;
 let lastGestureFrame = 0;
 let handFrameInFlight = false;
-const gestureState = { yawSpeed: 0, pitchSpeed: 0, moveForward: 0, pinching: false, lastPinchAt: 0 };
+const gestureState = { handDetected: false, yawSpeed: 0, pitchSpeed: 0, moveForward: 0, isPinching: false, lastPinchTriggerTime: 0 };
 let scatterStartedAt = 0;
 let scatterAnimating = false;
 const pressedKeys = new Set();
-const WALK_LIMITS = { minX: -0.65, maxX: 0.60, minY: -0.68, maxY: 0.75 };
+const WALK_LIMITS = { minX: -0.65, maxX: 0.60, minY: -0.68, maxY: 0.54 };
 const START_X = 0.404;
 const START_Y = 0.540;
-const EYE_HEIGHT = 1.6;
+const EYE_HEIGHT = 1.4;
+const VIEW_YAW_CENTER = Math.PI;
+const VIEW_YAW_LIMIT = 1.5;
 const INTRO_MS = 3800;
 const MOVE_SPEED = 0.82;
 const LOOK_SENSITIVITY = 0.0022;
@@ -335,7 +337,8 @@ async function startGestureMode() {
     gestureState.yawSpeed = 0;
     gestureState.pitchSpeed = 0;
     gestureState.moveForward = 0;
-    gestureState.pinching = false;
+    gestureState.handDetected = false;
+    gestureState.isPinching = false;
     setGestureButtons('关闭摄像头手势控制');
     commandStatus.textContent = '手掌位置控制环视；张开手掌前进，握拳停止；拇指食指捏合可交互。';
     if (!document.pointerLockElement && !debugOpen) {
@@ -360,7 +363,8 @@ function stopGestureMode(showStatus = true) {
   gestureState.yawSpeed = 0;
   gestureState.pitchSpeed = 0;
   gestureState.moveForward = 0;
-  gestureState.pinching = false;
+  gestureState.handDetected = false;
+  gestureState.isPinching = false;
   gestureLastSeen = 0;
   if (handTracker) {
     handTracker.close();
@@ -395,20 +399,19 @@ function recognizeHandFrame(time) {
 }
 
 function processHandResults(results) {
-  const now = performance.now();
-  gestureLastSeen = now;
-  const hand = results.multiHandLandmarks?.[0];
-  if (!hand) {
-    gestureState.yawSpeed *= 0.82;
-    gestureState.pitchSpeed *= 0.82;
-    gestureState.moveForward *= 0.82;
-    gestureState.pinching = false;
+  gestureLastSeen = performance.now();
+  const landmarks = results.multiHandLandmarks && results.multiHandLandmarks[0];
+  if (!landmarks) {
+    gestureState.handDetected = false;
+    gestureState.yawSpeed *= 0.85;
+    gestureState.pitchSpeed *= 0.85;
+    gestureState.moveForward *= 0.85;
     return;
   }
 
-  // 摄像头预览按镜像方向理解：掌心偏向画面左右/上下时，平滑地转动视角。
-  const palmX = 1 - hand[9].x;
-  const palmY = hand[9].y;
+  gestureState.handDetected = true;
+  const palmX = 1.0 - landmarks[9].x;
+  const palmY = landmarks[9].y;
   const deadzone = 0.14;
   const offsetX = palmX - 0.5;
   const offsetY = palmY - 0.5;
@@ -421,22 +424,31 @@ function processHandResults(results) {
   gestureState.yawSpeed += (targetYaw - gestureState.yawSpeed) * 0.18;
   gestureState.pitchSpeed += (targetPitch - gestureState.pitchSpeed) * 0.18;
 
-  const wrist = hand[0];
-  const tips = [hand[8], hand[12], hand[16], hand[20]];
-  const averageTipDistance = tips.reduce((sum, tip) => sum + Math.hypot(tip.x - wrist.x, tip.y - wrist.y), 0) / tips.length;
-  const targetForward = averageTipDistance > 0.34 ? 1 : 0;
-  gestureState.moveForward += (targetForward - gestureState.moveForward) * 0.15;
+  const thumbTip = landmarks[4];
+  const indexTip = landmarks[8];
+  const pinchDistance = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
+  const wrist = landmarks[0];
+  const fingerTips = [8, 12, 16, 20];
+  let averageSpread = 0;
+  fingerTips.forEach((index) => {
+    averageSpread += Math.hypot(landmarks[index].x - wrist.x, landmarks[index].y - wrist.y);
+  });
+  averageSpread /= fingerTips.length;
 
-  const pinchDistance = Math.hypot(hand[4].x - hand[8].x, hand[4].y - hand[8].y);
+  let targetForward = 0;
   if (pinchDistance < 0.055) {
-    if (!gestureState.pinching && now - gestureState.lastPinchAt > 800) {
-      gestureState.lastPinchAt = now;
+    const now = performance.now();
+    if (!gestureState.isPinching && now - gestureState.lastPinchTriggerTime > 800) {
+      gestureState.isPinching = true;
+      gestureState.lastPinchTriggerTime = now;
       interactAtCrosshair();
     }
-    gestureState.pinching = true;
   } else {
-    gestureState.pinching = false;
+    gestureState.isPinching = false;
+    if (averageSpread > 0.34) targetForward = 1.0;
+    else if (averageSpread < 0.21) targetForward = 0.0;
   }
+  gestureState.moveForward += (targetForward - gestureState.moveForward) * 0.15;
 }
 
 function interactAtCrosshair() {
@@ -543,7 +555,7 @@ window.addEventListener('blur', () => pressedKeys.clear());
 
 document.addEventListener('mousemove', (event) => {
   if (document.pointerLockElement !== renderer.domElement || debugOpen) return;
-  yaw += event.movementX * LOOK_SENSITIVITY;
+  yaw = THREE.MathUtils.clamp(yaw + event.movementX * LOOK_SENSITIVITY, VIEW_YAW_CENTER - VIEW_YAW_LIMIT, VIEW_YAW_CENTER + VIEW_YAW_LIMIT);
   pitch = THREE.MathUtils.clamp(pitch - event.movementY * LOOK_SENSITIVITY, -1.42, 1.42);
   updateCameraLook();
 });
@@ -587,7 +599,7 @@ function movePlayer(deltaSeconds) {
   const pointerLocked = document.pointerLockElement === renderer.domElement;
   if (!hasStarted || (!pointerLocked && !gestureFresh) || debugOpen) return;
   if (gestureFresh) {
-    yaw += gestureState.yawSpeed * deltaSeconds;
+    yaw = THREE.MathUtils.clamp(yaw + gestureState.yawSpeed * deltaSeconds, VIEW_YAW_CENTER - VIEW_YAW_LIMIT, VIEW_YAW_CENTER + VIEW_YAW_LIMIT);
     pitch = THREE.MathUtils.clamp(pitch + gestureState.pitchSpeed * deltaSeconds, -1.05, 1.05);
   }
   let forward = 0;
