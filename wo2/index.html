@@ -24,6 +24,10 @@
       <div class="coord-readout" id="coord-readout" hidden></div>
       <div class="error" id="error" hidden></div>
       <video id="gesture-video" autoplay muted playsinline hidden></video>
+      <aside class="gesture-widget" id="gesture-widget" aria-label="摄像头手势识别预览" hidden>
+        <div class="gesture-widget-heading"><span><i></i>手势视觉追踪</span><span id="gesture-state-tag">等待手部</span></div>
+        <div class="gesture-preview"><canvas id="gesture-canvas" width="240" height="180"></canvas></div>
+      </aside>
 
       <section class="entry-screen" id="entry-screen" hidden>
         <div class="entry-card">
@@ -44,7 +48,7 @@
           <label class="sr-only" for="command-input">输入指令</label>
           <div class="command-entry"><input id="command-input" type="text" placeholder="输入 /point 0.01 或 /coor on" autocomplete="off" spellcheck="false" /><button type="submit">执行</button></div>
           <button class="gesture-toggle gesture-toggle-debug" type="button">开启摄像头手势控制</button>
-          <p class="command-help">/point X　调整点大小<br />/coor on　开启准心坐标读取<br />/coor off　关闭坐标读取<br />/gesture on 或 /gesture off　手势控制<br />手掌位置：环顾上下左右；张掌：前进；握拳：停止；拇指食指捏合：交互</p>
+          <p class="command-help">/point X　调整点大小<br />/coor on　开启准心坐标读取<br />/coor off　关闭坐标读取<br />/gesture on 或 /gesture off　手势控制<br />/window　呼出或关闭右下角摄像头预览<br />手掌位置：环顾上下左右；张掌：前进；握拳：停止；拇指食指捏合：交互</p>
           <p id="command-status" class="command-status" aria-live="polite">按 Esc 关闭</p>
         </form>
       </section>

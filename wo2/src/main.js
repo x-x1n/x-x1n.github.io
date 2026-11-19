@@ -17,6 +17,10 @@ const commandStatus = document.querySelector('#command-status');
 const coordReadout = document.querySelector('#coord-readout');
 const crosshair = document.querySelector('#crosshair');
 const gestureVideo = document.querySelector('#gesture-video');
+const gestureCanvas = document.querySelector('#gesture-canvas');
+const gestureContext = gestureCanvas.getContext('2d');
+const gestureWidget = document.querySelector('#gesture-widget');
+const gestureStateTag = document.querySelector('#gesture-state-tag');
 const gestureButtons = [...document.querySelectorAll('.gesture-toggle')];
 
 const scene = new THREE.Scene();
@@ -53,6 +57,7 @@ const sound = new THREE.Audio(audioListener);
 const audioLoader = new THREE.AudioLoader();
 
 let roomCloud = null;
+let roomCollisionGrid = null;
 let interactiveModel = null;
 let coordinateMode = false;
 let debugOpen = false;
@@ -77,14 +82,21 @@ let scatterStartedAt = 0;
 let scatterAnimating = false;
 const pressedKeys = new Set();
 const WALK_LIMITS = { minX: -0.65, maxX: 0.60, minY: -0.68, maxY: 0.54 };
+const PLAYER_COLLISION_RADIUS = 0.16;
+const COLLISION_CELL_SIZE = 0.08;
 const START_X = 0.404;
 const START_Y = 0.540;
-const EYE_HEIGHT = 1.4;
+const EYE_HEIGHT = 1.3;
 const VIEW_YAW_CENTER = Math.PI;
 const VIEW_YAW_LIMIT = 1.5;
 const INTRO_MS = 3800;
 const MOVE_SPEED = 0.82;
 const LOOK_SENSITIVITY = 0.0022;
+const HAND_CONNECTIONS = [
+  [0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8],
+  [5, 9], [9, 10], [10, 11], [11, 12], [9, 13], [13, 14], [14, 15], [15, 16],
+  [13, 17], [17, 18], [18, 19], [19, 20], [0, 17],
+];
 
 function updateCameraLook() {
   const cosPitch = Math.cos(pitch);
@@ -117,6 +129,49 @@ function beginIntro() {
   updateCameraLook();
 }
 
+function buildRoomCollisionGrid(geometry) {
+  geometry.computeBoundingBox();
+  const box = geometry.boundingBox;
+  const columns = Math.ceil((box.max.x - box.min.x) / COLLISION_CELL_SIZE) + 1;
+  const rows = Math.ceil((box.max.y - box.min.y) / COLLISION_CELL_SIZE) + 1;
+  const occupied = new Uint8Array(columns * rows);
+  const positions = geometry.getAttribute('position');
+  const lowObstacleZ = floorZ + 0.2;
+  const highObstacleZ = floorZ + EYE_HEIGHT + 0.2;
+
+  for (let i = 0; i < positions.count; i += 1) {
+    const x = positions.getX(i);
+    const y = positions.getY(i);
+    const z = positions.getZ(i);
+    if (z <= lowObstacleZ || z >= highObstacleZ) continue;
+    const column = Math.floor((x - box.min.x) / COLLISION_CELL_SIZE);
+    const row = Math.floor((y - box.min.y) / COLLISION_CELL_SIZE);
+    if (column >= 0 && column < columns && row >= 0 && row < rows) {
+      occupied[row * columns + column] = 1;
+    }
+  }
+
+  roomCollisionGrid = { minX: box.min.x, minY: box.min.y, columns, rows, occupied };
+}
+
+function isRoomObstacleAt(x, y) {
+  if (!roomCollisionGrid) return false;
+  const { minX, minY, columns, rows, occupied } = roomCollisionGrid;
+  const column = Math.floor((x - minX) / COLLISION_CELL_SIZE);
+  const row = Math.floor((y - minY) / COLLISION_CELL_SIZE);
+  const padding = Math.ceil(PLAYER_COLLISION_RADIUS / COLLISION_CELL_SIZE);
+  for (let offsetY = -padding; offsetY <= padding; offsetY += 1) {
+    for (let offsetX = -padding; offsetX <= padding; offsetX += 1) {
+      if (Math.hypot(offsetX, offsetY) * COLLISION_CELL_SIZE > PLAYER_COLLISION_RADIUS + COLLISION_CELL_SIZE * 0.25) continue;
+      const testX = column + offsetX;
+      const testY = row + offsetY;
+      if (testX < 0 || testX >= columns || testY < 0 || testY >= rows) return true;
+      if (occupied[testY * columns + testX]) return true;
+    }
+  }
+  return false;
+}
+
 function loadRoomFrom(paths, index = 0) {
   if (index >= paths.length) {
     loading.hidden = true;
@@ -133,6 +188,7 @@ function loadRoomFrom(paths, index = 0) {
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
       geometry.translate(-center.x, -center.y, -center.z);
+      buildRoomCollisionGrid(geometry);
 
       const hasColors = geometry.hasAttribute('color');
       pointSize = Math.max(size.length() / 480, 0.003);
@@ -339,6 +395,7 @@ async function startGestureMode() {
     gestureState.moveForward = 0;
     gestureState.handDetected = false;
     gestureState.isPinching = false;
+    gestureStateTag.textContent = '等待手部';
     setGestureButtons('关闭摄像头手势控制');
     commandStatus.textContent = '手掌位置控制环视；张开手掌前进，握拳停止；拇指食指捏合可交互。';
     if (!document.pointerLockElement && !debugOpen) {
@@ -375,6 +432,8 @@ function stopGestureMode(showStatus = true) {
     gestureStream = null;
   }
   gestureVideo.srcObject = null;
+  gestureStateTag.textContent = '摄像头已关闭';
+  gestureContext.clearRect(0, 0, gestureCanvas.width, gestureCanvas.height);
   setGestureButtons('开启摄像头手势控制');
   if (showStatus) commandStatus.textContent = '摄像头手势控制已关闭。';
   if (hasStarted && !document.pointerLockElement && !debugOpen) showEntry(true);
@@ -383,6 +442,12 @@ function stopGestureMode(showStatus = true) {
 function toggleGestureMode() {
   if (gestureActive || gestureInitializing) stopGestureMode();
   else startGestureMode();
+}
+
+function toggleGestureWidget() {
+  gestureWidget.hidden = !gestureWidget.hidden;
+  if (!gestureActive && !gestureWidget.hidden) gestureStateTag.textContent = '摄像头未开启';
+  commandStatus.textContent = gestureWidget.hidden ? '摄像头预览窗口已关闭。' : '摄像头预览窗口已打开。';
 }
 
 function recognizeHandFrame(time) {
@@ -398,14 +463,43 @@ function recognizeHandFrame(time) {
   }).finally(() => { handFrameInFlight = false; });
 }
 
+function drawHandSkeleton(landmarks) {
+  gestureCanvas.width = 240;
+  gestureCanvas.height = 180;
+  gestureContext.clearRect(0, 0, 240, 180);
+  if (gestureVideo.readyState >= 2) {
+    gestureContext.globalAlpha = 0.32;
+    gestureContext.drawImage(gestureVideo, 0, 0, 240, 180);
+    gestureContext.globalAlpha = 1;
+  }
+  if (!landmarks) return;
+
+  gestureContext.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+  gestureContext.lineWidth = 2;
+  HAND_CONNECTIONS.forEach(([from, to]) => {
+    gestureContext.beginPath();
+    gestureContext.moveTo(landmarks[from].x * 240, landmarks[from].y * 180);
+    gestureContext.lineTo(landmarks[to].x * 240, landmarks[to].y * 180);
+    gestureContext.stroke();
+  });
+  landmarks.forEach((point, index) => {
+    gestureContext.beginPath();
+    gestureContext.arc(point.x * 240, point.y * 180, index === 4 || index === 8 ? 4.2 : 2.5, 0, Math.PI * 2);
+    gestureContext.fillStyle = index === 4 || index === 8 ? '#fbbf24' : '#e0f2fe';
+    gestureContext.fill();
+  });
+}
+
 function processHandResults(results) {
   gestureLastSeen = performance.now();
   const landmarks = results.multiHandLandmarks && results.multiHandLandmarks[0];
+  drawHandSkeleton(landmarks);
   if (!landmarks) {
     gestureState.handDetected = false;
     gestureState.yawSpeed *= 0.85;
     gestureState.pitchSpeed *= 0.85;
     gestureState.moveForward *= 0.85;
+    gestureStateTag.textContent = '未检测到手部';
     return;
   }
 
@@ -437,6 +531,7 @@ function processHandResults(results) {
 
   let targetForward = 0;
   if (pinchDistance < 0.055) {
+    gestureStateTag.textContent = '捏合触发';
     const now = performance.now();
     if (!gestureState.isPinching && now - gestureState.lastPinchTriggerTime > 800) {
       gestureState.isPinching = true;
@@ -445,8 +540,15 @@ function processHandResults(results) {
     }
   } else {
     gestureState.isPinching = false;
-    if (averageSpread > 0.34) targetForward = 1.0;
-    else if (averageSpread < 0.21) targetForward = 0.0;
+    if (averageSpread > 0.34) {
+      targetForward = 1.0;
+      gestureStateTag.textContent = '张掌前行';
+    } else if (averageSpread < 0.21) {
+      targetForward = 0.0;
+      gestureStateTag.textContent = '握拳驻足';
+    } else {
+      gestureStateTag.textContent = '悬停环顾';
+    }
   }
   gestureState.moveForward += (targetForward - gestureState.moveForward) * 0.15;
 }
@@ -516,8 +618,10 @@ commandForm.addEventListener('submit', (event) => {
     startGestureMode();
   } else if (/^\/gesture\s+off$/i.test(command)) {
     stopGestureMode();
+  } else if (/^\/window$/i.test(command)) {
+    toggleGestureWidget();
   } else {
-    commandStatus.textContent = '未识别命令。可用：/point X、/coor on、/coor off';
+    commandStatus.textContent = '未识别命令。可用：/point X、/coor on/off、/gesture on/off、/window';
   }
   commandInput.value = '';
   commandInput.focus();
@@ -621,8 +725,17 @@ function movePlayer(deltaSeconds) {
   const dx = (Math.sin(yaw) * forward + Math.cos(yaw) * strafe) * distance;
   const dy = (Math.cos(yaw) * forward - Math.sin(yaw) * strafe) * distance;
   // 将活动区域收在扫描房间的地面范围内，并留出墙边缓冲。
-  camera.position.x = THREE.MathUtils.clamp(camera.position.x + dx, WALK_LIMITS.minX, WALK_LIMITS.maxX);
-  camera.position.y = THREE.MathUtils.clamp(camera.position.y + dy, WALK_LIMITS.minY, WALK_LIMITS.maxY);
+  const currentX = camera.position.x;
+  const currentY = camera.position.y;
+  const nextX = THREE.MathUtils.clamp(currentX + dx, WALK_LIMITS.minX, WALK_LIMITS.maxX);
+  const nextY = THREE.MathUtils.clamp(currentY + dy, WALK_LIMITS.minY, WALK_LIMITS.maxY);
+  if (!isRoomObstacleAt(nextX, nextY)) {
+    camera.position.x = nextX;
+    camera.position.y = nextY;
+  } else {
+    if (!isRoomObstacleAt(nextX, currentY)) camera.position.x = nextX;
+    if (!isRoomObstacleAt(camera.position.x, nextY)) camera.position.y = nextY;
+  }
   if (gestureFresh) updateCameraLook();
 }
 
