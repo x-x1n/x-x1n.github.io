@@ -64,21 +64,15 @@ let yaw = Math.PI; // 朝向房间前墙（Y 轴负方向）。
 let pitch = 0;
 let floorZ = -1.364;
 let pointSize = 0.009;
-let gestureRecognizer = null;
+let handTracker = null;
 let gestureStream = null;
 let gestureActive = false;
 let gestureInitializing = false;
 let gestureGeneration = 0;
-let gestureTurn = 0;
-let gestureStrafe = 0;
-let gesturePitchActive = false;
-let gesturePitchNeutralY = 0.5;
-let gesturePitchBase = 0;
-let gesturePitchTarget = 0;
 let gestureLastSeen = 0;
 let lastGestureFrame = 0;
-const lastGestureByHand = { Left: 'None', Right: 'None' };
-let lastInteractionAt = 0;
+let handFrameInFlight = false;
+const gestureState = { yawSpeed: 0, pitchSpeed: 0, moveForward: 0, pinching: false, lastPinchAt: 0 };
 let scatterStartedAt = 0;
 let scatterAnimating = false;
 const pressedKeys = new Set();
@@ -320,30 +314,30 @@ async function startGestureMode() {
     gestureVideo.srcObject = gestureStream;
     await gestureVideo.play();
 
-    const { FilesetResolver, GestureRecognizer } = await import(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.mjs'
-    );
-    if (generation !== gestureGeneration) throw new Error('手势控制启动已取消。');
-    const vision = await FilesetResolver.forVisionTasks(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
-    );
-    if (generation !== gestureGeneration) throw new Error('手势控制启动已取消。');
-    const modelUrl =
-      'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/latest/gesture_recognizer.task';
-    gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
-      baseOptions: { modelAssetPath: modelUrl, delegate: 'CPU' },
-      runningMode: 'VIDEO',
-      numHands: 2,
-      cannedGesturesClassifierOptions: { maxResults: 1, scoreThreshold: 0.58 },
-    });
+    if (typeof Hands !== 'function') throw new Error('MediaPipe Hands 脚本未能载入，请检查网络后刷新页面。');
+    if (!handTracker) {
+      handTracker = new Hands({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
+      });
+      handTracker.setOptions({
+        maxNumHands: 1,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.65,
+        minTrackingConfidence: 0.6,
+      });
+      handTracker.onResults(processHandResults);
+    }
     if (generation !== gestureGeneration) throw new Error('手势控制启动已取消。');
 
     gestureActive = true;
     gestureLastSeen = 0;
-    lastGestureByHand.Left = 'None';
-    lastGestureByHand.Right = 'None';
+    lastGestureFrame = 0;
+    gestureState.yawSpeed = 0;
+    gestureState.pitchSpeed = 0;
+    gestureState.moveForward = 0;
+    gestureState.pinching = false;
     setGestureButtons('关闭摄像头手势控制');
-    commandStatus.textContent = '左手食指举起持续左转并上下调节视角，右手食指举起持续右转；左/右拇指分别侧移。握拳后张开交互。';
+    commandStatus.textContent = '手掌位置控制环视；张开手掌前进，握拳停止；拇指食指捏合可交互。';
     if (!document.pointerLockElement && !debugOpen) {
       hasStarted = true;
       entryScreen.hidden = true;
@@ -363,15 +357,14 @@ async function startGestureMode() {
 function stopGestureMode(showStatus = true) {
   gestureGeneration += 1;
   gestureActive = false;
-  gestureTurn = 0;
-  gestureStrafe = 0;
-  gesturePitchActive = false;
+  gestureState.yawSpeed = 0;
+  gestureState.pitchSpeed = 0;
+  gestureState.moveForward = 0;
+  gestureState.pinching = false;
   gestureLastSeen = 0;
-  lastGestureByHand.Left = 'None';
-  lastGestureByHand.Right = 'None';
-  if (gestureRecognizer) {
-    gestureRecognizer.close();
-    gestureRecognizer = null;
+  if (handTracker) {
+    handTracker.close();
+    handTracker = null;
   }
   if (gestureStream) {
     for (const track of gestureStream.getTracks()) track.stop();
@@ -389,73 +382,61 @@ function toggleGestureMode() {
 }
 
 function recognizeHandFrame(time) {
-  if (!gestureActive || debugOpen || !gestureRecognizer || gestureVideo.readyState < 2) return;
-  if (time - lastGestureFrame < 100 || gestureVideo.currentTime === recognizeHandFrame.lastVideoTime) return;
+  if (!gestureActive || debugOpen || !handTracker || gestureVideo.readyState < 2 || handFrameInFlight) return;
+  if (time - lastGestureFrame < 66 || gestureVideo.currentTime === recognizeHandFrame.lastVideoTime) return;
   recognizeHandFrame.lastVideoTime = gestureVideo.currentTime;
   lastGestureFrame = time;
-
-  let result;
-  try {
-    result = gestureRecognizer.recognizeForVideo(gestureVideo, time);
-  } catch (error) {
+  handFrameInFlight = true;
+  handTracker.send({ image: gestureVideo }).catch((error) => {
     console.error('MediaPipe 手势识别中断：', error);
     stopGestureMode(false);
     commandStatus.textContent = '手势识别中断，摄像头已关闭；可继续使用鼠标和 WASD。';
+  }).finally(() => { handFrameInFlight = false; });
+}
+
+function processHandResults(results) {
+  const now = performance.now();
+  gestureLastSeen = now;
+  const hand = results.multiHandLandmarks?.[0];
+  if (!hand) {
+    gestureState.yawSpeed *= 0.82;
+    gestureState.pitchSpeed *= 0.82;
+    gestureState.moveForward *= 0.82;
+    gestureState.pinching = false;
     return;
   }
 
-  const handsSeen = new Set();
-  let turn = 0;
-  let strafe = 0;
-  let pitchActiveThisFrame = false;
-  for (let i = 0; i < (result.landmarks?.length || 0); i += 1) {
-    const hand = result.landmarks[i];
-    const handSide = (result.handednesses?.[i]?.[0] || result.handedness?.[i]?.[0])?.categoryName;
-    if (!hand || !['Left', 'Right'].includes(handSide)) continue;
-    handsSeen.add(handSide);
+  // 摄像头预览按镜像方向理解：掌心偏向画面左右/上下时，平滑地转动视角。
+  const palmX = 1 - hand[9].x;
+  const palmY = hand[9].y;
+  const deadzone = 0.14;
+  const offsetX = palmX - 0.5;
+  const offsetY = palmY - 0.5;
+  const targetYaw = Math.abs(offsetX) > deadzone
+    ? -Math.sign(offsetX) * ((Math.abs(offsetX) - deadzone) / (0.5 - deadzone)) * 1.45
+    : 0;
+  const targetPitch = Math.abs(offsetY) > deadzone
+    ? -Math.sign(offsetY) * ((Math.abs(offsetY) - deadzone) / (0.5 - deadzone)) * 0.95
+    : 0;
+  gestureState.yawSpeed += (targetYaw - gestureState.yawSpeed) * 0.18;
+  gestureState.pitchSpeed += (targetPitch - gestureState.pitchSpeed) * 0.18;
 
-    const category = result.gestures?.[i]?.[0];
-    const name = category && category.score >= 0.58 ? category.categoryName : 'None';
-    const previousName = lastGestureByHand[handSide];
+  const wrist = hand[0];
+  const tips = [hand[8], hand[12], hand[16], hand[20]];
+  const averageTipDistance = tips.reduce((sum, tip) => sum + Math.hypot(tip.x - wrist.x, tip.y - wrist.y), 0) / tips.length;
+  const targetForward = averageTipDistance > 0.34 ? 1 : 0;
+  gestureState.moveForward += (targetForward - gestureState.moveForward) * 0.15;
 
-    if (name === 'Pointing_Up' && handSide === 'Right') turn += 1;
-    if (name === 'Pointing_Up' && handSide === 'Left') {
-      if (previousName !== 'Pointing_Up') {
-        gesturePitchNeutralY = (hand[0].y + hand[9].y) * 0.5;
-        gesturePitchBase = pitch;
-      }
-      const handCenterY = (hand[0].y + hand[9].y) * 0.5;
-      gesturePitchTarget = THREE.MathUtils.clamp(
-        gesturePitchBase + (gesturePitchNeutralY - handCenterY) * 3.2,
-        -1.25,
-        1.25
-      );
-      pitchActiveThisFrame = true;
-    }
-    if (name === 'Thumb_Up') strafe += handSide === 'Left' ? -1 : 1;
-
-    // 握拳后张开才触发，避免手掌一直张开时反复触发交互。
-    if (name === 'Open_Palm' && previousName === 'Closed_Fist' && time - lastInteractionAt > 700) {
-      lastInteractionAt = time;
+  const pinchDistance = Math.hypot(hand[4].x - hand[8].x, hand[4].y - hand[8].y);
+  if (pinchDistance < 0.055) {
+    if (!gestureState.pinching && now - gestureState.lastPinchAt > 800) {
+      gestureState.lastPinchAt = now;
       interactAtCrosshair();
     }
-    lastGestureByHand[handSide] = name;
+    gestureState.pinching = true;
+  } else {
+    gestureState.pinching = false;
   }
-
-  for (const handSide of ['Left', 'Right']) {
-    if (!handsSeen.has(handSide)) lastGestureByHand[handSide] = 'None';
-  }
-  gesturePitchActive = pitchActiveThisFrame;
-  if (handsSeen.size === 0) {
-    gestureTurn = 0;
-    gestureStrafe = 0;
-    gestureLastSeen = 0;
-    return;
-  }
-
-  gestureLastSeen = time;
-  gestureTurn = THREE.MathUtils.clamp(turn, -1, 1);
-  gestureStrafe = THREE.MathUtils.clamp(strafe, -1, 1);
 }
 
 function interactAtCrosshair() {
@@ -605,10 +586,9 @@ function movePlayer(deltaSeconds) {
   const gestureFresh = gestureActive && gestureLastSeen && performance.now() - gestureLastSeen < 350;
   const pointerLocked = document.pointerLockElement === renderer.domElement;
   if (!hasStarted || (!pointerLocked && !gestureFresh) || debugOpen) return;
-  if (gestureFresh) yaw += gestureTurn * 2.0 * deltaSeconds;
-  if (gestureFresh && gesturePitchActive) {
-    const pitchEase = 1 - Math.exp(-8 * deltaSeconds);
-    pitch = THREE.MathUtils.lerp(pitch, gesturePitchTarget, pitchEase);
+  if (gestureFresh) {
+    yaw += gestureState.yawSpeed * deltaSeconds;
+    pitch = THREE.MathUtils.clamp(pitch + gestureState.pitchSpeed * deltaSeconds, -1.05, 1.05);
   }
   let forward = 0;
   let strafe = 0;
@@ -616,17 +596,16 @@ function movePlayer(deltaSeconds) {
   if (pressedKeys.has('s')) forward -= 1;
   if (pressedKeys.has('d')) strafe += 1;
   if (pressedKeys.has('a')) strafe -= 1;
-  if (gestureFresh) strafe += gestureStrafe;
+  if (gestureFresh) forward += gestureState.moveForward * 0.85;
   if (forward === 0 && strafe === 0) {
-    if (gestureFresh && (gestureTurn !== 0 || gesturePitchActive)) updateCameraLook();
+    if (gestureFresh && (Math.abs(gestureState.yawSpeed) > 0.001 || Math.abs(gestureState.pitchSpeed) > 0.001)) updateCameraLook();
     return;
   }
 
   const length = Math.hypot(forward, strafe);
   forward /= length;
   strafe /= length;
-  const gestureMoving = gestureFresh && gestureStrafe !== 0;
-  const distance = MOVE_SPEED * deltaSeconds * (gestureMoving ? 1.35 : 1);
+  const distance = MOVE_SPEED * deltaSeconds;
   const dx = (Math.sin(yaw) * forward + Math.cos(yaw) * strafe) * distance;
   const dy = (Math.cos(yaw) * forward - Math.sin(yaw) * strafe) * distance;
   // 将活动区域收在扫描房间的地面范围内，并留出墙边缓冲。
