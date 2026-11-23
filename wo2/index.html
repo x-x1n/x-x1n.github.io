@@ -35,6 +35,8 @@
       <div class="crosshair" id="crosshair" aria-hidden="true"><span></span></div>
       <div class="room-label"><span class="live-dot"></span> ROOM / POINT CLOUD</div>
       <div class="help" id="help">鼠标环视 <span>·</span> 滚轮拉近/拉远 <span>·</span> 长按快速定位</div>
+      <button id="pause-toggle" class="pause-toggle" type="button">PAUSE <kbd>SPACE</kbd></button>
+      <canvas id="pause-particles" aria-label="粒子暂停菜单" hidden></canvas>
       <div class="coord-readout" id="coord-readout" hidden></div>
       <div class="error" id="error" hidden></div>
       <video id="gesture-video" autoplay muted playsinline hidden></video>
@@ -46,8 +48,9 @@
       <section class="entry-screen" id="entry-screen" hidden>
         <button class="info-button entry-info-button" type="button" aria-label="打开项目说明">i</button>
         <div class="entry-card">
-          <button id="enter-button" class="curve-action" type="button" aria-label="Resume"><svg viewBox="0 0 420 100"><defs><path id="pause-wave-0" d="M8 70 C95 10 150 18 220 50 S335 82 412 24"/></defs><text><textPath href="#pause-wave-0">CONTINUE</textPath></text></svg></button>
-          <button id="switch-mode-button" class="curve-action" type="button" aria-label="Switch interaction mode"><svg viewBox="0 0 420 100"><defs><path id="pause-wave-1" d="M8 72 C95 22 154 12 220 45 S338 88 412 32"/></defs><text><textPath href="#pause-wave-1">SWITCH CONTROL MODE</textPath></text></svg></button>
+          <button id="enter-button" class="pause-action" type="button" aria-label="Resume">CONTINUE</button>
+          <button id="return-start-button" class="pause-action" type="button" aria-label="Return to original position">RETURN TO START</button>
+          <button id="switch-mode-button" class="pause-action" type="button" aria-label="Switch interaction mode">SWITCH CONTROL MODE</button>
         </div>
       </section>
 

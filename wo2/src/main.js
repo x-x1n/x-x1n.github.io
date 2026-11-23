@@ -8,7 +8,11 @@ const loading = document.querySelector('#loading');
 const errorBox = document.querySelector('#error');
 const entryScreen = document.querySelector('#entry-screen');
 const enterButton = document.querySelector('#enter-button');
+const returnStartButton = document.querySelector('#return-start-button');
 const switchModeButton = document.querySelector('#switch-mode-button');
+const pauseToggle = document.querySelector('#pause-toggle');
+const pauseCanvas = document.querySelector('#pause-particles');
+const pauseContext = pauseCanvas.getContext('2d');
 const modeChoice = document.querySelector('#mode-choice');
 const debugBackdrop = document.querySelector('#debug-backdrop');
 const commandForm = document.querySelector('#command-form');
@@ -38,6 +42,12 @@ let gestureZoomTargetFov = 72;
 let gestureWidthSamples = [];
 let activeControlMode = 'mouse';
 let radialWheelAccumulator = 0;
+let pauseOpen = false;
+let pauseParticles = [];
+let pauseItems = [];
+let pauseAnimationFrame = 0;
+let pauseStartedAt = 0;
+let pausePointer = { x: -1000, y: -1000, active: false };
 let cameraFlight = null;
 
 function showInfo() { infoModal.hidden = false; }
@@ -207,10 +217,170 @@ function updateCameraLook() {
   camera.lookAt(cameraTarget);
 }
 
-function showEntry(resume = false) {
-  entryScreen.hidden = false;
-  crosshair.hidden = true;
+function resizePauseCanvas() {
+  pauseCanvas.width = window.innerWidth;
+  pauseCanvas.height = window.innerHeight;
 }
+
+function buildPauseParticles() {
+  resizePauseCanvas();
+  const width = pauseCanvas.width;
+  const height = pauseCanvas.height;
+  const offscreen = document.createElement('canvas');
+  offscreen.width = width;
+  offscreen.height = height;
+  const textCtx = offscreen.getContext('2d', { willReadFrequently: true });
+  const labels = ['RESUME', 'SYSTEM', 'DATABASE', 'EXIT'];
+  const fontSize = Math.max(27, Math.min(56, width * 0.052));
+  const gap = Math.min(92, height * 0.13);
+  const left = Math.max(40, width * 0.14);
+  const firstY = height / 2 - gap * 1.5;
+  const textParticles = [];
+  pauseItems = [];
+
+  labels.forEach((label, itemIndex) => {
+    textCtx.clearRect(0, 0, width, height);
+    textCtx.font = `600 ${fontSize}px "DM Mono", monospace`;
+    textCtx.textBaseline = 'middle';
+    textCtx.fillStyle = '#fff';
+    const y = firstY + itemIndex * gap;
+    textCtx.fillText(label, left, y);
+    const metrics = textCtx.measureText(label);
+    const bounds = { x: left - 18, y: y - fontSize * 0.9, width: metrics.width + 36, height: fontSize * 1.8 };
+    pauseItems.push({ label, ...bounds });
+    const image = textCtx.getImageData(Math.max(0, bounds.x), Math.max(0, bounds.y), Math.min(width, Math.ceil(bounds.width)), Math.min(height, Math.ceil(bounds.height)));
+    for (let py = 0; py < image.height; py += 4) {
+      for (let px = 0; px < image.width; px += 4) {
+        if (image.data[(py * image.width + px) * 4 + 3] > 100) {
+          textParticles.push({ x: Math.max(0, bounds.x) + px, y: Math.max(0, bounds.y) + py, itemIndex });
+        }
+      }
+    }
+  });
+
+  const particles = [];
+  const backgroundCount = Math.max(4000, Math.min(5600, Math.floor(width * height / 250)));
+  for (let i = 0; i < backgroundCount; i += 1) {
+    const x = Math.random() * width;
+    const band = i % 5;
+    const y = height * (0.12 + band * 0.18) + Math.sin(x * 0.006 + band * 1.7) * (22 + band * 5) + (Math.random() - 0.5) * 50;
+    particles.push({ tx: x, ty: y, itemIndex: -1, r: 0.7 + Math.random() * 1.8, delay: Math.random() * 1.1 });
+  }
+  textParticles.forEach((point) => particles.push({ tx: point.x, ty: point.y, itemIndex: point.itemIndex, r: 0.75 + Math.random() * 1.5, delay: Math.random() * 0.75 }));
+
+  pauseParticles = particles.map((particle) => ({
+    ...particle,
+    x: Math.random() * width,
+    y: -Math.random() * height * 1.5,
+    vx: (Math.random() - 0.5) * 18,
+    vy: Math.random() * 35,
+    alpha: 0.45 + Math.random() * 0.55,
+    phase: Math.random() * Math.PI * 2,
+  }));
+}
+
+function openParticlePause() {
+  if (pauseOpen) return;
+  pauseOpen = true;
+  pauseStartedAt = performance.now();
+  pauseCanvas.hidden = false;
+  pauseToggle.textContent = 'RESUME  SPACE';
+  entryScreen.hidden = true;
+  infoModal.hidden = true;
+  modeChoice.hidden = true;
+  radialMenu.hidden = true;
+  crosshair.hidden = true;
+  if (gestureActive) stopGestureMode(false);
+  if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
+  buildPauseParticles();
+  pauseAnimationFrame = requestAnimationFrame(animatePauseParticles);
+}
+
+function closeParticlePause(action = 'resume') {
+  if (!pauseOpen) return;
+  pauseOpen = false;
+  cancelAnimationFrame(pauseAnimationFrame);
+  pauseCanvas.hidden = true;
+  pauseToggle.textContent = 'PAUSE  SPACE';
+  if (action === 'system') {
+    showModeChoice();
+    return;
+  }
+  if (action === 'database') {
+    coordinateMode = !coordinateMode;
+    coordReadout.hidden = !coordinateMode;
+  }
+  if (action === 'exit') locateStart();
+  if (activeControlMode === 'gesture') chooseGestureMode();
+  else requestPointerLock();
+}
+
+function animatePauseParticles(now) {
+  if (!pauseOpen) return;
+  const width = pauseCanvas.width;
+  const height = pauseCanvas.height;
+  const dt = Math.min(0.033, Math.max(0.001, (now - (animatePauseParticles.lastTime || now)) / 1000));
+  animatePauseParticles.lastTime = now;
+  const elapsed = (now - pauseStartedAt) / 1000;
+  const hoverIndex = pauseItems.findIndex((item) => pausePointer.active && pausePointer.x >= item.x && pausePointer.x <= item.x + item.width && pausePointer.y >= item.y && pausePointer.y <= item.y + item.height);
+  const ctx = pauseContext;
+  ctx.fillStyle = '#09090B';
+  ctx.fillRect(0, 0, width, height);
+  for (let i = 0; i < pauseParticles.length; i += 1) {
+    const p = pauseParticles[i];
+    const age = elapsed - p.delay;
+    const turbulence = Math.sin(elapsed * 2.2 + p.phase + p.tx * 0.008) * Math.max(0, 1.5 - age) * 80;
+    const tx = p.tx + (p.itemIndex < 0 ? turbulence : 0);
+    const ty = p.ty + (p.itemIndex < 0 ? Math.sin(elapsed * 1.6 + p.phase) * 8 : 0);
+    let ax = (tx - p.x) * 15 - p.vx * 5.2;
+    let ay = (ty - p.y) * 15 - p.vy * 5.2;
+    if (age < 1.25) ay += 560 * (1 - Math.max(0, age) / 1.25);
+    if (pausePointer.active) {
+      const dx = p.x - pausePointer.x;
+      const dy = p.y - pausePointer.y;
+      const dist2 = dx * dx + dy * dy;
+      if (dist2 < 185 * 185 && dist2 > 1) {
+        const dist = Math.sqrt(dist2);
+        const force = (1 - dist / 185) * (p.itemIndex === hoverIndex ? 1050 : 720);
+        ax += dx / dist * force - dy / dist * force * 0.22;
+        ay += dy / dist * force + dx / dist * force * 0.22;
+      }
+    }
+    if (p.itemIndex === hoverIndex) {
+      ax += Math.sin(now * 0.008 + p.phase) * 45;
+      ay += Math.cos(now * 0.008 + p.phase) * 45;
+    }
+    p.vx += ax * dt;
+    p.vy += ay * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    const speed = Math.hypot(p.vx, p.vy);
+    ctx.globalAlpha = Math.min(1, p.alpha * (0.62 + speed / 800));
+    ctx.fillStyle = p.itemIndex === hoverIndex ? '#DFFE78' : (speed > 170 ? '#DFFE78' : '#EAEAEA');
+    const size = p.r * (speed > 190 ? 1.18 : 1);
+    ctx.fillRect(p.x, p.y, size, size);
+  }
+  ctx.globalAlpha = 1;
+  pauseAnimationFrame = requestAnimationFrame(animatePauseParticles);
+}
+
+pauseCanvas.addEventListener('pointermove', (event) => {
+  pausePointer = { x: event.clientX, y: event.clientY, active: true };
+  const hovering = pauseItems.some((item) => event.clientX >= item.x && event.clientX <= item.x + item.width && event.clientY >= item.y && event.clientY <= item.y + item.height);
+  pauseCanvas.style.cursor = hovering ? 'pointer' : 'default';
+});
+pauseCanvas.addEventListener('pointerleave', () => { pausePointer.active = false; });
+pauseCanvas.addEventListener('click', (event) => {
+  const itemIndex = pauseItems.findIndex((item) => event.clientX >= item.x && event.clientX <= item.x + item.width && event.clientY >= item.y && event.clientY <= item.y + item.height);
+  if (itemIndex >= 0) closeParticlePause(['resume', 'system', 'database', 'exit'][itemIndex]);
+});
+pauseToggle.addEventListener('click', () => pauseOpen ? closeParticlePause() : openParticlePause());
+window.addEventListener('resize', () => {
+  if (pauseOpen) {
+    buildPauseParticles();
+    pauseStartedAt = performance.now();
+  }
+});
 
 function beginIntro() {
   if (introPlaying) return;
@@ -700,45 +870,34 @@ debugBackdrop.addEventListener('pointerdown', (event) => {
 });
 
 document.addEventListener('keydown', (event) => {
+  if (event.code === 'Space' && hasStarted && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+    event.preventDefault();
+    if (pauseOpen) closeParticlePause();
+    else openParticlePause();
+    return;
+  }
+  if (event.key === 'Escape' && hasStarted) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    debugOpen = false;
+    debugBackdrop.hidden = true;
+    modeChoice.hidden = true;
+    infoModal.hidden = true;
+    radialMenu.hidden = true;
+    if (gestureActive) stopGestureMode(false);
+    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
+    if (pauseOpen) closeParticlePause();
+    else openParticlePause();
+    return;
+  }
   if (event.key === '/' && !debugOpen && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
     event.preventDefault();
     openDebug();
     return;
   }
-  if (event.key === 'Escape' && debugOpen) {
-    event.preventDefault();
-    closeDebug();
-    return;
-  }
-  if (event.key === 'Escape' && !infoModal.hidden) {
-    event.preventDefault();
-    hideInfo();
-    return;
-  }
-  if (event.key === 'Escape' && !modeChoice.hidden) {
-    event.preventDefault();
-    modeChoice.hidden = true;
-    return;
-  }
-  if (event.key === 'Escape' && !radialMenu.hidden) {
-    radialMenu.hidden = true;
-    return;
-  }
-  if (event.key === 'Escape' && gestureActive) {
-    stopGestureMode(false);
-    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
-    showEntry(true);
-    return;
-  }
-  if (event.key === 'Escape' && hasStarted && !debugOpen) {
-    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
-    radialMenu.hidden = true;
-    showEntry(true);
-    return;
-  }
+  if (event.key === 'Escape' && !modeChoice.hidden) modeChoice.hidden = true;
   if (debugOpen || !hasStarted) return;
-  if (event.code === 'Space') event.preventDefault();
-});
+}, true);
 
 document.addEventListener('mousemove', (event) => {
   if (document.pointerLockElement !== renderer.domElement || debugOpen) return;
@@ -843,11 +1002,17 @@ enterButton.addEventListener('click', () => {
   else chooseMouseMode();
 });
 switchModeButton.addEventListener('click', showModeChoice);
+returnStartButton.addEventListener('click', () => {
+  locateStart();
+  entryScreen.hidden = true;
+  if (activeControlMode === 'gesture') chooseGestureMode();
+  else requestPointerLock();
+});
 
 function movePlayer(deltaSeconds) {
   const gestureFresh = gestureActive && gestureLastSeen && performance.now() - gestureLastSeen < 350;
   const pointerLocked = document.pointerLockElement === renderer.domElement;
-  if (!hasStarted || (!pointerLocked && !gestureFresh) || debugOpen) return;
+  if (!hasStarted || (!pointerLocked && !gestureFresh) || debugOpen || pauseOpen) return;
   if (gestureFresh) {
     yaw = THREE.MathUtils.clamp(yaw + gestureState.yawSpeed * deltaSeconds, VIEW_YAW_CENTER - VIEW_YAW_LIMIT, VIEW_YAW_CENTER + VIEW_YAW_LIMIT);
     pitch = THREE.MathUtils.clamp(pitch + gestureState.pitchSpeed * deltaSeconds, -1.05, 1.05);
