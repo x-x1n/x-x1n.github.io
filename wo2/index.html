@@ -14,9 +14,9 @@
   </head>
   <body>
     <section id="intro-cover" class="intro-cover" aria-label="入场画面">
+      <button class="info-button intro-info-button" type="button" aria-label="打开项目说明">i</button>
       <div class="intro-content">
         <p class="intro-line intro-top">Some memories remain in the things we leave behind.</p>
-        <p class="intro-heading">Entering a Space of Cognitive Impairment</p>
         <div class="intro-title" aria-label="When Things Remeber">
           <span>When Things Remeber</span>
           <span>When Things Remeber</span>
@@ -34,7 +34,7 @@
       <div class="vignette" aria-hidden="true"></div>
       <div class="crosshair" id="crosshair" aria-hidden="true"><span></span></div>
       <div class="room-label"><span class="live-dot"></span> ROOM / POINT CLOUD</div>
-      <div class="help" id="help">WASD 移动 <span>·</span> 鼠标环视 <span>·</span> / 调试</div>
+      <div class="help" id="help">鼠标环视 <span>·</span> 滚轮拉近/拉远 <span>·</span> / 调试</div>
       <div class="coord-readout" id="coord-readout" hidden></div>
       <div class="error" id="error" hidden></div>
       <video id="gesture-video" autoplay muted playsinline hidden></video>
@@ -44,16 +44,21 @@
       </aside>
 
       <section class="entry-screen" id="entry-screen" hidden>
+        <button class="info-button entry-info-button" type="button" aria-label="打开项目说明">i</button>
         <div class="entry-card">
           <p class="entry-kicker">ROOM / FIRST PERSON</p>
           <h1 id="entry-title">进入房间</h1>
-          <p id="entry-copy">点击开始漫游。使用 WASD 移动，移动鼠标环视。</p>
+          <p id="entry-copy">点击继续。移动鼠标环视，使用滚轮拉近或拉远。</p>
           <button id="enter-button" type="button">开始漫游</button>
           <button class="gesture-toggle gesture-toggle-entry" type="button">开启摄像头手势控制</button>
-          <p class="gesture-privacy">手掌偏离画面中心可环顾上下左右；张开手掌前进，握拳停止；拇指与食指捏合可与准心物体交互。</p>
+          <p class="gesture-privacy">手掌偏离画面中心可控制上下左右视角；拇指与食指捏合可与准心物体交互。</p>
           <p class="gesture-privacy">启用后摄像头画面只在本机进行识别，不上传视频。</p>
           <p class="entry-foot">按 / 打开调试指令</p>
         </div>
+      </section>
+
+      <section class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>
+        <div class="info-modal-card"><button id="info-close" type="button" aria-label="关闭说明">×</button><p class="entry-kicker">ABOUT THIS SPACE</p><h2 id="info-title">When Things Remeber</h2><p>Some memories remain in the things we leave behind. This room is an interactive point cloud space. Look around to explore its fragments; pinch toward an object to interact with it.</p></div>
       </section>
 
       <section class="debug-backdrop" id="debug-backdrop" hidden>
@@ -62,7 +67,7 @@
           <label class="sr-only" for="command-input">输入指令</label>
           <div class="command-entry"><input id="command-input" type="text" placeholder="输入 /point 0.01 或 /coor on" autocomplete="off" spellcheck="false" /><button type="submit">执行</button></div>
           <button class="gesture-toggle gesture-toggle-debug" type="button">开启摄像头手势控制</button>
-          <p class="command-help">/point X　调整点大小<br />/coor on　开启准心坐标读取<br />/coor off　关闭坐标读取<br />/gesture on 或 /gesture off　手势控制<br />/window　呼出或关闭右下角摄像头预览<br />手掌位置：环顾上下左右；张掌：前进；握拳：停止；拇指食指捏合：交互</p>
+          <p class="command-help">/point X　调整点大小<br />/coor on　开启准心坐标读取<br />/coor off　关闭坐标读取<br />/gesture on 或 /gesture off　手势控制<br />/window　呼出或关闭右下角摄像头预览<br />手掌位置：环顾上下左右；拇指食指捏合：交互</p>
           <p id="command-status" class="command-status" aria-live="polite">按 Esc 关闭</p>
         </form>
       </section>

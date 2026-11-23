@@ -23,7 +23,15 @@ const gestureWidget = document.querySelector('#gesture-widget');
 const gestureStateTag = document.querySelector('#gesture-state-tag');
 const gestureButtons = [...document.querySelectorAll('.gesture-toggle')];
 const introCover = document.querySelector('#intro-cover');
+const infoModal = document.querySelector('#info-modal');
+const infoButtons = document.querySelectorAll('.info-button');
 let introDismissed = false;
+
+function showInfo() { infoModal.hidden = false; }
+function hideInfo() { infoModal.hidden = true; }
+infoButtons.forEach((button) => button.addEventListener('click', showInfo));
+document.querySelector('#info-close').addEventListener('click', hideInfo);
+infoModal.addEventListener('click', (event) => { if (event.target === infoModal) hideInfo(); });
 
 function dismissIntro() {
   if (introDismissed) return;
@@ -49,13 +57,13 @@ function dismissIntro() {
 }
 
 window.addEventListener('wheel', (event) => {
-  if (event.deltaY < -8) dismissIntro();
+  if (Math.abs(event.deltaY) > 8) dismissIntro();
 }, { passive: true });
 let touchStartY = 0;
 window.addEventListener('touchstart', (event) => { touchStartY = event.changedTouches[0]?.clientY ?? 0; }, { passive: true });
 window.addEventListener('touchend', (event) => {
   const endY = event.changedTouches[0]?.clientY ?? touchStartY;
-  if (touchStartY - endY > 35) dismissIntro();
+  if (Math.abs(touchStartY - endY) > 35) dismissIntro();
 }, { passive: true });
 
 const scene = new THREE.Scene();
@@ -92,7 +100,6 @@ const sound = new THREE.Audio(audioListener);
 const audioLoader = new THREE.AudioLoader();
 
 let roomCloud = null;
-let roomCollisionGrid = null;
 let interactiveModel = null;
 let coordinateMode = false;
 let debugOpen = false;
@@ -115,13 +122,9 @@ let handFrameInFlight = false;
 const gestureState = { handDetected: false, yawSpeed: 0, pitchSpeed: 0, moveForward: 0, isPinching: false, lastPinchTriggerTime: 0 };
 let scatterStartedAt = 0;
 let scatterAnimating = false;
-const pressedKeys = new Set();
-const WALK_LIMITS = { minX: -0.65, maxX: 0.60, minY: -0.68, maxY: 0.54 };
-const PLAYER_COLLISION_RADIUS = 0.16;
-const COLLISION_CELL_SIZE = 0.08;
 const START_X = 0.404;
 const START_Y = 0.540;
-const EYE_HEIGHT = 1.3;
+const EYE_HEIGHT = 1.15;
 const VIEW_YAW_CENTER = Math.PI;
 const VIEW_YAW_LIMIT = 1.5;
 const INTRO_MS = 3800;
@@ -148,7 +151,7 @@ function showEntry(resume = false) {
   entryTitle.textContent = resume ? '继续漫游' : '进入房间';
   entryCopy.textContent = resume
     ? '点击画面恢复鼠标视角。按 / 可打开调试指令。'
-    : '点击开始漫游。使用 WASD 移动，移动鼠标环视。';
+    : '点击继续。移动鼠标环视，使用滚轮拉近或拉远。';
   enterButton.textContent = resume ? '继续漫游' : '开始漫游';
   entryScreen.hidden = false;
   crosshair.hidden = true;
@@ -162,49 +165,6 @@ function beginIntro() {
   yaw = Math.PI;
   pitch = 0;
   updateCameraLook();
-}
-
-function buildRoomCollisionGrid(geometry) {
-  geometry.computeBoundingBox();
-  const box = geometry.boundingBox;
-  const columns = Math.ceil((box.max.x - box.min.x) / COLLISION_CELL_SIZE) + 1;
-  const rows = Math.ceil((box.max.y - box.min.y) / COLLISION_CELL_SIZE) + 1;
-  const occupied = new Uint8Array(columns * rows);
-  const positions = geometry.getAttribute('position');
-  const lowObstacleZ = floorZ + 0.2;
-  const highObstacleZ = floorZ + EYE_HEIGHT + 0.2;
-
-  for (let i = 0; i < positions.count; i += 1) {
-    const x = positions.getX(i);
-    const y = positions.getY(i);
-    const z = positions.getZ(i);
-    if (z <= lowObstacleZ || z >= highObstacleZ) continue;
-    const column = Math.floor((x - box.min.x) / COLLISION_CELL_SIZE);
-    const row = Math.floor((y - box.min.y) / COLLISION_CELL_SIZE);
-    if (column >= 0 && column < columns && row >= 0 && row < rows) {
-      occupied[row * columns + column] = 1;
-    }
-  }
-
-  roomCollisionGrid = { minX: box.min.x, minY: box.min.y, columns, rows, occupied };
-}
-
-function isRoomObstacleAt(x, y) {
-  if (!roomCollisionGrid) return false;
-  const { minX, minY, columns, rows, occupied } = roomCollisionGrid;
-  const column = Math.floor((x - minX) / COLLISION_CELL_SIZE);
-  const row = Math.floor((y - minY) / COLLISION_CELL_SIZE);
-  const padding = Math.ceil(PLAYER_COLLISION_RADIUS / COLLISION_CELL_SIZE);
-  for (let offsetY = -padding; offsetY <= padding; offsetY += 1) {
-    for (let offsetX = -padding; offsetX <= padding; offsetX += 1) {
-      if (Math.hypot(offsetX, offsetY) * COLLISION_CELL_SIZE > PLAYER_COLLISION_RADIUS + COLLISION_CELL_SIZE * 0.25) continue;
-      const testX = column + offsetX;
-      const testY = row + offsetY;
-      if (testX < 0 || testX >= columns || testY < 0 || testY >= rows) return true;
-      if (occupied[testY * columns + testX]) return true;
-    }
-  }
-  return false;
 }
 
 function loadRoomFrom(paths, index = 0) {
@@ -223,7 +183,6 @@ function loadRoomFrom(paths, index = 0) {
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
       geometry.translate(-center.x, -center.y, -center.z);
-      buildRoomCollisionGrid(geometry);
 
       const hasColors = geometry.hasAttribute('color');
       pointSize = Math.max(size.length() / 480, 0.003);
@@ -432,7 +391,7 @@ async function startGestureMode() {
     gestureState.isPinching = false;
     gestureStateTag.textContent = '等待手部';
     setGestureButtons('关闭摄像头手势控制');
-    commandStatus.textContent = '手掌位置控制环视；张开手掌前进，握拳停止；拇指食指捏合可交互。';
+    commandStatus.textContent = '手掌位置控制上下左右视角；拇指食指捏合可交互。';
     if (!document.pointerLockElement && !debugOpen) {
       hasStarted = true;
       entryScreen.hidden = true;
@@ -494,7 +453,7 @@ function recognizeHandFrame(time) {
   handTracker.send({ image: gestureVideo }).catch((error) => {
     console.error('MediaPipe 手势识别中断：', error);
     stopGestureMode(false);
-    commandStatus.textContent = '手势识别中断，摄像头已关闭；可继续使用鼠标和 WASD。';
+    commandStatus.textContent = '手势识别中断，摄像头已关闭；可继续使用鼠标环视。';
   }).finally(() => { handFrameInFlight = false; });
 }
 
@@ -545,7 +504,7 @@ function processHandResults(results) {
   const offsetX = palmX - 0.5;
   const offsetY = palmY - 0.5;
   const targetYaw = Math.abs(offsetX) > deadzone
-    ? -Math.sign(offsetX) * ((Math.abs(offsetX) - deadzone) / (0.5 - deadzone)) * 1.45
+    ? Math.sign(offsetX) * ((Math.abs(offsetX) - deadzone) / (0.5 - deadzone)) * 1.45
     : 0;
   const targetPitch = Math.abs(offsetY) > deadzone
     ? -Math.sign(offsetY) * ((Math.abs(offsetY) - deadzone) / (0.5 - deadzone)) * 0.95
@@ -556,15 +515,6 @@ function processHandResults(results) {
   const thumbTip = landmarks[4];
   const indexTip = landmarks[8];
   const pinchDistance = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
-  const wrist = landmarks[0];
-  const fingerTips = [8, 12, 16, 20];
-  let averageSpread = 0;
-  fingerTips.forEach((index) => {
-    averageSpread += Math.hypot(landmarks[index].x - wrist.x, landmarks[index].y - wrist.y);
-  });
-  averageSpread /= fingerTips.length;
-
-  let targetForward = 0;
   if (pinchDistance < 0.055) {
     gestureStateTag.textContent = '捏合触发';
     const now = performance.now();
@@ -575,17 +525,9 @@ function processHandResults(results) {
     }
   } else {
     gestureState.isPinching = false;
-    if (averageSpread > 0.34) {
-      targetForward = 1.0;
-      gestureStateTag.textContent = '张掌前行';
-    } else if (averageSpread < 0.21) {
-      targetForward = 0.0;
-      gestureStateTag.textContent = '握拳驻足';
-    } else {
-      gestureStateTag.textContent = '悬停环顾';
-    }
+    gestureStateTag.textContent = '视角控制';
   }
-  gestureState.moveForward += (targetForward - gestureState.moveForward) * 0.15;
+  gestureState.moveForward = 0;
 }
 
 function interactAtCrosshair() {
@@ -680,17 +622,14 @@ document.addEventListener('keydown', (event) => {
     closeDebug();
     return;
   }
-  if (debugOpen || !hasStarted) return;
-  const key = event.key.toLowerCase();
-  if (['w', 'a', 's', 'd'].includes(key)) {
+  if (event.key === 'Escape' && !infoModal.hidden) {
     event.preventDefault();
-    pressedKeys.add(key);
+    hideInfo();
+    return;
   }
+  if (debugOpen || !hasStarted) return;
   if (event.code === 'Space') event.preventDefault();
 });
-
-document.addEventListener('keyup', (event) => pressedKeys.delete(event.key.toLowerCase()));
-window.addEventListener('blur', () => pressedKeys.clear());
 
 document.addEventListener('mousemove', (event) => {
   if (document.pointerLockElement !== renderer.domElement || debugOpen) return;
@@ -698,6 +637,13 @@ document.addEventListener('mousemove', (event) => {
   pitch = THREE.MathUtils.clamp(pitch - event.movementY * LOOK_SENSITIVITY, -1.42, 1.42);
   updateCameraLook();
 });
+
+document.addEventListener('wheel', (event) => {
+  if (introDismissed && !introCover.isConnected && !debugOpen) {
+    camera.fov = THREE.MathUtils.clamp(camera.fov + event.deltaY * 0.025, 38, 95);
+    camera.updateProjectionMatrix();
+  }
+}, { passive: true });
 
 renderer.domElement.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || document.pointerLockElement !== renderer.domElement || debugOpen) return;
@@ -711,7 +657,6 @@ document.addEventListener('pointerlockchange', () => {
     entryScreen.hidden = true;
     crosshair.hidden = false;
   } else {
-    pressedKeys.clear();
     crosshair.hidden = true;
     if (hasStarted && !debugOpen && !gestureActive) showEntry(true);
   }
@@ -740,38 +685,8 @@ function movePlayer(deltaSeconds) {
   if (gestureFresh) {
     yaw = THREE.MathUtils.clamp(yaw + gestureState.yawSpeed * deltaSeconds, VIEW_YAW_CENTER - VIEW_YAW_LIMIT, VIEW_YAW_CENTER + VIEW_YAW_LIMIT);
     pitch = THREE.MathUtils.clamp(pitch + gestureState.pitchSpeed * deltaSeconds, -1.05, 1.05);
+    updateCameraLook();
   }
-  let forward = 0;
-  let strafe = 0;
-  if (pressedKeys.has('w')) forward += 1;
-  if (pressedKeys.has('s')) forward -= 1;
-  if (pressedKeys.has('d')) strafe += 1;
-  if (pressedKeys.has('a')) strafe -= 1;
-  if (gestureFresh) forward += gestureState.moveForward * 0.85;
-  if (forward === 0 && strafe === 0) {
-    if (gestureFresh && (Math.abs(gestureState.yawSpeed) > 0.001 || Math.abs(gestureState.pitchSpeed) > 0.001)) updateCameraLook();
-    return;
-  }
-
-  const length = Math.hypot(forward, strafe);
-  forward /= length;
-  strafe /= length;
-  const distance = MOVE_SPEED * deltaSeconds;
-  const dx = (Math.sin(yaw) * forward + Math.cos(yaw) * strafe) * distance;
-  const dy = (Math.cos(yaw) * forward - Math.sin(yaw) * strafe) * distance;
-  // 将活动区域收在扫描房间的地面范围内，并留出墙边缓冲。
-  const currentX = camera.position.x;
-  const currentY = camera.position.y;
-  const nextX = THREE.MathUtils.clamp(currentX + dx, WALK_LIMITS.minX, WALK_LIMITS.maxX);
-  const nextY = THREE.MathUtils.clamp(currentY + dy, WALK_LIMITS.minY, WALK_LIMITS.maxY);
-  if (!isRoomObstacleAt(nextX, nextY)) {
-    camera.position.x = nextX;
-    camera.position.y = nextY;
-  } else {
-    if (!isRoomObstacleAt(nextX, currentY)) camera.position.x = nextX;
-    if (!isRoomObstacleAt(camera.position.x, nextY)) camera.position.y = nextY;
-  }
-  if (gestureFresh) updateCameraLook();
 }
 
 function resize() {
