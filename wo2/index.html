@@ -46,10 +46,13 @@
       <section class="entry-screen" id="entry-screen" hidden>
         <button class="info-button entry-info-button" type="button" aria-label="打开项目说明">i</button>
         <div class="entry-card">
-          <button id="enter-button" class="curve-action" type="button" aria-label="Resume"><svg viewBox="0 0 420 100"><defs><path id="pause-wave-0" d="M8 70 C95 10 150 18 220 50 S335 82 412 24"/></defs><text><textPath href="#pause-wave-0">RESUME</textPath></text></svg></button>
-          <button id="return-start-button" class="curve-action" type="button" aria-label="Return to original view"><svg viewBox="0 0 420 100"><defs><path id="pause-wave-1" d="M8 72 C95 22 154 12 220 45 S338 88 412 32"/></defs><text><textPath href="#pause-wave-1">RETURN TO START</textPath></text></svg></button>
-          <button class="gesture-toggle gesture-toggle-entry curve-action" type="button" aria-label="Toggle camera control"><svg viewBox="0 0 420 100"><defs><path id="pause-wave-2" d="M8 68 C88 6 159 20 228 52 S340 76 412 22"/></defs><text><textPath href="#pause-wave-2">CAMERA CONTROL</textPath></text></svg></button>
+          <button id="enter-button" class="curve-action" type="button" aria-label="Resume"><svg viewBox="0 0 420 100"><defs><path id="pause-wave-0" d="M8 70 C95 10 150 18 220 50 S335 82 412 24"/></defs><text><textPath href="#pause-wave-0">CONTINUE</textPath></text></svg></button>
+          <button id="switch-mode-button" class="curve-action" type="button" aria-label="Switch interaction mode"><svg viewBox="0 0 420 100"><defs><path id="pause-wave-1" d="M8 72 C95 22 154 12 220 45 S338 88 412 32"/></defs><text><textPath href="#pause-wave-1">SWITCH CONTROL MODE</textPath></text></svg></button>
         </div>
+      </section>
+
+      <section class="mode-choice" id="mode-choice" role="dialog" aria-modal="true" aria-labelledby="mode-choice-title" hidden>
+        <div class="mode-choice-card"><p class="entry-kicker">CHOOSE YOUR WAY IN</p><h2 id="mode-choice-title">Select interaction mode</h2><button id="mouse-mode-button" type="button">MOUSE LOOK</button><button id="gesture-mode-button" type="button">HAND GESTURE LOOK</button></div>
       </section>
 
       <section class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>

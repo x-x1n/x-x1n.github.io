@@ -8,7 +8,8 @@ const loading = document.querySelector('#loading');
 const errorBox = document.querySelector('#error');
 const entryScreen = document.querySelector('#entry-screen');
 const enterButton = document.querySelector('#enter-button');
-const returnStartButton = document.querySelector('#return-start-button');
+const switchModeButton = document.querySelector('#switch-mode-button');
+const modeChoice = document.querySelector('#mode-choice');
 const debugBackdrop = document.querySelector('#debug-backdrop');
 const commandForm = document.querySelector('#command-form');
 const commandInput = document.querySelector('#command-input');
@@ -33,10 +34,32 @@ let longPressTriggered = false;
 let radialSelection = 0;
 let gestureZoomBaseWidth = 0;
 let gestureZoomBaseFov = 72;
+let gestureZoomTargetFov = 72;
+let gestureWidthSamples = [];
+let activeControlMode = 'mouse';
+let radialWheelAccumulator = 0;
 let cameraFlight = null;
 
 function showInfo() { infoModal.hidden = false; }
 function hideInfo() { infoModal.hidden = true; }
+function showModeChoice() {
+  document.querySelector('#mode-choice-title').textContent = 'Select interaction mode';
+  modeChoice.hidden = false;
+}
+function chooseMouseMode() {
+  activeControlMode = 'mouse';
+  modeChoice.hidden = true;
+  entryScreen.hidden = true;
+  requestPointerLock();
+}
+function chooseGestureMode() {
+  activeControlMode = 'gesture';
+  modeChoice.hidden = true;
+  entryScreen.hidden = true;
+  startGestureMode();
+}
+document.querySelector('#mouse-mode-button').addEventListener('click', chooseMouseMode);
+document.querySelector('#gesture-mode-button').addEventListener('click', chooseGestureMode);
 function updateRadialSelection() {
   radialItems.forEach((item, index) => {
     const relative = (index - radialSelection + radialItems.length + 2) % radialItems.length - 2;
@@ -76,8 +99,14 @@ function dismissIntro() {
 window.addEventListener('wheel', (event) => {
   if (!radialMenu.hidden && Math.abs(event.deltaY) > 2) {
     event.preventDefault();
-    radialSelection = (radialSelection + (event.deltaY > 0 ? 1 : radialItems.length - 1)) % radialItems.length;
-    updateRadialSelection();
+    radialWheelAccumulator += event.deltaY;
+    if (Math.abs(radialWheelAccumulator) >= 34) {
+      const steps = Math.min(3, Math.floor(Math.abs(radialWheelAccumulator) / 34));
+      const direction = Math.sign(radialWheelAccumulator);
+      radialSelection = (radialSelection + direction * steps + radialItems.length * 4) % radialItems.length;
+      radialWheelAccumulator -= direction * steps * 34;
+      updateRadialSelection();
+    }
     return;
   }
   if (Math.abs(event.deltaY) > 8) dismissIntro();
@@ -423,6 +452,8 @@ async function startGestureMode() {
     gestureState.isPinching = false;
     gestureZoomBaseWidth = 0;
     gestureZoomBaseFov = camera.fov;
+    gestureZoomTargetFov = camera.fov;
+    gestureWidthSamples = [];
     help.innerHTML = '手掌左右/上下：环视 <span>·</span> 手掌前后：拉近/拉远 <span>·</span> 捏合：交互';
     gestureStateTag.textContent = '等待手部';
     setGestureButtons('Disable camera control');
@@ -436,7 +467,8 @@ async function startGestureMode() {
     console.error('MediaPipe 手势控制启动失败：', error);
     stopGestureMode(false);
     commandStatus.textContent = `手势控制未启动：${error.message || '请检查摄像头权限和网络。'}`;
-    if (!debugOpen) commandStatus.textContent = `手势控制未启动：${error.message || '请检查摄像头权限和网络。'}`;
+    document.querySelector('#mode-choice-title').textContent = `Camera unavailable: ${error.message || 'check camera permission.'}`;
+    modeChoice.hidden = false;
   } finally {
     gestureInitializing = false;
     gestureButtons.forEach((button) => { button.disabled = false; });
@@ -453,6 +485,8 @@ function stopGestureMode(showStatus = true) {
   gestureState.isPinching = false;
   gestureLastSeen = 0;
   gestureZoomBaseWidth = 0;
+  gestureZoomTargetFov = camera.fov;
+  gestureWidthSamples = [];
   help.innerHTML = '鼠标环视 <span>·</span> 滚轮拉近/拉远 <span>·</span> 长按快速定位';
   if (handTracker) {
     handTracker.close();
@@ -470,8 +504,13 @@ function stopGestureMode(showStatus = true) {
 }
 
 function toggleGestureMode() {
-  if (gestureActive || gestureInitializing) stopGestureMode();
-  else startGestureMode();
+  if (gestureActive || gestureInitializing) {
+    activeControlMode = 'mouse';
+    stopGestureMode();
+  } else {
+    activeControlMode = 'gesture';
+    startGestureMode();
+  }
 }
 
 function toggleGestureWidget() {
@@ -535,13 +574,19 @@ function processHandResults(results) {
 
   gestureState.handDetected = true;
   const palmWidth = Math.hypot(landmarks[5].x - landmarks[17].x, landmarks[5].y - landmarks[17].y);
-  if (!gestureZoomBaseWidth) {
-    gestureZoomBaseWidth = palmWidth;
-    gestureZoomBaseFov = camera.fov;
-  } else if (palmWidth > 0.01) {
-    const targetFov = THREE.MathUtils.clamp(gestureZoomBaseFov * gestureZoomBaseWidth / palmWidth, 38, 95);
-    camera.fov += (targetFov - camera.fov) * 0.16;
-    camera.updateProjectionMatrix();
+  if (!gestureZoomBaseWidth && palmWidth > 0.025) {
+    gestureWidthSamples.push(palmWidth);
+    if (gestureWidthSamples.length >= 8) {
+      gestureWidthSamples.sort((a, b) => a - b);
+      gestureZoomBaseWidth = gestureWidthSamples[Math.floor(gestureWidthSamples.length / 2)];
+      gestureZoomBaseFov = camera.fov;
+      gestureZoomTargetFov = camera.fov;
+      gestureWidthSamples = [];
+    }
+  } else if (gestureZoomBaseWidth && palmWidth > 0.025) {
+    const ratio = gestureZoomBaseWidth / palmWidth;
+    const adjustedRatio = Math.abs(ratio - 1) < 0.045 ? 1 : ratio;
+    gestureZoomTargetFov = THREE.MathUtils.clamp(gestureZoomBaseFov * Math.pow(adjustedRatio, 0.88), 38, 95);
   }
   const palmX = 1.0 - landmarks[9].x;
   const palmY = landmarks[9].y;
@@ -670,6 +715,11 @@ document.addEventListener('keydown', (event) => {
     hideInfo();
     return;
   }
+  if (event.key === 'Escape' && !modeChoice.hidden) {
+    event.preventDefault();
+    modeChoice.hidden = true;
+    return;
+  }
   if (event.key === 'Escape' && !radialMenu.hidden) {
     radialMenu.hidden = true;
     return;
@@ -775,25 +825,24 @@ document.addEventListener('pointerlockchange', () => {
 
 async function requestPointerLock() {
   try {
+    activeControlMode = 'mouse';
+    modeChoice.hidden = true;
     const result = renderer.domElement.requestPointerLock();
     if (result && typeof result.then === 'function') await result;
     if (audioListener.context.state === 'suspended') await audioListener.context.resume();
   } catch (error) {
     commandStatus.textContent = '浏览器未能启用鼠标锁定，请检查权限。';
+    document.querySelector('#mode-choice-title').textContent = 'Mouse look unavailable. Choose hand gesture control.';
+    modeChoice.hidden = false;
     console.warn('鼠标锁定未能启动：', error);
   }
 }
 
-enterButton.addEventListener('click', requestPointerLock);
-returnStartButton.addEventListener('click', () => {
-  radialMenu.hidden = true;
-  locateStart();
-  if (!gestureActive) requestPointerLock();
-  else entryScreen.hidden = true;
+enterButton.addEventListener('click', () => {
+  if (activeControlMode === 'gesture') chooseGestureMode();
+  else chooseMouseMode();
 });
-entryScreen.addEventListener('click', (event) => {
-  if (event.target === entryScreen) requestPointerLock();
-});
+switchModeButton.addEventListener('click', showModeChoice);
 
 function movePlayer(deltaSeconds) {
   const gestureFresh = gestureActive && gestureLastSeen && performance.now() - gestureLastSeen < 350;
@@ -839,12 +888,18 @@ renderer.setAnimationLoop((time) => {
     updateCameraLook();
     if (t >= 1) {
       introPlaying = false;
-      showEntry(false);
+      hasStarted = true;
+      showModeChoice();
     }
   } else {
     recognizeHandFrame(time);
     movePlayer(deltaSeconds);
     if (coordinateMode) updateCoordinateReadout();
+  }
+  if (gestureActive) {
+    const zoomSmoothing = 1 - Math.exp(-8 * deltaSeconds);
+    camera.fov += (gestureZoomTargetFov - camera.fov) * zoomSmoothing;
+    camera.updateProjectionMatrix();
   }
   updateScatter(time);
   renderer.render(scene, camera);
