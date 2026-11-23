@@ -22,6 +22,41 @@ const gestureContext = gestureCanvas.getContext('2d');
 const gestureWidget = document.querySelector('#gesture-widget');
 const gestureStateTag = document.querySelector('#gesture-state-tag');
 const gestureButtons = [...document.querySelectorAll('.gesture-toggle')];
+const introCover = document.querySelector('#intro-cover');
+let introDismissed = false;
+
+function dismissIntro() {
+  if (introDismissed) return;
+  introDismissed = true;
+  const particleLayer = introCover.querySelector('.intro-particles');
+  const particleCount = Math.min(280, Math.floor(window.innerWidth * window.innerHeight / 5000));
+  for (let i = 0; i < particleCount; i += 1) {
+    const particle = document.createElement('i');
+    particle.className = 'intro-particle';
+    particle.style.setProperty('--x', `${Math.random() * 100}%`);
+    particle.style.setProperty('--y', `${Math.random() * 100}%`);
+    particle.style.setProperty('--size', `${1 + Math.random() * 4}px`);
+    particle.style.setProperty('--alpha', `${0.18 + Math.random() * 0.55}`);
+    particle.style.setProperty('--blur', `${Math.random() * 2}px`);
+    particle.style.setProperty('--dx', `${(Math.random() - 0.5) * 100}px`);
+    particle.style.setProperty('--dy', `${-40 - Math.random() * 180}px`);
+    particle.style.setProperty('--rot', `${(Math.random() - 0.5) * 180}deg`);
+    particle.style.animationDelay = `${Math.random() * 0.35}s`;
+    particleLayer.appendChild(particle);
+  }
+  introCover.classList.add('is-leaving');
+  window.setTimeout(() => introCover.remove(), 1250);
+}
+
+window.addEventListener('wheel', (event) => {
+  if (event.deltaY < -8) dismissIntro();
+}, { passive: true });
+let touchStartY = 0;
+window.addEventListener('touchstart', (event) => { touchStartY = event.changedTouches[0]?.clientY ?? 0; }, { passive: true });
+window.addEventListener('touchend', (event) => {
+  const endY = event.changedTouches[0]?.clientY ?? touchStartY;
+  if (touchStartY - endY > 35) dismissIntro();
+}, { passive: true });
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#111516');
