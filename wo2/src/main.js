@@ -7,9 +7,8 @@ const host = document.querySelector('#canvas-wrap');
 const loading = document.querySelector('#loading');
 const errorBox = document.querySelector('#error');
 const entryScreen = document.querySelector('#entry-screen');
-const entryTitle = document.querySelector('#entry-title');
-const entryCopy = document.querySelector('#entry-copy');
 const enterButton = document.querySelector('#enter-button');
+const returnStartButton = document.querySelector('#return-start-button');
 const debugBackdrop = document.querySelector('#debug-backdrop');
 const commandForm = document.querySelector('#command-form');
 const commandInput = document.querySelector('#command-input');
@@ -39,7 +38,12 @@ let cameraFlight = null;
 function showInfo() { infoModal.hidden = false; }
 function hideInfo() { infoModal.hidden = true; }
 function updateRadialSelection() {
-  radialItems.forEach((item, index) => item.classList.toggle('is-selected', index === radialSelection));
+  radialItems.forEach((item, index) => {
+    const relative = (index - radialSelection + radialItems.length + 2) % radialItems.length - 2;
+    item.classList.toggle('is-selected', relative === 0);
+    item.style.setProperty('--offset-y', `${relative * 15}vh`);
+    item.style.setProperty('--arc-x', `${70 + (2 - Math.abs(relative)) * 60}px`);
+  });
 }
 updateRadialSelection();
 infoButtons.forEach((button) => button.addEventListener('click', showInfo));
@@ -175,11 +179,6 @@ function updateCameraLook() {
 }
 
 function showEntry(resume = false) {
-  entryTitle.textContent = resume ? '继续漫游' : '进入房间';
-  entryCopy.textContent = resume
-    ? '点击画面恢复鼠标视角。按 / 可打开调试指令。'
-    : '点击继续。移动鼠标环视，使用滚轮拉近或拉远。';
-  enterButton.textContent = resume ? '继续漫游' : '开始漫游';
   entryScreen.hidden = false;
   crosshair.hidden = true;
 }
@@ -371,7 +370,13 @@ function updateScatter(time) {
 }
 
 function setGestureButtons(label) {
-  for (const button of gestureButtons) button.textContent = label;
+  for (const button of gestureButtons) {
+    if (button.classList.contains('gesture-toggle-entry')) {
+      button.setAttribute('aria-label', label);
+      const pathText = button.querySelector('textPath');
+      if (pathText) pathText.textContent = gestureActive ? 'DISABLE CAMERA CONTROL' : 'ENABLE CAMERA CONTROL';
+    } else button.textContent = label;
+  }
 }
 
 async function startGestureMode() {
@@ -420,7 +425,7 @@ async function startGestureMode() {
     gestureZoomBaseFov = camera.fov;
     help.innerHTML = '手掌左右/上下：环视 <span>·</span> 手掌前后：拉近/拉远 <span>·</span> 捏合：交互';
     gestureStateTag.textContent = '等待手部';
-    setGestureButtons('关闭摄像头手势控制');
+    setGestureButtons('Disable camera control');
     commandStatus.textContent = '手掌位置控制上下左右视角；拇指食指捏合可交互。';
     if (!document.pointerLockElement && !debugOpen) {
       hasStarted = true;
@@ -431,7 +436,7 @@ async function startGestureMode() {
     console.error('MediaPipe 手势控制启动失败：', error);
     stopGestureMode(false);
     commandStatus.textContent = `手势控制未启动：${error.message || '请检查摄像头权限和网络。'}`;
-    if (!debugOpen) entryCopy.textContent = `手势控制未启动：${error.message || '请检查摄像头权限和网络。'}`;
+    if (!debugOpen) commandStatus.textContent = `手势控制未启动：${error.message || '请检查摄像头权限和网络。'}`;
   } finally {
     gestureInitializing = false;
     gestureButtons.forEach((button) => { button.disabled = false; });
@@ -460,9 +465,8 @@ function stopGestureMode(showStatus = true) {
   gestureVideo.srcObject = null;
   gestureStateTag.textContent = '摄像头已关闭';
   gestureContext.clearRect(0, 0, gestureCanvas.width, gestureCanvas.height);
-  setGestureButtons('开启摄像头手势控制');
+  setGestureButtons('Enable camera control');
   if (showStatus) commandStatus.textContent = '摄像头手势控制已关闭。';
-  if (hasStarted && !document.pointerLockElement && !debugOpen) showEntry(true);
 }
 
 function toggleGestureMode() {
@@ -604,8 +608,6 @@ function closeDebug() {
   if (gestureActive) {
     hasStarted = true;
     entryScreen.hidden = true;
-  } else if (hasStarted) {
-    showEntry(true);
   }
 }
 
@@ -673,8 +675,14 @@ document.addEventListener('keydown', (event) => {
     return;
   }
   if (event.key === 'Escape' && gestureActive) {
-    stopGestureMode();
+    stopGestureMode(false);
     if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
+    showEntry(true);
+    return;
+  }
+  if (event.key === 'Escape' && hasStarted && !debugOpen) {
+    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
+    radialMenu.hidden = true;
     showEntry(true);
     return;
   }
@@ -744,6 +752,16 @@ function locateItem(index) {
   if (!gestureActive) requestPointerLock();
 }
 
+function locateStart() {
+  camera.fov = 72;
+  camera.updateProjectionMatrix();
+  cameraFlight = {
+    startedAt: performance.now(), duration: 850, from: camera.position.clone(),
+    to: new THREE.Vector3(START_X, START_Y - 0.22, floorZ + EYE_HEIGHT),
+    fromYaw: yaw, toYaw: Math.PI, fromPitch: pitch, toPitch: 0,
+  };
+}
+
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === renderer.domElement;
   if (locked) {
@@ -752,7 +770,6 @@ document.addEventListener('pointerlockchange', () => {
     crosshair.hidden = false;
   } else {
     crosshair.hidden = true;
-    if (hasStarted && !debugOpen && !gestureActive) showEntry(true);
   }
 });
 
@@ -762,12 +779,18 @@ async function requestPointerLock() {
     if (result && typeof result.then === 'function') await result;
     if (audioListener.context.state === 'suspended') await audioListener.context.resume();
   } catch (error) {
-    entryCopy.textContent = '浏览器未能启用鼠标锁定，请点击画面重试。';
+    commandStatus.textContent = '浏览器未能启用鼠标锁定，请检查权限。';
     console.warn('鼠标锁定未能启动：', error);
   }
 }
 
 enterButton.addEventListener('click', requestPointerLock);
+returnStartButton.addEventListener('click', () => {
+  radialMenu.hidden = true;
+  locateStart();
+  if (!gestureActive) requestPointerLock();
+  else entryScreen.hidden = true;
+});
 entryScreen.addEventListener('click', (event) => {
   if (event.target === entryScreen) requestPointerLock();
 });
