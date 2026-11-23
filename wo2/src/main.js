@@ -16,6 +16,7 @@ const commandInput = document.querySelector('#command-input');
 const commandStatus = document.querySelector('#command-status');
 const coordReadout = document.querySelector('#coord-readout');
 const crosshair = document.querySelector('#crosshair');
+const help = document.querySelector('#help');
 const gestureVideo = document.querySelector('#gesture-video');
 const gestureCanvas = document.querySelector('#gesture-canvas');
 const gestureContext = gestureCanvas.getContext('2d');
@@ -26,12 +27,21 @@ const introCover = document.querySelector('#intro-cover');
 const infoModal = document.querySelector('#info-modal');
 const infoButtons = document.querySelectorAll('.info-button');
 const radialMenu = document.querySelector('#radial-menu');
+const radialItems = [...radialMenu.querySelectorAll('button[data-index]')];
 let introDismissed = false;
 let longPressTimer = 0;
 let longPressTriggered = false;
+let radialSelection = 0;
+let gestureZoomBaseWidth = 0;
+let gestureZoomBaseFov = 72;
+let cameraFlight = null;
 
 function showInfo() { infoModal.hidden = false; }
 function hideInfo() { infoModal.hidden = true; }
+function updateRadialSelection() {
+  radialItems.forEach((item, index) => item.classList.toggle('is-selected', index === radialSelection));
+}
+updateRadialSelection();
 infoButtons.forEach((button) => button.addEventListener('click', showInfo));
 document.querySelector('#info-close').addEventListener('click', hideInfo);
 infoModal.addEventListener('click', (event) => { if (event.target === infoModal) hideInfo(); });
@@ -60,8 +70,14 @@ function dismissIntro() {
 }
 
 window.addEventListener('wheel', (event) => {
+  if (!radialMenu.hidden && Math.abs(event.deltaY) > 2) {
+    event.preventDefault();
+    radialSelection = (radialSelection + (event.deltaY > 0 ? 1 : radialItems.length - 1)) % radialItems.length;
+    updateRadialSelection();
+    return;
+  }
   if (Math.abs(event.deltaY) > 8) dismissIntro();
-}, { passive: true });
+}, { passive: false });
 let touchStartY = 0;
 window.addEventListener('touchstart', (event) => { touchStartY = event.changedTouches[0]?.clientY ?? 0; }, { passive: true });
 window.addEventListener('touchend', (event) => {
@@ -128,6 +144,13 @@ let scatterAnimating = false;
 const START_X = 0.404;
 const START_Y = 0.540;
 const EYE_HEIGHT = 1.15;
+const ITEM_VIEWPOINTS = [
+  { label: '水壶', position: [0.404, 0.72], target: [0.404, 0.54, -0.75] },
+  { label: '水槽', position: [-0.08, -0.48], target: [-0.08, -0.60, -0.68] },
+  { label: '洗衣机', position: [0.38, -0.10], target: [0.42, -0.28, -0.62] },
+  { label: '灶台', position: [-0.38, -0.08], target: [-0.34, -0.28, -0.62] },
+  { label: '地毯', position: [0.02, 0.30], target: [0.02, 0.12, -1.15] },
+];
 const VIEW_YAW_CENTER = Math.PI;
 const VIEW_YAW_LIMIT = 1.5;
 const INTRO_MS = 3800;
@@ -393,6 +416,9 @@ async function startGestureMode() {
     gestureState.moveForward = 0;
     gestureState.handDetected = false;
     gestureState.isPinching = false;
+    gestureZoomBaseWidth = 0;
+    gestureZoomBaseFov = camera.fov;
+    help.innerHTML = '手掌左右/上下：环视 <span>·</span> 手掌前后：拉近/拉远 <span>·</span> 捏合：交互';
     gestureStateTag.textContent = '等待手部';
     setGestureButtons('关闭摄像头手势控制');
     commandStatus.textContent = '手掌位置控制上下左右视角；拇指食指捏合可交互。';
@@ -421,6 +447,8 @@ function stopGestureMode(showStatus = true) {
   gestureState.handDetected = false;
   gestureState.isPinching = false;
   gestureLastSeen = 0;
+  gestureZoomBaseWidth = 0;
+  help.innerHTML = '鼠标环视 <span>·</span> 滚轮拉近/拉远 <span>·</span> 长按快速定位';
   if (handTracker) {
     handTracker.close();
     handTracker = null;
@@ -502,6 +530,15 @@ function processHandResults(results) {
   }
 
   gestureState.handDetected = true;
+  const palmWidth = Math.hypot(landmarks[5].x - landmarks[17].x, landmarks[5].y - landmarks[17].y);
+  if (!gestureZoomBaseWidth) {
+    gestureZoomBaseWidth = palmWidth;
+    gestureZoomBaseFov = camera.fov;
+  } else if (palmWidth > 0.01) {
+    const targetFov = THREE.MathUtils.clamp(gestureZoomBaseFov * gestureZoomBaseWidth / palmWidth, 38, 95);
+    camera.fov += (targetFov - camera.fov) * 0.16;
+    camera.updateProjectionMatrix();
+  }
   const palmX = 1.0 - landmarks[9].x;
   const palmY = landmarks[9].y;
   const deadzone = 0.14;
@@ -653,7 +690,7 @@ document.addEventListener('mousemove', (event) => {
 });
 
 document.addEventListener('wheel', (event) => {
-  if (introDismissed && !introCover.isConnected && !debugOpen) {
+  if (introDismissed && !introCover.isConnected && radialMenu.hidden && !debugOpen) {
     camera.fov = THREE.MathUtils.clamp(camera.fov + event.deltaY * 0.025, 38, 95);
     camera.updateProjectionMatrix();
   }
@@ -666,8 +703,11 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
   longPressTimer = window.setTimeout(() => {
     longPressTriggered = true;
     radialMenu.hidden = false;
+    radialSelection = 0;
+    updateRadialSelection();
     radialMenu.classList.remove('is-open');
     requestAnimationFrame(() => radialMenu.classList.add('is-open'));
+    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
   }, LONG_PRESS_MS);
 });
 document.addEventListener('pointerup', (event) => {
@@ -678,24 +718,31 @@ document.addEventListener('pointerup', (event) => {
 renderer.domElement.addEventListener('contextmenu', (event) => event.preventDefault());
 
 radialMenu.addEventListener('click', (event) => {
-  const action = event.target.closest('button')?.dataset.action;
-  if (!action) return;
+  const index = Number(event.target.closest('button')?.dataset.index);
+  if (!Number.isInteger(index) || !ITEM_VIEWPOINTS[index]) return;
   radialMenu.hidden = true;
-  if (action === 'sound') toggleSound();
-  if (action === 'reset') {
-    yaw = Math.PI;
-    pitch = 0;
-    camera.fov = 72;
-    camera.updateProjectionMatrix();
-    updateCameraLook();
-  }
-  if (action === 'coords') {
-    coordinateMode = !coordinateMode;
-    coordReadout.hidden = !coordinateMode;
-    updateCoordinateReadout();
-  }
-  if (action === 'info') showInfo();
+  locateItem(index);
 });
+
+function locateItem(index) {
+  const item = ITEM_VIEWPOINTS[index];
+  const destination = new THREE.Vector3(item.position[0], item.position[1], floorZ + EYE_HEIGHT);
+  const target = new THREE.Vector3(...item.target);
+  const direction = target.sub(destination).normalize();
+  const destinationYaw = Math.atan2(direction.x, direction.y);
+  const destinationPitch = Math.asin(THREE.MathUtils.clamp(direction.z, -1, 1));
+  cameraFlight = {
+    startedAt: performance.now(),
+    duration: 850,
+    from: camera.position.clone(),
+    to: destination,
+    fromYaw: yaw,
+    toYaw: destinationYaw,
+    fromPitch: pitch,
+    toPitch: destinationPitch,
+  };
+  if (!gestureActive) requestPointerLock();
+}
 
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === renderer.domElement;
@@ -750,6 +797,17 @@ resize();
 renderer.setAnimationLoop((time) => {
   const deltaSeconds = previousFrameTime ? Math.min((time - previousFrameTime) / 1000, 0.05) : 0;
   previousFrameTime = time;
+
+  if (cameraFlight) {
+    const t = THREE.MathUtils.clamp((time - cameraFlight.startedAt) / cameraFlight.duration, 0, 1);
+    const eased = t * t * (3 - 2 * t);
+    camera.position.lerpVectors(cameraFlight.from, cameraFlight.to, eased);
+    const yawDelta = Math.atan2(Math.sin(cameraFlight.toYaw - cameraFlight.fromYaw), Math.cos(cameraFlight.toYaw - cameraFlight.fromYaw));
+    yaw = cameraFlight.fromYaw + yawDelta * eased;
+    pitch = THREE.MathUtils.lerp(cameraFlight.fromPitch, cameraFlight.toPitch, eased);
+    updateCameraLook();
+    if (t >= 1) cameraFlight = null;
+  }
 
   if (introPlaying) {
     const t = THREE.MathUtils.clamp((time - introStartTime) / INTRO_MS, 0, 1);

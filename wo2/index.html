@@ -34,7 +34,7 @@
       <div class="vignette" aria-hidden="true"></div>
       <div class="crosshair" id="crosshair" aria-hidden="true"><span></span></div>
       <div class="room-label"><span class="live-dot"></span> ROOM / POINT CLOUD</div>
-      <div class="help" id="help">鼠标环视 <span>·</span> 滚轮拉近/拉远 <span>·</span> / 调试</div>
+      <div class="help" id="help">鼠标环视 <span>·</span> 滚轮拉近/拉远 <span>·</span> 长按快速定位</div>
       <div class="coord-readout" id="coord-readout" hidden></div>
       <div class="error" id="error" hidden></div>
       <video id="gesture-video" autoplay muted playsinline hidden></video>
@@ -62,11 +62,11 @@
       </section>
 
       <nav class="radial-menu" id="radial-menu" aria-label="快速菜单" hidden>
-        <button type="button" data-action="sound" style="--angle:-68deg">声音</button>
-        <button type="button" data-action="reset" style="--angle:-38deg">重置视角</button>
-        <button type="button" data-action="coords" style="--angle:-8deg">坐标读取</button>
-        <button type="button" data-action="info" style="--angle:23deg">空间说明</button>
-        <button type="button" data-action="close" style="--angle:54deg">返回</button>
+        <button type="button" data-index="0" aria-label="水壶：查看水壶"><svg viewBox="0 0 420 110"><defs><path id="wave-item-0" d="M4 80 C70 12 135 18 197 48 S315 88 410 22"/><path id="wave-desc-0" d="M12 101 C95 45 160 48 226 75 S340 100 410 53"/></defs><text><textPath href="#wave-item-0">水壶</textPath></text><text class="item-description"><textPath href="#wave-desc-0">查看水壶所在位置 · 01</textPath></text></svg></button>
+        <button type="button" data-index="1" aria-label="水槽：查看水槽"><svg viewBox="0 0 420 110"><defs><path id="wave-item-1" d="M4 72 C78 34 132 4 204 32 S325 93 410 39"/><path id="wave-desc-1" d="M4 96 C80 60 145 30 214 57 S330 110 410 64"/></defs><text><textPath href="#wave-item-1">水槽</textPath></text><text class="item-description"><textPath href="#wave-desc-1">查看水槽所在位置 · 02</textPath></text></svg></button>
+        <button type="button" data-index="2" aria-label="洗衣机：查看洗衣机"><svg viewBox="0 0 420 110"><defs><path id="wave-item-2" d="M4 60 C74 4 144 18 210 51 S330 78 410 18"/><path id="wave-desc-2" d="M5 89 C87 38 151 51 220 78 S335 100 410 52"/></defs><text><textPath href="#wave-item-2">洗衣机</textPath></text><text class="item-description"><textPath href="#wave-desc-2">查看洗衣机所在位置 · 03</textPath></text></svg></button>
+        <button type="button" data-index="3" aria-label="灶台：查看灶台"><svg viewBox="0 0 420 110"><defs><path id="wave-item-3" d="M4 77 C70 20 145 3 207 39 S322 101 410 35"/><path id="wave-desc-3" d="M4 103 C88 48 155 33 222 67 S337 112 410 68"/></defs><text><textPath href="#wave-item-3">灶台</textPath></text><text class="item-description"><textPath href="#wave-desc-3">查看灶台所在位置 · 04</textPath></text></svg></button>
+        <button type="button" data-index="4" aria-label="地毯：查看地毯"><svg viewBox="0 0 420 110"><defs><path id="wave-item-4" d="M4 68 C82 7 148 26 214 55 S330 86 410 28"/><path id="wave-desc-4" d="M4 98 C87 45 157 57 225 82 S340 107 410 61"/></defs><text><textPath href="#wave-item-4">地毯</textPath></text><text class="item-description"><textPath href="#wave-desc-4">查看地毯所在位置 · 05</textPath></text></svg></button>
       </nav>
 
       <section class="debug-backdrop" id="debug-backdrop" hidden>
