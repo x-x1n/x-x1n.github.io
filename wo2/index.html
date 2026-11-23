@@ -61,6 +61,14 @@
         <div class="info-modal-card"><button id="info-close" type="button" aria-label="关闭说明">×</button><p class="entry-kicker">ABOUT THIS SPACE</p><h2 id="info-title">When Things Remeber</h2><p>Some memories remain in the things we leave behind. This room is an interactive point cloud space. Look around to explore its fragments; pinch toward an object to interact with it.</p></div>
       </section>
 
+      <nav class="radial-menu" id="radial-menu" aria-label="快速菜单" hidden>
+        <button type="button" data-action="sound" style="--angle:-68deg">声音</button>
+        <button type="button" data-action="reset" style="--angle:-38deg">重置视角</button>
+        <button type="button" data-action="coords" style="--angle:-8deg">坐标读取</button>
+        <button type="button" data-action="info" style="--angle:23deg">空间说明</button>
+        <button type="button" data-action="close" style="--angle:54deg">返回</button>
+      </nav>
+
       <section class="debug-backdrop" id="debug-backdrop" hidden>
         <form class="debug-panel" id="command-form" role="dialog" aria-modal="true" aria-labelledby="debug-title">
           <div class="debug-heading"><div><p class="entry-kicker">ROOM / DEBUG</p><h2 id="debug-title">调试指令</h2></div><button type="button" id="close-debug" aria-label="关闭">×</button></div>

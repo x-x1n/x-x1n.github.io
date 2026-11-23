@@ -25,7 +25,10 @@ const gestureButtons = [...document.querySelectorAll('.gesture-toggle')];
 const introCover = document.querySelector('#intro-cover');
 const infoModal = document.querySelector('#info-modal');
 const infoButtons = document.querySelectorAll('.info-button');
+const radialMenu = document.querySelector('#radial-menu');
 let introDismissed = false;
+let longPressTimer = 0;
+let longPressTriggered = false;
 
 function showInfo() { infoModal.hidden = false; }
 function hideInfo() { infoModal.hidden = true; }
@@ -129,7 +132,8 @@ const VIEW_YAW_CENTER = Math.PI;
 const VIEW_YAW_LIMIT = 1.5;
 const INTRO_MS = 3800;
 const MOVE_SPEED = 0.82;
-const LOOK_SENSITIVITY = 0.0022;
+const LOOK_SENSITIVITY = 0.0019;
+const LONG_PRESS_MS = 600;
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8],
   [5, 9], [9, 10], [10, 11], [11, 12], [9, 13], [13, 14], [14, 15], [15, 16],
@@ -258,7 +262,7 @@ mtlLoader.load(
       'INMOBJECT1.obj',
       (object) => {
         interactiveModel = object;
-        interactiveModel.position.set(START_X, START_Y, floorZ);
+        interactiveModel.position.set(START_X, START_Y, floorZ + 0.12);
         // 模型文件使用 Y 轴朝上时，旋转到房间的 Z 轴向上坐标系。
         interactiveModel.rotation.x = Math.PI / 2;
         interactiveModel.scale.setScalar(1);
@@ -504,10 +508,10 @@ function processHandResults(results) {
   const offsetX = palmX - 0.5;
   const offsetY = palmY - 0.5;
   const targetYaw = Math.abs(offsetX) > deadzone
-    ? Math.sign(offsetX) * ((Math.abs(offsetX) - deadzone) / (0.5 - deadzone)) * 1.45
+    ? Math.sign(offsetX) * ((Math.abs(offsetX) - deadzone) / (0.5 - deadzone)) * 1.2
     : 0;
   const targetPitch = Math.abs(offsetY) > deadzone
-    ? -Math.sign(offsetY) * ((Math.abs(offsetY) - deadzone) / (0.5 - deadzone)) * 0.95
+    ? -Math.sign(offsetY) * ((Math.abs(offsetY) - deadzone) / (0.5 - deadzone)) * 0.8
     : 0;
   gestureState.yawSpeed += (targetYaw - gestureState.yawSpeed) * 0.18;
   gestureState.pitchSpeed += (targetPitch - gestureState.pitchSpeed) * 0.18;
@@ -627,6 +631,16 @@ document.addEventListener('keydown', (event) => {
     hideInfo();
     return;
   }
+  if (event.key === 'Escape' && !radialMenu.hidden) {
+    radialMenu.hidden = true;
+    return;
+  }
+  if (event.key === 'Escape' && gestureActive) {
+    stopGestureMode();
+    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
+    showEntry(true);
+    return;
+  }
   if (debugOpen || !hasStarted) return;
   if (event.code === 'Space') event.preventDefault();
 });
@@ -646,8 +660,41 @@ document.addEventListener('wheel', (event) => {
 }, { passive: true });
 
 renderer.domElement.addEventListener('pointerdown', (event) => {
-  if (event.button !== 0 || document.pointerLockElement !== renderer.domElement || debugOpen) return;
-  interactAtCrosshair();
+  if (event.button !== 0 || !hasStarted || debugOpen) return;
+  longPressTriggered = false;
+  window.clearTimeout(longPressTimer);
+  longPressTimer = window.setTimeout(() => {
+    longPressTriggered = true;
+    radialMenu.hidden = false;
+    radialMenu.classList.remove('is-open');
+    requestAnimationFrame(() => radialMenu.classList.add('is-open'));
+  }, LONG_PRESS_MS);
+});
+document.addEventListener('pointerup', (event) => {
+  if (event.button !== 0) return;
+  window.clearTimeout(longPressTimer);
+  if (!longPressTriggered && document.pointerLockElement === renderer.domElement && !debugOpen) interactAtCrosshair();
+});
+renderer.domElement.addEventListener('contextmenu', (event) => event.preventDefault());
+
+radialMenu.addEventListener('click', (event) => {
+  const action = event.target.closest('button')?.dataset.action;
+  if (!action) return;
+  radialMenu.hidden = true;
+  if (action === 'sound') toggleSound();
+  if (action === 'reset') {
+    yaw = Math.PI;
+    pitch = 0;
+    camera.fov = 72;
+    camera.updateProjectionMatrix();
+    updateCameraLook();
+  }
+  if (action === 'coords') {
+    coordinateMode = !coordinateMode;
+    coordReadout.hidden = !coordinateMode;
+    updateCoordinateReadout();
+  }
+  if (action === 'info') showInfo();
 });
 
 document.addEventListener('pointerlockchange', () => {
